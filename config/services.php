@@ -35,4 +35,22 @@ return [
         ],
     ],
 
+    // Stripe Configuration
+    'stripe' => [
+        'model' => env('STRIPE_MODEL', App\Models\User::class),
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook' => [
+            'secret' => env('STRIPE_WEBHOOK_SECRET'),
+            'tolerance' => env('STRIPE_WEBHOOK_TOLERANCE', 300),
+        ],
+    ],
+
+    // Telnyx Configuration
+    'telnyx' => [
+        'api_key' => env('TELNYX_API_KEY'),
+        'connection_id' => env('TELNYX_CONNECTION_ID'),
+        'from_number' => env('TELNYX_FROM_NUMBER'),
+    ],
+
 ];
