@@ -28,8 +28,14 @@ class SendFaxJob implements ShouldQueue
 
     public function handle(): void
     {
-        // Set Telnyx API key
-        Telnyx::setApiKey(config('services.telnyx.api_key'));
+        // Set Telnyx API key only
+        $apiKey = config('services.telnyx.api_key');
+        Log::info("Telnyx Configuration", [
+            'has_api_key' => !empty($apiKey),
+            'connection_id' => config('services.telnyx.connection_id'),
+        ]);
+        Telnyx::setApiKey($apiKey);
+        \Telnyx\Telnyx::$apiBase = config('services.telnyx.api_base');
 
         try {
             // Get the file path and convert to full path
@@ -47,6 +53,10 @@ class SendFaxJob implements ShouldQueue
                 'from' => config('services.telnyx.from_number', '+18001234567'), // Default or configured number
                 'quality' => 'high',
                 'store_media' => true,
+            ]);
+
+            Log::info('Telnyx Fax API response', [
+                'fax_response' => is_object($fax) ? $fax->toArray() : $fax
             ]);
 
             // Update the fax job with Telnyx fax ID and mark as sent

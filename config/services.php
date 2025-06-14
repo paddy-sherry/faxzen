@@ -49,6 +49,7 @@ return [
     // Telnyx Configuration
     'telnyx' => [
         'api_key' => env('TELNYX_API_KEY'),
+        'api_base' => env('TELNYX_API_BASE', 'https://api.telnyx.com'),
         'connection_id' => env('TELNYX_CONNECTION_ID'),
         'from_number' => env('TELNYX_FROM_NUMBER'),
     ],

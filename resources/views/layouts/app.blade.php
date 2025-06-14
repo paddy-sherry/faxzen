@@ -22,7 +22,7 @@
     <header class="bg-white shadow-sm border-b">
         <div class="max-w-4xl mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold text-faxzen-blue">FaxZen</h1>
+                <h1 class="text-2xl font-bold text-faxzen-blue"><a href="/">FaxZen</a></h1>
                 <p class="text-gray-600">Send faxes online for just $5</p>
             </div>
         </div>

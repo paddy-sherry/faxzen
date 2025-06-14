@@ -14,7 +14,7 @@
                 <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">3</div>
             </div>
         </div>
-        <h2 class="text-2xl font-bold text-center text-gray-800">Step 1 of 3: Upload Document</h2>
+        <h2 class="text-2xl font-bold text-center text-gray-800">Step 1: Upload Document</h2>
         <p class="text-center text-gray-600 mt-2">Upload your PDF and enter the destination fax number</p>
     </div>
 
@@ -54,7 +54,7 @@
 
         <div>
             <label for="recipient_number" class="block text-sm font-medium text-gray-700 mb-2">
-                Destination Fax Number <span class="text-red-500">*</span>
+                Recipient Fax Number <span class="text-red-500">*</span>
             </label>
             <input type="tel" 
                    id="recipient_number" 
