@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'FaxZen - Send Faxes Online')</title>
+    <link rel="icon" type="image/gif" href="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/fb1d0ae8-0136-4e6a-bc03-fe4e8d30f300/public">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
