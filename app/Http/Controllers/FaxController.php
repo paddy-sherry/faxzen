@@ -86,6 +86,7 @@ class FaxController extends Controller
         $checkoutSession = Session::create([
             'payment_method_types' => ['card'],
             'mode' => 'payment',
+            'customer_email' => $faxJob->sender_email,
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'usd',
