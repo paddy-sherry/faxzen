@@ -87,21 +87,64 @@ class FaxController extends Controller
             'payment_method_types' => ['card'],
             'mode' => 'payment',
             'customer_email' => $faxJob->sender_email,
+            'billing_address_collection' => 'required',            
+            'automatic_tax' => [
+                'enabled' => true,
+            ],
+            'tax_id_collection' => [
+                'enabled' => true,
+            ],
+            'consent_collection' => [
+                'terms_of_service' => 'required',
+            ],
+            'custom_text' => [
+                'submit' => [
+                    'message' => 'Your fax will be sent immediately after payment confirmation.',
+                ],
+                'terms_of_service_acceptance' => [
+                    'message' => 'By completing this purchase, you agree to our terms of service and privacy policy.',
+                ],
+            ],
             'line_items' => [[
                 'price_data' => [
-                    'currency' => 'usd',
+                    'currency' => 'eur',
+                    'tax_behavior' => 'exclusive',
                     'product_data' => [
-                        'name' => 'FaxZen.com',
-                        'description' => "Send fax to {$faxJob->recipient_number}",
+                        'name' => 'Fax Sending Service',
+                        'description' => "Professional fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}\nSender: {$faxJob->sender_name}",
+                        'images' => [
+                            'https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/f022f0ec-15f5-465d-ab48-764bd2a96100/public', // Professional fax/document icon - replace with your logo
+                        ],
                     ],
                     'unit_amount' => $faxJob->amount * 100, // Convert to cents
                 ],
                 'quantity' => 1,
             ]],
+            'payment_intent_data' => [
+                'statement_descriptor' => 'FAXZEN',
+                'statement_descriptor_suffix' => 'FAX',
+            ],
+            'invoice_creation' => [
+                'enabled' => true,
+                'invoice_data' => [
+                    'description' => "Fax transmission service for document: {$faxJob->file_original_name}",
+                    'footer' => 'Thank you for using FaxZen.com - Professional fax services made simple.',
+                    'metadata' => [
+                        'service' => 'fax_transmission',
+                        'recipient' => $faxJob->recipient_number,
+                        'document' => $faxJob->file_original_name,
+                    ],
+                ],
+            ],
             'success_url' => route('fax.payment.success', $faxJob->id) . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => route('fax.step2', $faxJob->id),
             'metadata' => [
                 'fax_job_id' => $faxJob->id,
+                'recipient_number' => $faxJob->recipient_number,
+                'sender_name' => $faxJob->sender_name,
+                'sender_email' => $faxJob->sender_email,
+                'document_name' => $faxJob->file_original_name,
+                'service' => 'fax_transmission',
             ],
         ]);
 
