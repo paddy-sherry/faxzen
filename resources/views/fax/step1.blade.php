@@ -5,6 +5,7 @@
 @section('content')
 <div class="bg-white rounded-lg shadow-md p-8">
     <div class="mb-8">
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Send Fax Online For $3</h1>
         <div class="flex items-center justify-center mb-4">
             <div class="flex items-center space-x-4">
                 <div class="flex items-center justify-center w-8 h-8 bg-faxzen-blue text-white rounded-full font-semibold">1</div>
@@ -14,7 +15,7 @@
                 <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">3</div>
             </div>
         </div>
-        <h2 class="text-2xl font-bold text-center text-gray-800">Step 1: Upload Document</h2>
+        <h2 class="text-xl font-bold text-center text-gray-800">Step 1: Upload Document</h2>
         <p class="text-center text-gray-600 mt-2">Upload your PDF and enter the destination fax number</p>
     </div>
 
