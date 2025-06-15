@@ -3,17 +3,12 @@
 use App\Http\Controllers\FaxController;
 use Illuminate\Support\Facades\Route;
 
-// Homepage - redirect to step 1
-Route::get('/', function () {
-    return redirect()->route('fax.step1');
-});
+// Homepage - Step 1: Upload PDF and enter fax number
+Route::get('/', [FaxController::class, 'step1'])->name('fax.step1');
+Route::post('/', [FaxController::class, 'processStep1']);
 
 // Fax sending process routes
 Route::prefix('fax')->name('fax.')->group(function () {
-    // Step 1: Upload PDF and enter fax number
-    Route::get('/step1', [FaxController::class, 'step1'])->name('step1');
-    Route::post('/step1', [FaxController::class, 'processStep1']);
-    
     // Step 2: Enter sender details
     Route::get('/step2/{faxJob}', [FaxController::class, 'step2'])->name('step2');
     Route::post('/step2/{faxJob}', [FaxController::class, 'processStep2']);
