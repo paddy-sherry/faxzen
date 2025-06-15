@@ -38,11 +38,9 @@ class SendFaxJob implements ShouldQueue
         \Telnyx\Telnyx::$apiBase = config('services.telnyx.api_base');
 
         try {
-            // Get the file path and convert to full path
-            $filePath = Storage::path($this->faxJob->file_path);
-            
-            if (!file_exists($filePath)) {
-                throw new \Exception("File not found: {$filePath}");
+            // Check if the file exists on R2
+            if (!\Storage::disk('r2')->exists($this->faxJob->file_path)) {
+                throw new \Exception("File not found on R2: {$this->faxJob->file_path}");
             }
 
             // Create a fax using Telnyx API
@@ -109,16 +107,8 @@ class SendFaxJob implements ShouldQueue
 
     protected function getFileUrl(string $filePath): string
     {
-        // For now, we'll use a temporary URL. In production, you might want to:
-        // 1. Upload to a public S3 bucket temporarily
-        // 2. Use a signed URL
-        // 3. Or serve the file through a public route
-        
-        // Create a temporary public URL for the file
-        $fullPath = Storage::path($filePath);
-        $tempUrl = route('fax.document', ['filename' => basename($filePath)]);
-        
-        return $tempUrl;
+        // Generate a temporary signed URL for 10 minutes
+        return \Storage::disk('r2')->temporaryUrl($filePath, now()->addMinutes(10));
     }
 
     protected function sendConfirmationEmail(): void

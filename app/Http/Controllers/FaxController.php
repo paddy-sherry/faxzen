@@ -37,10 +37,10 @@ class FaxController extends Controller
             ],
         ]);
 
-        // Store the uploaded file
+        // Store the uploaded file on R2
         $file = $request->file('pdf_file');
         $filename = time() . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('fax_documents', $filename, 'local');
+        $filePath = $file->storeAs('fax_documents', $filename, 'r2');
 
         // Create fax job record
         $faxJob = FaxJob::create([
