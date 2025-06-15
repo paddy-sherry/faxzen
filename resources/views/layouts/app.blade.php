@@ -20,9 +20,9 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <header class="bg-white shadow-sm border-b">
-        <div class="max-w-4xl mx-auto px-4 py-4">
+        <div class="max-w-4xl mx-auto px-4 py-2">
             <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold text-faxzen-blue"><a href="/">FaxZen</a></h1>
+                <a href="/"><img src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/42ca1bda-1138-4c31-ca0c-479017295900/public"></a>
                 <p class="text-gray-600">Send faxes online for just $5</p>
             </div>
         </div>
