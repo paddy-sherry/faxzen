@@ -107,7 +107,7 @@ class FaxController extends Controller
             ],
             'line_items' => [[
                 'price_data' => [
-                    'currency' => 'eur',
+                    'currency' => 'usd',
                     'tax_behavior' => 'exclusive',
                     'product_data' => [
                         'name' => 'Fax Sending Service',
