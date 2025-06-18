@@ -14,7 +14,7 @@
                 <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">3</div>
             </div>
         </div>
-        <h2 class="text-2xl font-bold text-center text-gray-800">Step 2: Your Details</h2>
+        <h2 class="text-2xl font-bold text-center text-gray-800">Your Details</h2>
         <p class="text-center text-gray-600 mt-2">Enter your contact information</p>
     </div>
 

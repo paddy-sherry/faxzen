@@ -15,7 +15,7 @@
                 <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">3</div>
             </div>
         </div>
-        <h2 class="text-xl font-bold text-center text-gray-800">Step 1: Upload Document</h2>
+        <h2 class="text-xl font-bold text-center text-gray-800">Upload Document</h2>
         <p class="text-center text-gray-600 mt-2">Upload your PDF and enter the destination fax number</p>
     </div>
 
@@ -36,19 +36,20 @@
             <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-2">
                 PDF Document <span class="text-red-500">*</span>
             </label>
-            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-faxzen-blue transition-colors">
+            <div id="drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-faxzen-blue transition-colors">
                 <div class="space-y-1 text-center">
                     <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    <div class="flex text-sm text-gray-600">
-                        <label for="pdf_file" class="relative cursor-pointer bg-white rounded-md font-medium text-faxzen-blue hover:text-faxzen-light focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-faxzen-blue">
+                    <div class="flex flex-col items-center text-sm text-gray-600">
+                        <label for="pdf_file" class="relative cursor-pointer bg-faxzen-blue text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-faxzen-blue transition-colors mb-2">
                             <span>Upload a PDF file</span>
                             <input id="pdf_file" name="pdf_file" type="file" accept=".pdf" class="sr-only" required>
                         </label>
-                        <p class="pl-1">or drag and drop</p>
+                        <p class="text-gray-500">or drag and drop</p>
                     </div>
                     <p class="text-xs text-gray-500">PDF up to 50MB</p>
+                    <p id="file-name" class="text-sm text-green-600 font-medium hidden"></p>
                 </div>
             </div>
         </div>
@@ -96,4 +97,73 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('pdf_file');
+    const fileName = document.getElementById('file-name');
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Handle dropped files
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    // Handle file selection via button
+    fileInput.addEventListener('change', handleFileSelect, false);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        dropZone.classList.add('border-faxzen-blue', 'bg-blue-50');
+    }
+
+    function unhighlight(e) {
+        dropZone.classList.remove('border-faxzen-blue', 'bg-blue-50');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type === 'application/pdf') {
+                fileInput.files = files;
+                showFileName(file.name);
+            } else {
+                alert('Please select a PDF file.');
+            }
+        }
+    }
+
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+            showFileName(file.name);
+        }
+    }
+
+    function showFileName(name) {
+        fileName.textContent = `Selected: ${name}`;
+        fileName.classList.remove('hidden');
+    }
+});
+</script>
 @endsection 
