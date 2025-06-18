@@ -8,29 +8,7 @@
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online For $3</h1>
         <p class="text-center text-gray-600 mb-6">Send faxes online with instant delivery. Trusted by thousands of people and businesses worldwide. </p>
         
-        <!-- Trust Badges -->
-        <div class="text-center mb-6">
-            <div class="flex items-center justify-center space-x-6 mb-4">
-                <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-sm text-gray-600 font-medium">SSL Encrypted</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m-3-6h6" />
-                    </svg>
-                    <span class="text-sm text-gray-600 font-medium">No Hidden Fees</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <span class="text-sm text-gray-600 font-medium">Instant Delivery</span>
-                </div>
-            </div>
-        </div>
+       
         
         <div class="flex items-center justify-center mb-4">
             <div class="flex items-center space-x-4">
@@ -100,6 +78,30 @@
                 Continue to Step 2
             </button>
         </div>
+
+         <!-- Trust Badges -->
+         <div class="text-center mb-6">
+            <div class="flex items-center justify-center space-x-6 mb-4">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-sm text-gray-600 font-medium">SSL Encrypted</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m-3-6h6" />
+                    </svg>
+                    <span class="text-sm text-gray-600 font-medium">No Hidden Fees</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span class="text-sm text-gray-600 font-medium">Instant Delivery</span>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 
@@ -120,6 +122,30 @@
             <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">3</div>
             <h4 class="font-semibold text-gray-800">Pay & Send</h4>
             <p class="text-sm text-gray-600">Complete payment and we'll send your fax instantly</p>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Section with Image -->
+<div class="mt-12 bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        <!-- Text Content -->
+        <div class="p-8 lg:p-12 text-center">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
+            Experience effortless faxing with FaxZen
+            </h2>
+            <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
+            We’ve revolutionized the way you send faxes. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it’s as simple as uploading your PDF document, paying just $3, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
+            </p>
+        </div>
+        
+        <!-- Image -->
+        <div class="h-[400px] bg-gray-100">
+            <img 
+                src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/307e046b-9566-4a97-1495-12bf4e94f000/public" 
+                alt="Send Fax Online"
+                class="w-full object-contain"
+            >
         </div>
     </div>
 </div>
@@ -233,29 +259,7 @@
     </div>
 </div>
 
-<!-- Hero Section with Image -->
-<div class="mt-12 bg-white rounded-lg shadow-md overflow-hidden">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-        <!-- Text Content -->
-        <div class="p-8 lg:p-12 text-center">
-            <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
-            Experience effortless faxing with FaxZen
-            </h2>
-            <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
-            We’ve revolutionized the way you send faxes. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it’s as simple as uploading your PDF document, paying just $3, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
-            </p>
-        </div>
-        
-        <!-- Image -->
-        <div class="h-[400px] bg-gray-100">
-            <img 
-                src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/307e046b-9566-4a97-1495-12bf4e94f000/public" 
-                alt="Send Fax Online"
-                class="w-full object-contain"
-            >
-        </div>
-    </div>
-</div>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
