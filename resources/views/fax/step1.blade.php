@@ -34,7 +34,7 @@
         
         <div class="flex items-center justify-center mb-4">
             <div class="flex items-center space-x-4">
-                <div class="flex items-center justify-center w-8 h-8 bg-faxzen-blue text-white rounded-full font-semibold">1</div>
+                <div class="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full font-semibold">1</div>
                 <div class="w-16 h-0.5 bg-gray-300"></div>
                 <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">2</div>
                 <div class="w-16 h-0.5 bg-gray-300"></div>
@@ -62,13 +62,13 @@
             <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-2">
                 PDF Document <span class="text-red-500">*</span>
             </label>
-            <div id="drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-faxzen-blue transition-colors">
+            <div id="drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-all duration-200">
                 <div class="space-y-1 text-center">
                     <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <div class="flex flex-col items-center text-sm text-gray-600">
-                        <label for="pdf_file" class="relative cursor-pointer bg-faxzen-blue text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-faxzen-blue transition-colors mb-2">
+                        <label for="pdf_file" class="relative cursor-pointer bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-md font-medium focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-purple-500 transition-all duration-200 mb-2">
                             <span>Upload a PDF file</span>
                             <input id="pdf_file" name="pdf_file" type="file" accept=".pdf" class="sr-only" required>
                         </label>
@@ -89,35 +89,35 @@
                    name="recipient_number" 
                    value="{{ old('recipient_number') }}"
                    placeholder="e.g., +1-555-123-4567"
-                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue"
+                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple"
                    required>
             <p class="mt-1 text-sm text-gray-500">Include country code (e.g., +1 for US/Canada)</p>
         </div>
 
         <div class="pt-4">
             <button type="submit" 
-                    class="w-full bg-faxzen-blue text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-faxzen-blue transition-colors font-semibold">
+                    class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 font-semibold">
                 Continue to Step 2
             </button>
         </div>
     </form>
 </div>
 
-<div class="mt-8 bg-blue-50 rounded-lg p-6">
-    <h3 class="text-lg font-semibold text-faxzen-blue mb-4">How it works</h3>
+<div class="mt-8 bg-white border border-purple-500 rounded-lg p-6">
+    <h3 class="text-lg font-semibold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent mb-4">How it works</h3>
     <div class="grid md:grid-cols-3 gap-6">
         <div class="text-center">
-            <div class="bg-faxzen-blue text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">1</div>
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">1</div>
             <h4 class="font-semibold text-gray-800">Upload PDF</h4>
             <p class="text-sm text-gray-600">Upload your PDF document and enter the fax number</p>
         </div>
         <div class="text-center">
-            <div class="bg-faxzen-blue text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">2</div>
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">2</div>
             <h4 class="font-semibold text-gray-800">Enter Details</h4>
             <p class="text-sm text-gray-600">Provide your name and email address</p>
         </div>
         <div class="text-center">
-            <div class="bg-faxzen-blue text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">3</div>
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">3</div>
             <h4 class="font-semibold text-gray-800">Pay & Send</h4>
             <p class="text-sm text-gray-600">Complete payment and we'll send your fax instantly</p>
         </div>
@@ -197,15 +197,15 @@
         <div class="mt-6 pt-4 border-t border-gray-200">
             <div class="flex items-center justify-center space-x-4">
                 <div class="text-center">
-                    <div class="text-2xl font-bold text-faxzen-blue">50,000+</div>
+                    <div class="text-2xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">50,000+</div>
                     <div class="text-xs text-gray-600">Faxes Sent</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-2xl font-bold text-faxzen-blue">99.9%</div>
+                    <div class="text-2xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">99.9%</div>
                     <div class="text-xs text-gray-600">Success Rate</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-2xl font-bold text-faxzen-blue">24/7</div>
+                    <div class="text-2xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">24/7</div>
                     <div class="text-xs text-gray-600">Support</div>
                 </div>
             </div>
@@ -246,11 +246,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function highlight(e) {
-        dropZone.classList.add('border-faxzen-blue', 'bg-blue-50');
+        dropZone.classList.add('border-gray-400', 'bg-gradient-to-br', 'from-purple-50', 'to-purple-100');
     }
 
     function unhighlight(e) {
-        dropZone.classList.remove('border-faxzen-blue', 'bg-blue-50');
+        dropZone.classList.remove('border-gray-400', 'bg-gradient-to-br', 'from-purple-50', 'to-purple-100');
     }
 
     function handleDrop(e) {

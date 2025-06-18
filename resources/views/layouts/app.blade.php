@@ -11,6 +11,8 @@
             theme: {
                 extend: {
                     colors: {
+                        'faxzen-purple': '#8b5cf6',
+                        'faxzen-purple-dark': '#7c3aed',
                         'faxzen-blue': '#1e40af',
                         'faxzen-light': '#3b82f6',
                     }
