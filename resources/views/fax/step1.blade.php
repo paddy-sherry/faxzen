@@ -6,7 +6,7 @@
 <div class="bg-white rounded-lg shadow-md p-8">
     <div class="mb-8">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online For $3</h1>
-        <p class="text-center text-gray-600 mb-6">Trusted by thousands of businesses worldwide. Send faxes instantly with guaranteed delivery.</p>
+        <p class="text-center text-gray-600 mb-6">Send faxes online with instant delivery. Trusted by thousands of people and businesses worldwide. </p>
         
         <!-- Trust Badges -->
         <div class="text-center mb-6">
@@ -229,6 +229,30 @@
                     <div class="text-xs text-gray-600">Support</div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Section with Image -->
+<div class="mt-12 bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        <!-- Text Content -->
+        <div class="p-8 lg:p-12 text-center">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
+            Experience effortless faxing with FaxZen
+            </h2>
+            <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
+            We’ve revolutionized the way you send faxes. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it’s as simple as uploading your PDF document, paying just $3, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
+            </p>
+        </div>
+        
+        <!-- Image -->
+        <div class="h-[400px] bg-gray-100">
+            <img 
+                src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/307e046b-9566-4a97-1495-12bf4e94f000/public" 
+                alt="Send Fax Online"
+                class="w-full object-contain"
+            >
         </div>
     </div>
 </div>
