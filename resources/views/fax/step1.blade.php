@@ -136,7 +136,7 @@
                        id="recipient_number" 
                        name="recipient_number" 
                        value="{{ old('recipient_number') }}"
-                       placeholder="555-123-4567"
+                       placeholder="5551234567"
                        class="flex-1 px-3 py-2 border border-l-0 border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple"
                        required>
             </div>

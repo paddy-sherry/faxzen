@@ -30,12 +30,20 @@ class FaxController extends Controller
                 File::types(['pdf'])
                     ->max(50 * 1024) // 50MB in KB
             ],
+            'country_code' => [
+                'required',
+                'string',
+                'regex:/^\+[1-9]\d{0,3}$/' // Country code format like +1, +44, +353, etc.
+            ],
             'recipient_number' => [
                 'required',
                 'string',
-                'regex:/^\+?[1-9]\d{1,14}$/' // Basic international phone number format
+                'regex:/^[0-9]{7,15}$/' // Local number without country code
             ],
         ]);
+
+        // Combine country code and recipient number into E164 format
+        $fullPhoneNumber = $request->country_code . $request->recipient_number;
 
         // Store the uploaded file on R2
         $file = $request->file('pdf_file');
@@ -44,7 +52,7 @@ class FaxController extends Controller
 
         // Create fax job record
         $faxJob = FaxJob::create([
-            'recipient_number' => $request->recipient_number,
+            'recipient_number' => $fullPhoneNumber,
             'file_path' => $filePath,
             'file_original_name' => $file->getClientOriginalName(),
             'status' => FaxJob::STATUS_PENDING,
@@ -111,7 +119,7 @@ class FaxController extends Controller
                     'tax_behavior' => 'exclusive',
                     'product_data' => [
                         'name' => 'Fax Sending Service',
-                        'description' => "Professional fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}\nSender: {$faxJob->sender_name}",
+                        'description' => "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}\nSender: {$faxJob->sender_name}",
                         'images' => [
                             'https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/f022f0ec-15f5-465d-ab48-764bd2a96100/public', // Professional fax/document icon - replace with your logo
                         ],
