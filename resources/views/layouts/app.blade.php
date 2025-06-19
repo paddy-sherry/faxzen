@@ -26,7 +26,11 @@
         <div class="max-w-4xl mx-auto px-4 py-2">
             <div class="flex items-center justify-between">
                 <a href="/"><img src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/42ca1bda-1138-4c31-ca0c-479017295900/public"></a>
-                <p class="text-gray-600">Send faxes online for just $3</p>
+                @if(!request()->is('/'))
+                    <a href="/" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-md font-medium transition-all duration-200">
+                        Send Fax
+                    </a>
+                @endif
             </div>
         </div>
     </header>
