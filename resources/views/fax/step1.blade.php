@@ -132,10 +132,10 @@
         <!-- Text Content -->
         <div class="p-8 lg:p-12 text-center">
             <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
-            Experience effortless faxing with FaxZen
+            Send A Fax Online With Ease
             </h2>
             <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
-            We’ve revolutionized the way you send faxes. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it’s as simple as uploading your PDF document, paying just $3, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
+            We’ve revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it’s as simple as uploading your PDF document, paying just $3, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
             </p>
         </div>
         
