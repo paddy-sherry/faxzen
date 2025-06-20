@@ -134,43 +134,41 @@ class KrakenCompressionService
      */
     private function getCompressionSettings($fileExtension, $fileSize)
     {
+        // Use lossless compression for all file types to preserve quality
         $settings = [
-            'lossy' => true,
-            'quality' => 85,
+            'lossy' => false, // Lossless compression
         ];
 
         switch ($fileExtension) {
             case 'pdf':
-                $settings['quality'] = 85;
-                // For large PDFs, be more aggressive
-                if ($fileSize > 10 * 1024 * 1024) { // 10MB
-                    $settings['quality'] = 75;
-                }
+                // PDFs use lossless compression by default
+                $settings['lossy'] = false;
                 break;
                 
             case 'jpg':
             case 'jpeg':
-                $settings['quality'] = 85;
-                if ($fileSize > 5 * 1024 * 1024) { // 5MB
-                    $settings['quality'] = 75;
-                }
+                // For JPEGs, we can still use lossless optimization
+                $settings['lossy'] = false;
                 break;
                 
             case 'png':
-                $settings['lossy'] = true;
-                $settings['quality'] = 85;
+                // PNG supports excellent lossless compression
+                $settings['lossy'] = false;
                 break;
                 
             case 'gif':
-                $settings['lossy'] = false; // GIFs should preserve animation
+                // GIFs are always lossless (preserves animation)
+                $settings['lossy'] = false;
                 break;
                 
             case 'webp':
-                $settings['quality'] = 85;
+                // WebP supports both lossy and lossless - use lossless
+                $settings['lossy'] = false;
                 break;
                 
             case 'svg':
-                $settings['lossy'] = false; // SVGs are vector-based
+                // SVGs are vector-based and always lossless
+                $settings['lossy'] = false;
                 break;
         }
 

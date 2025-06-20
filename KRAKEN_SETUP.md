@@ -1,14 +1,27 @@
-# Kraken.io Integration Setup
+# Kraken.io File Compression Setup
 
-This document explains how to set up Kraken.io compression for FaxZen.
+This document explains how to set up Kraken.io API for file compression in the FaxZen application.
 
 ## Overview
 
-FaxZen now supports automatic file compression using Kraken.io API for:
-- PDF documents
-- Images (JPG, PNG, GIF, WebP, SVG)
+FaxZen uses Kraken.io's API to compress files before sending them via fax. This helps ensure files are within size limits while **preserving quality through lossless compression**.
 
-Files are automatically compressed before being sent via fax to improve delivery success rates and reduce transmission time.
+## Supported File Types
+
+- **PDF**: Documents, forms, contracts
+- **JPG/JPEG**: Photos, scanned documents  
+- **PNG**: Screenshots, graphics with transparency
+- **GIF**: Animated images, simple graphics
+- **SVG**: Vector graphics, logos
+- **WebP**: Modern web images
+
+## Compression Strategy
+
+The service uses **lossless compression** for all file types to ensure:
+- **No quality degradation** - your documents look exactly the same
+- **Smaller file sizes** - faster transmission and better compatibility
+- **Preserved text clarity** - important for faxed documents
+- **Maintained image details** - photos and graphics stay crisp
 
 ## Setup Instructions
 
@@ -50,14 +63,14 @@ The compression service will automatically:
 
 ## Compression Settings
 
-The service uses different settings based on file type:
+The service uses **lossless compression** for all file types to preserve quality:
 
-- **PDF**: Quality 85% (75% for files > 10MB)
-- **JPG/JPEG**: Quality 85% (75% for files > 5MB)  
-- **PNG**: Lossy compression at 85% quality
-- **GIF**: Lossless (preserves animation)
-- **WebP**: Quality 85%
-- **SVG**: Lossless (vector-based)
+- **PDF**: Lossless compression (no quality loss)
+- **JPG/JPEG**: Lossless optimization (removes metadata, optimizes structure)
+- **PNG**: Lossless compression (excellent size reduction without quality loss)
+- **GIF**: Lossless (preserves animation and colors)
+- **WebP**: Lossless mode (maintains perfect quality)
+- **SVG**: Lossless optimization (removes unnecessary code)
 
 ## Monitoring
 
