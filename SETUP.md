@@ -37,6 +37,13 @@ TELNYX_CONNECTION_ID=your_connection_id_here
 TELNYX_FROM_NUMBER=+1234567890
 ```
 
+### FaxZen Configuration (Optional)
+Configure the fax service pricing:
+
+```env
+FAXZEN_PRICE=3.00
+```
+
 ### Email Configuration (Optional but Recommended)
 For sending confirmation emails, configure your mail settings:
 

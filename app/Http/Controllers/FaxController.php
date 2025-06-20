@@ -84,6 +84,7 @@ class FaxController extends Controller
             'recipient_number' => $fullPhoneNumber,
             'file_path' => $finalFilePath,
             'file_original_name' => $file->getClientOriginalName(),
+            'amount' => config('services.faxzen.price'),
             'status' => FaxJob::STATUS_PENDING,
             'sender_name' => '',
             'sender_email' => '',

@@ -60,4 +60,9 @@ return [
         'api_secret' => env('KRAKEN_API_SECRET'),
     ],
 
+    // FaxZen Configuration
+    'faxzen' => [
+        'price' => env('FAXZEN_PRICE', 3.00),
+    ],
+
 ];

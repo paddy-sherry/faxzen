@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('sender_email');
             $table->string('file_path');
             $table->string('file_original_name');
-            $table->decimal('amount', 8, 2)->default(5.00);
+            $table->decimal('amount', 8, 2);
             $table->string('payment_intent_id')->nullable();
             $table->enum('status', ['pending', 'payment_pending', 'paid', 'sent', 'failed'])->default('pending');
             $table->string('telnyx_fax_id')->nullable();
