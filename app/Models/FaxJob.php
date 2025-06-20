@@ -18,7 +18,11 @@ class FaxJob extends Model
         'telnyx_fax_id',
         'retry_attempts',
         'last_retry_at',
-        'error_message'
+        'error_message',
+        'is_compressed',
+        'original_file_size',
+        'compressed_file_size',
+        'compression_ratio',
     ];
 
     protected $casts = [

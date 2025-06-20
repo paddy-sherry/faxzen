@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendFaxJob;
 use App\Models\FaxJob;
+use App\Services\KrakenCompressionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\File;
@@ -17,48 +18,76 @@ class FaxController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
     }
 
-    public function step1()
+    public function step1(Request $request)
     {
-        return view('fax.step1');
-    }
+        // Handle GET request - show the form
+        if ($request->isMethod('GET')) {
+            return view('fax.step1');
+        }
 
-    public function processStep1(Request $request)
-    {
+        // Handle POST request - process the form
         $request->validate([
+            'country_code' => 'required|string',
+            'recipient_number' => 'required|string|min:7|max:15',
             'pdf_file' => [
                 'required',
-                File::types(['pdf'])
+                File::types(['pdf', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'])
                     ->max(50 * 1024) // 50MB in KB
-            ],
-            'country_code' => [
-                'required',
-                'string',
-                'regex:/^\+[1-9]\d{0,3}$/' // Country code format like +1, +44, +353, etc.
-            ],
-            'recipient_number' => [
-                'required',
-                'string',
-                'regex:/^[0-9]{7,15}$/' // Local number without country code
             ],
         ]);
 
         // Combine country code and recipient number into E164 format
-        $fullPhoneNumber = $request->country_code . $request->recipient_number;
+        $countryCode = $request->country_code;
+        $recipientNumber = $request->recipient_number;
+        
+        // Remove any non-numeric characters from recipient number
+        $recipientNumber = preg_replace('/[^0-9]/', '', $recipientNumber);
+        
+        // Create full phone number in E164 format
+        $fullPhoneNumber = $countryCode . $recipientNumber;
 
-        // Store the uploaded file on R2
         $file = $request->file('pdf_file');
         $filename = time() . '_' . $file->getClientOriginalName();
         $filePath = $file->storeAs('fax_documents', $filename, 'r2');
 
+        // Try to compress the file using Kraken.io (supports PDF and images)
+        $compressionService = new KrakenCompressionService();
+        $compressionResult = $compressionService->compressAndStore($filePath, 'r2');
+        
+        // Use compressed version if available, otherwise use original
+        $finalFilePath = ($compressionResult && $compressionResult['compressed_path']) 
+            ? $compressionResult['compressed_path'] 
+            : $filePath;
+
+        // Prepare compression data for storage
+        $compressionData = [];
+        if ($compressionResult) {
+            $compressionData = [
+                'is_compressed' => $compressionResult['is_compressed'],
+                'original_file_size' => $compressionResult['original_size'],
+                'compressed_file_size' => $compressionResult['compressed_size'],
+                'compression_ratio' => $compressionResult['compression_ratio'],
+            ];
+        } else {
+            // If compression failed, get original file size
+            $originalSize = Storage::disk('r2')->size($filePath);
+            $compressionData = [
+                'is_compressed' => false,
+                'original_file_size' => $originalSize,
+                'compressed_file_size' => $originalSize,
+                'compression_ratio' => 0,
+            ];
+        }
+
         // Create fax job record
-        $faxJob = FaxJob::create([
+        $faxJob = FaxJob::create(array_merge([
             'recipient_number' => $fullPhoneNumber,
-            'file_path' => $filePath,
+            'file_path' => $finalFilePath,
             'file_original_name' => $file->getClientOriginalName(),
             'status' => FaxJob::STATUS_PENDING,
             'sender_name' => '',
             'sender_email' => '',
-        ]);
+        ], $compressionData));
 
         return redirect()->route('fax.step2', $faxJob->id);
     }

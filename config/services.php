@@ -54,4 +54,10 @@ return [
         'from_number' => env('TELNYX_FROM_NUMBER'),
     ],
 
+    // Kraken.io Configuration
+    'kraken' => [
+        'api_key' => env('KRAKEN_API_KEY'),
+        'api_secret' => env('KRAKEN_API_SECRET'),
+    ],
+
 ];

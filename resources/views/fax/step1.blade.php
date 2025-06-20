@@ -38,7 +38,7 @@
         
         <div>
             <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-2">
-                PDF Document <span class="text-red-500">*</span>
+                Document or Image <span class="text-red-500">*</span>
             </label>
             <div id="drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-all duration-200">
                 <div class="space-y-1 text-center">
@@ -47,12 +47,12 @@
                     </svg>
                     <div class="flex flex-col items-center text-sm text-gray-600">
                         <label for="pdf_file" class="relative cursor-pointer bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-md font-medium focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-purple-500 transition-all duration-200 mb-2">
-                            <span>Upload a PDF file</span>
-                            <input id="pdf_file" name="pdf_file" type="file" accept=".pdf" class="sr-only" required>
+                            <span>Upload file</span>
+                            <input id="pdf_file" name="pdf_file" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.svg,.webp" class="sr-only" required>
                         </label>
                         <p class="text-gray-500">or drag and drop</p>
                     </div>
-                    <p class="text-xs text-gray-500">PDF up to 50MB</p>
+                    <p class="text-xs text-gray-500">PDF, JPG, PNG, GIF, SVG, WebP up to 50MB</p>
                     <p id="file-name" class="text-sm text-green-600 font-medium hidden"></p>
                 </div>
             </div>
@@ -181,8 +181,8 @@
     <div class="grid md:grid-cols-3 gap-6">
         <div class="text-center">
             <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">1</div>
-            <h4 class="font-semibold text-gray-800">Upload PDF</h4>
-            <p class="text-sm text-gray-600">Upload your PDF document and enter the fax number</p>
+            <h4 class="font-semibold text-gray-800">Upload File</h4>
+            <p class="text-sm text-gray-600">Upload your PDF document or image and enter the fax number</p>
         </div>
         <div class="text-center">
             <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">2</div>
@@ -206,7 +206,7 @@
             Send A Fax Online With Ease
             </h2>
             <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
-            We’ve revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it’s as simple as uploading your PDF document, paying just $3, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
+            We've revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it's as simple as uploading your PDF document, paying just $3, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
             </p>
         </div>
         
@@ -426,11 +426,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (files.length > 0) {
             const file = files[0];
-            if (file.type === 'application/pdf') {
+            const allowedTypes = [
+                'application/pdf',
+                'image/jpeg',
+                'image/jpg', 
+                'image/png',
+                'image/gif',
+                'image/svg+xml',
+                'image/webp'
+            ];
+            
+            if (allowedTypes.includes(file.type)) {
                 fileInput.files = files;
                 showFileName(file.name);
             } else {
-                alert('Please select a PDF file.');
+                alert('Please select a PDF document or image file (JPG, PNG, GIF, SVG, WebP).');
             }
         }
     }

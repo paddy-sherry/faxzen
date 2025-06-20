@@ -4,8 +4,7 @@ use App\Http\Controllers\FaxController;
 use Illuminate\Support\Facades\Route;
 
 // Homepage - Step 1: Upload PDF and enter fax number
-Route::get('/', [FaxController::class, 'step1'])->name('fax.step1');
-Route::post('/', [FaxController::class, 'processStep1']);
+Route::match(['GET', 'POST'], '/', [FaxController::class, 'step1'])->name('fax.step1');
 
 // Fax sending process routes
 Route::prefix('fax')->name('fax.')->group(function () {
