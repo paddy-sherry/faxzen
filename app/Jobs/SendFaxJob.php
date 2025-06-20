@@ -150,11 +150,27 @@ class SendFaxJob implements ShouldQueue
      */
     protected function ensureFileOnR2(): string
     {
+        Log::info("Checking file location", [
+            'fax_job_id' => $this->faxJob->id,
+            'file_path' => $this->faxJob->file_path,
+            'starts_with_fax_documents' => str_starts_with($this->faxJob->file_path, 'fax_documents/'),
+            'starts_with_temp_fax_documents' => str_starts_with($this->faxJob->file_path, 'temp_fax_documents/')
+        ]);
+
         // Check if file is already on R2
         if (str_starts_with($this->faxJob->file_path, 'fax_documents/')) {
             // Already on R2
             if (\Storage::disk('r2')->exists($this->faxJob->file_path)) {
+                Log::info("File already on R2", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'r2_path' => $this->faxJob->file_path
+                ]);
                 return $this->faxJob->file_path;
+            } else {
+                Log::warning("File path suggests R2 but file not found on R2", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'r2_path' => $this->faxJob->file_path
+                ]);
             }
         }
 
