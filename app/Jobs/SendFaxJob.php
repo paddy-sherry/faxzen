@@ -43,18 +43,33 @@ class SendFaxJob implements ShouldQueue
                 throw new \Exception("File not found on R2: {$this->faxJob->file_path}");
             }
 
+            $mediaUrl = $this->getFileUrl($this->faxJob->file_path);
+            
+            Log::info("Preparing to send fax via Telnyx", [
+                'fax_job_id' => $this->faxJob->id,
+                'recipient' => $this->faxJob->recipient_number,
+                'from_number' => config('services.telnyx.from_number', '+18001234567'),
+                'connection_id' => config('services.telnyx.connection_id'),
+                'media_url' => $mediaUrl,
+                'file_path' => $this->faxJob->file_path,
+                'file_name' => $this->faxJob->file_original_name
+            ]);
+
             // Create a fax using Telnyx API
             $fax = Fax::create([
                 'connection_id' => config('services.telnyx.connection_id'),
-                'media_url' => $this->getFileUrl($this->faxJob->file_path),
+                'media_url' => $mediaUrl,
                 'to' => $this->faxJob->recipient_number,
                 'from' => config('services.telnyx.from_number', '+18001234567'), // Default or configured number
                 'quality' => 'high',
                 'store_media' => true,
             ]);
 
-            Log::info('Telnyx Fax API response', [
-                'fax_response' => is_object($fax) ? $fax->toArray() : $fax
+            Log::info('Telnyx Fax API response received', [
+                'fax_job_id' => $this->faxJob->id,
+                'fax_response' => is_object($fax) ? $fax->toArray() : $fax,
+                'fax_id' => $fax->id ?? 'unknown',
+                'status' => $fax->status ?? 'unknown'
             ]);
 
             // Update the fax job with Telnyx fax ID and mark as sent
@@ -80,10 +95,19 @@ class SendFaxJob implements ShouldQueue
                 'error_message' => $e->getMessage(),
             ]);
 
-            Log::error("Failed to send fax", [
+            Log::error("Failed to send fax via Telnyx", [
                 'fax_job_id' => $this->faxJob->id,
                 'attempt' => $this->attempts(),
-                'error' => $e->getMessage(),
+                'max_attempts' => $this->tries,
+                'error_message' => $e->getMessage(),
+                'error_code' => $e->getCode(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'recipient' => $this->faxJob->recipient_number,
+                'from_number' => config('services.telnyx.from_number'),
+                'connection_id' => config('services.telnyx.connection_id'),
+                'file_path' => $this->faxJob->file_path,
+                'stack_trace' => $e->getTraceAsString()
             ]);
 
             // If this was the last attempt, mark as failed
