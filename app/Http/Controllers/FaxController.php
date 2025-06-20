@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendFaxJob;
 use App\Models\FaxJob;
-use App\Services\KrakenCompressionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\File;
@@ -48,47 +47,27 @@ class FaxController extends Controller
 
         $file = $request->file('pdf_file');
         $filename = time() . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('fax_documents', $filename, 'r2');
-
-        // Try to compress the file using Kraken.io (supports PDF and images)
-        $compressionService = new KrakenCompressionService();
-        $compressionResult = $compressionService->compressAndStore($filePath, 'r2');
         
-        // Use compressed version if available, otherwise use original
-        $finalFilePath = ($compressionResult && $compressionResult['compressed_path']) 
-            ? $compressionResult['compressed_path'] 
-            : $filePath;
+        // Store locally first for fast upload response
+        $localPath = $file->storeAs('temp_fax_documents', $filename, 'local');
+        
+        // Get file size from local storage
+        $originalSize = Storage::disk('local')->size($localPath);
 
-        // Prepare compression data for storage
-        $compressionData = [];
-        if ($compressionResult) {
-            $compressionData = [
-                'is_compressed' => $compressionResult['is_compressed'],
-                'original_file_size' => $compressionResult['original_size'],
-                'compressed_file_size' => $compressionResult['compressed_size'],
-                'compression_ratio' => $compressionResult['compression_ratio'],
-            ];
-        } else {
-            // If compression failed, get original file size
-            $originalSize = Storage::disk('r2')->size($filePath);
-            $compressionData = [
-                'is_compressed' => false,
-                'original_file_size' => $originalSize,
-                'compressed_file_size' => $originalSize,
-                'compression_ratio' => 0,
-            ];
-        }
-
-        // Create fax job record
-        $faxJob = FaxJob::create(array_merge([
+        // Create fax job record - file will be moved to R2 in SendFaxJob
+        $faxJob = FaxJob::create([
             'recipient_number' => $fullPhoneNumber,
-            'file_path' => $finalFilePath,
+            'file_path' => $localPath, // Initially stored locally
             'file_original_name' => $file->getClientOriginalName(),
             'amount' => config('services.faxzen.price'),
             'status' => FaxJob::STATUS_PENDING,
             'sender_name' => '',
             'sender_email' => '',
-        ], $compressionData));
+            'is_compressed' => false,
+            'original_file_size' => $originalSize,
+            'compressed_file_size' => $originalSize,
+            'compression_ratio' => 0,
+        ]);
 
         return redirect()->route('fax.step2', $faxJob->id);
     }

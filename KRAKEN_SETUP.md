@@ -55,11 +55,35 @@ The compression service will automatically:
 
 ## How It Works
 
-1. **File Upload**: User uploads PDF or image file
-2. **Compression**: File is sent to Kraken.io for compression
-3. **Storage**: Compressed file is stored alongside original
-4. **Fax Sending**: Compressed version is used for fax transmission
-5. **Cleanup**: Files are deleted after 24 hours
+1. **Fast Upload**: User uploads file to local storage (instant - no network delay)
+2. **Immediate Response**: User can proceed to Step 2 instantly
+3. **Background Processing**: SendFaxJob moves file to R2 cloud storage
+4. **Compression**: File is automatically compressed using Kraken.io API (lossless)
+5. **Fax Sending**: Compressed version is used for fax transmission via Telnyx
+6. **Cleanup**: Local and cloud files are deleted after 24 hours
+
+## Performance Benefits
+
+- **Instant Upload**: Files stored locally first - no cloud upload delay
+- **Zero Wait Time**: Users proceed immediately to next step
+- **Background Processing**: All heavy operations (R2 upload, compression) happen asynchronously
+- **Better User Experience**: No browser timeouts or long waits
+- **Reliable Processing**: Multiple fallback mechanisms ensure delivery
+- **Scalable**: Queue workers handle all heavy lifting
+
+## Upload Flow Optimization
+
+### Traditional Flow (Slow):
+```
+Upload → R2 → Compression → Response (5-30 seconds)
+```
+
+### Optimized Flow (Fast):
+```
+Upload → Local Storage → Response (< 1 second)
+         ↓ (Background)
+         R2 → Compression → Fax Sending
+```
 
 ## Compression Settings
 
