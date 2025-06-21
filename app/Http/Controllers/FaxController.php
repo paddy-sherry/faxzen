@@ -74,7 +74,7 @@ class FaxController extends Controller
             'compression_ratio' => 0,
         ]);
 
-        return redirect()->route('fax.step2', $faxJob->id);
+        return redirect()->route('fax.step2', $faxJob->hash);
     }
 
     public function step2(FaxJob $faxJob)
@@ -158,8 +158,8 @@ class FaxController extends Controller
                     ],
                 ],
             ],
-            'success_url' => route('fax.payment.success', $faxJob->id) . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => route('fax.step2', $faxJob->id),
+            'success_url' => route('fax.payment.success', $faxJob->hash) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('fax.step2', $faxJob->hash),
             'metadata' => [
                 'fax_job_id' => $faxJob->id,
                 'recipient_number' => $faxJob->recipient_number,
@@ -201,7 +201,7 @@ class FaxController extends Controller
                 SendFaxJob::dispatch($faxJob);
 
                 // Redirect to status page instead of success page
-                return redirect()->route('fax.status', $faxJob->id);
+                return redirect()->route('fax.status', $faxJob->hash);
             }
         } catch (\Exception $e) {
             return redirect()->route('fax.step1')->with('error', 'Payment verification failed.');

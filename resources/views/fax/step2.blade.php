@@ -37,7 +37,7 @@
         </div>
     @endif
 
-    <form action="{{ route('fax.step2', $faxJob->id) }}" method="POST" class="space-y-6">
+    <form action="{{ route('fax.step2', $faxJob->hash) }}" method="POST" class="space-y-6">
         @csrf
         
         <div>

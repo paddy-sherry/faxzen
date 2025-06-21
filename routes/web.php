@@ -10,14 +10,14 @@ Route::match(['GET', 'POST'], '/', [FaxController::class, 'step1'])->name('fax.s
 // Fax sending process routes
 Route::prefix('fax')->name('fax.')->group(function () {
     // Step 2: Enter sender details
-    Route::get('/step2/{faxJob}', [FaxController::class, 'step2'])->name('step2');
-    Route::post('/step2/{faxJob}', [FaxController::class, 'processStep2'])->name('step2.process');
+    Route::get('/step2/{faxJob:hash}', [FaxController::class, 'step2'])->name('step2');
+    Route::post('/step2/{faxJob:hash}', [FaxController::class, 'processStep2'])->name('step2.process');
     
     // Payment success - redirect to status
-    Route::get('/payment/success/{faxJob}', [FaxController::class, 'paymentSuccess'])->name('payment.success');
+    Route::get('/payment/success/{faxJob:hash}', [FaxController::class, 'paymentSuccess'])->name('payment.success');
     
     // Status tracking page
-    Route::get('/status/{faxJob}', [FaxController::class, 'status'])->name('status');
+    Route::get('/status/{faxJob:hash}', [FaxController::class, 'status'])->name('status');
     
     // Document serving route (for Telnyx to access PDFs)
     Route::get('/document/{filename}', function ($filename) {

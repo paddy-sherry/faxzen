@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class FaxJob extends Model
 {
     protected $fillable = [
+        'hash',
         'recipient_number',
         'sender_name',
         'sender_email',
@@ -62,6 +63,28 @@ class FaxJob extends Model
     public function canRetry()
     {
         return $this->retry_attempts < 2;
+    }
+
+    /**
+     * Boot the model
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($faxJob) {
+            if (empty($faxJob->hash)) {
+                $faxJob->hash = \Str::random(32);
+            }
+        });
+    }
+
+    /**
+     * Get route key name for model binding
+     */
+    public function getRouteKeyName()
+    {
+        return 'hash';
     }
 
     /**
