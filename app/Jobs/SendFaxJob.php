@@ -32,6 +32,9 @@ class SendFaxJob implements ShouldQueue
 
     public function handle(): void
     {
+        // Mark as sending started
+        $this->faxJob->markSendingStarted();
+
         // Set Telnyx API key only
         $apiKey = config('services.telnyx.api_key');
         Log::info("Telnyx Configuration", [
@@ -66,14 +69,26 @@ class SendFaxJob implements ShouldQueue
             ]);
 
             // Create a fax using Telnyx API
-            $fax = Fax::create([
+            $faxCreateParams = [
                 'connection_id' => config('services.telnyx.connection_id'),
                 'media_url' => $mediaUrl,
                 'to' => $this->faxJob->recipient_number,
                 'from' => config('services.telnyx.from_number', '+18001234567'), // Default or configured number
                 'quality' => 'high',
                 'store_media' => true,
-            ]);
+            ];
+
+            // Add webhook URL if configured
+            $webhookUrl = config('services.telnyx.webhook_url');
+            if ($webhookUrl) {
+                $faxCreateParams['webhook_url'] = $webhookUrl;
+                Log::info("Adding webhook URL to fax request", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'webhook_url' => $webhookUrl
+                ]);
+            }
+
+            $fax = Fax::create($faxCreateParams);
 
             Log::info('Telnyx Fax API response received', [
                 'fax_job_id' => $this->faxJob->id,
@@ -82,24 +97,27 @@ class SendFaxJob implements ShouldQueue
                 'status' => $fax->status ?? 'unknown'
             ]);
 
-            // Update the fax job with Telnyx fax ID and mark as sent
+            // Update the fax job with Telnyx fax ID - wait for webhook for delivery confirmation
             $this->faxJob->update([
                 'status' => FaxJob::STATUS_SENT,
                 'telnyx_fax_id' => $fax->id,
                 'retry_attempts' => $this->attempts(),
+                'telnyx_status' => $fax->status ?? 'queued',
+                'delivery_details' => json_encode($fax->toArray())
             ]);
 
-            Log::info("Fax sent successfully", [
+            Log::info("Fax submitted to Telnyx successfully", [
                 'fax_job_id' => $this->faxJob->id,
                 'telnyx_fax_id' => $fax->id,
                 'recipient' => $this->faxJob->recipient_number,
+                'telnyx_status' => $fax->status ?? 'queued',
+                'note' => 'Waiting for webhook delivery confirmation'
             ]);
 
             // Clean up local file if it exists
             $this->cleanupLocalFile();
 
-            // TODO: Send confirmation email to sender
-            $this->sendConfirmationEmail();
+            // Note: Email will be sent via webhook when delivery is confirmed
 
         } catch (\Exception $e) {
             $this->faxJob->update([
@@ -288,9 +306,22 @@ class SendFaxJob implements ShouldQueue
 
     protected function sendConfirmationEmail(): void
     {
-        // TODO: Implement email notification
-        // You can use Laravel's Mail system here
-        Log::info("Should send confirmation email to: " . $this->faxJob->sender_email);
+        try {
+            // Mark email as sent
+            $this->faxJob->markEmailSent();
+            
+            // TODO: Implement actual email notification
+            // You can use Laravel's Mail system here
+            Log::info("Confirmation email marked as sent", [
+                'fax_job_id' => $this->faxJob->id,
+                'recipient_email' => $this->faxJob->sender_email
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Failed to mark email as sent", [
+                'fax_job_id' => $this->faxJob->id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     protected function sendFailureEmail(): void

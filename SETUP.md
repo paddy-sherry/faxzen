@@ -35,7 +35,10 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 TELNYX_API_KEY=your_telnyx_api_key_here
 TELNYX_CONNECTION_ID=your_connection_id_here
 TELNYX_FROM_NUMBER=+1234567890
+TELNYX_WEBHOOK_URL=https://yourdomain.com/webhooks/telnyx
 ```
+
+**Important**: The webhook URL enables real-time status updates. Without it, you'll need to rely on the backup status checker command.
 
 ### FaxZen Configuration (Optional)
 Configure the fax service pricing:

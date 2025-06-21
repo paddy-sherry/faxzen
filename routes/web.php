@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FaxController;
+use App\Http\Controllers\TelnyxWebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Homepage - Step 1: Upload PDF and enter fax number
@@ -12,8 +13,11 @@ Route::prefix('fax')->name('fax.')->group(function () {
     Route::get('/step2/{faxJob}', [FaxController::class, 'step2'])->name('step2');
     Route::post('/step2/{faxJob}', [FaxController::class, 'processStep2'])->name('step2.process');
     
-    // Payment success
+    // Payment success - redirect to status
     Route::get('/payment/success/{faxJob}', [FaxController::class, 'paymentSuccess'])->name('payment.success');
+    
+    // Status tracking page
+    Route::get('/status/{faxJob}', [FaxController::class, 'status'])->name('status');
     
     // Document serving route (for Telnyx to access PDFs)
     Route::get('/document/{filename}', function ($filename) {
@@ -28,5 +32,8 @@ Route::prefix('fax')->name('fax.')->group(function () {
         ]);
     })->name('document');
 });
+
+// Telnyx webhook endpoint
+Route::post('/webhooks/telnyx', [TelnyxWebhookController::class, 'handle'])->name('webhooks.telnyx');
 
 

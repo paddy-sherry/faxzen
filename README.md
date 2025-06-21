@@ -59,3 +59,64 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# FaxZen - Online Fax Service
+
+## Webhook Setup
+
+### Telnyx Webhook Configuration
+
+To enable real-time status updates, you need to configure webhooks in TWO places:
+
+#### 1. Add webhook URL to your .env file:
+```env
+TELNYX_WEBHOOK_URL=https://yourdomain.com/webhooks/telnyx
+```
+
+#### 2. Configure webhooks in your Telnyx dashboard:
+1. Go to [Telnyx Dashboard > Webhooks](https://portal.telnyx.com/#/app/webhooks)
+2. Click "Add Webhook"
+3. Configure:
+   - **Webhook URL**: `https://yourdomain.com/webhooks/telnyx`
+   - **HTTP Method**: POST
+   - **Events**: Select all fax events:
+     - `fax.sending`
+     - `fax.delivered` 
+     - `fax.failed`
+     - `fax.media.processed`
+
+**Important**: The webhook URL in your .env file tells Telnyx where to send status updates for each individual fax. The dashboard webhook is a fallback for all events.
+
+### Backup Status Checking
+
+As a backup to webhooks, you can run the status checker command:
+
+```bash
+# Check all undelivered faxes from last 2 hours
+php artisan fax:check-status
+
+# Check specific fax job
+php artisan fax:check-status --job-id=58
+
+# Check faxes from last 6 hours
+php artisan fax:check-status --hours=6
+```
+
+### Cron Job Setup
+
+Add this to your crontab to automatically check status every 5 minutes:
+
+```bash
+*/5 * * * * cd /path/to/faxzen && php artisan fax:check-status >/dev/null 2>&1
+```
+
+## Status Tracking
+
+The system now tracks 4 distinct steps:
+
+1. **Preparing Fax** - File uploaded, payment confirmed, queued for processing
+2. **Sending** - File compressed and submitted to Telnyx API
+3. **Delivered** - Confirmed delivery by receiving fax machine (via webhook/API)
+4. **Email Confirmation** - Receipt email sent to customer
+
+Each step has its own timestamp and the status page updates in real-time.

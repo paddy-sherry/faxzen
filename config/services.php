@@ -52,6 +52,7 @@ return [
         'api_base' => env('TELNYX_API_BASE', 'https://api.telnyx.com'),
         'connection_id' => env('TELNYX_CONNECTION_ID'),
         'from_number' => env('TELNYX_FROM_NUMBER'),
+        'webhook_url' => env('TELNYX_WEBHOOK_URL'),
     ],
 
     // Kraken.io Configuration

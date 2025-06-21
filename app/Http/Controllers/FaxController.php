@@ -191,21 +191,33 @@ class FaxController extends Controller
             $session = Session::retrieve($sessionId);
             
             if ($session->payment_status === 'paid' && $session->metadata->fax_job_id == $faxJob->id) {
-                // Update fax job status to paid
+                // Update fax job status to paid and mark as prepared
                 $faxJob->update([
                     'status' => FaxJob::STATUS_PAID,
+                    'prepared_at' => now(),
                 ]);
 
                 // Dispatch the job to send the fax
                 SendFaxJob::dispatch($faxJob);
 
-                return view('fax.success', compact('faxJob'));
+                // Redirect to status page instead of success page
+                return redirect()->route('fax.status', $faxJob->id);
             }
         } catch (\Exception $e) {
             return redirect()->route('fax.step1')->with('error', 'Payment verification failed.');
         }
 
         return redirect()->route('fax.step1')->with('error', 'Payment not completed or invalid.');
+    }
+
+    public function status(FaxJob $faxJob)
+    {
+        // Only allow access to paid fax jobs
+        if ($faxJob->status !== FaxJob::STATUS_PAID && $faxJob->status !== FaxJob::STATUS_SENT) {
+            return redirect()->route('fax.step1')->with('error', 'Fax job not found or not paid.');
+        }
+
+        return view('fax.status', compact('faxJob'));
     }
 
 
