@@ -3,6 +3,64 @@
 @section('title', 'Fax Status - Tracking Your Delivery | FaxZen')
 
 @section('content')
+<style>
+    @keyframes pulse-progress {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -200px 0; }
+        100% { background-position: calc(200px + 100%) 0; }
+    }
+    
+    @keyframes breathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+    }
+    
+    @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    @keyframes bounce-gentle {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+    }
+    
+    .progress-bar-animated {
+        animation: pulse-progress 2s ease-in-out infinite;
+    }
+    
+    .shimmer-effect {
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        background-size: 200px 100%;
+        animation: shimmer 1.5s infinite;
+    }
+    
+    .breathe-animation {
+        animation: breathe 3s ease-in-out infinite;
+    }
+    
+    .spin-slow {
+        animation: spin-slow 3s linear infinite;
+    }
+    
+    .bounce-gentle {
+        animation: bounce-gentle 2s ease-in-out infinite;
+    }
+    
+    .status-card {
+        transition: all 0.3s ease;
+    }
+    
+    .status-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+</style>
+
 <div class="bg-white rounded-lg shadow-md p-8">
     <div class="mb-8 text-center">
         <h2 class="text-3xl font-bold text-gray-800 mb-4">Fax Status</h2>
@@ -15,8 +73,11 @@
             <span class="text-sm font-medium text-gray-700">Progress</span>
             <span class="text-sm font-medium text-gray-700">{{ $faxJob->getCompletionPercentage() }}%</span>
         </div>
-        <div class="w-full bg-gray-200 rounded-full h-3">
-            <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-3 rounded-full transition-all duration-500" 
+        <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden relative">
+            @if($faxJob->getCurrentStep() < 4)
+                <div class="absolute inset-0 shimmer-effect"></div>
+            @endif
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-3 rounded-full transition-all duration-500 {{ $faxJob->getCurrentStep() < 4 ? 'progress-bar-animated' : '' }}" 
                  style="width: {{ $faxJob->getCompletionPercentage() }}%"></div>
         </div>
     </div>
@@ -28,15 +89,15 @@
             <div class="text-center">
                 <div class="flex items-center justify-center mb-3">
                     @if($faxJob->getCurrentStep() > 1)
-                        <div class="bg-green-100 rounded-full p-3">
+                        <div class="bg-green-100 rounded-full p-3 bounce-gentle">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
                     @elseif($faxJob->getCurrentStep() == 1)
                         <div class="bg-blue-100 rounded-full p-3 animate-pulse">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            <svg class="w-6 h-6 text-blue-600 spin-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
                         </div>
                     @else
@@ -64,14 +125,14 @@
             <div class="text-center">
                 <div class="flex items-center justify-center mb-3">
                     @if($faxJob->getCurrentStep() > 2)
-                        <div class="bg-green-100 rounded-full p-3">
+                        <div class="bg-green-100 rounded-full p-3 bounce-gentle">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
                     @elseif($faxJob->getCurrentStep() == 2)
                         <div class="bg-blue-100 rounded-full p-3 animate-pulse">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-blue-600 bounce-gentle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                             </svg>
                         </div>
@@ -100,13 +161,13 @@
             <div class="text-center">
                 <div class="flex items-center justify-center mb-3">
                     @if($faxJob->getCurrentStep() > 3)
-                        <div class="bg-green-100 rounded-full p-3">
+                        <div class="bg-green-100 rounded-full p-3 bounce-gentle">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                         </div>
                     @elseif($faxJob->getCurrentStep() == 3)
-                        <div class="bg-green-100 rounded-full p-3">
+                        <div class="bg-green-100 rounded-full p-3 bounce-gentle">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -136,7 +197,7 @@
             <div class="text-center">
                 <div class="flex items-center justify-center mb-3">
                     @if($faxJob->getCurrentStep() >= 4)
-                        <div class="bg-green-100 rounded-full p-3">
+                        <div class="bg-green-100 rounded-full p-3 bounce-gentle">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
@@ -167,20 +228,34 @@
     <!-- Current Status Message -->
     <div class="mb-8 text-center">
         @if($faxJob->getCurrentStep() == 1)
-            <div class="bg-blue-50 rounded-lg p-4">
+            <div class="bg-blue-50 rounded-lg p-4 status-card breathe-animation">
                 <h3 class="font-semibold text-blue-800 mb-2">🔄 Preparing Your Fax</h3>
                 <p class="text-blue-700">Your fax is in our queue and will be processed shortly.</p>
+                <div class="mt-3 flex justify-center">
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
             </div>
         @elseif($faxJob->getCurrentStep() == 2)
-            <div class="bg-yellow-50 rounded-lg p-4">
+            <div class="bg-yellow-50 rounded-lg p-4 status-card breathe-animation">
                 <h3 class="font-semibold text-yellow-800 mb-2">📤 Sending Your Fax</h3>
-                <p class="text-yellow-700">Your fax is being transmitted to {{ $faxJob->recipient_number }}.</p>
+                <p class="text-yellow-700">Your fax is being sent to {{ $faxJob->recipient_number }}.</p>
                 @if($faxJob->telnyx_fax_id)
                     <p class="text-xs text-yellow-600 mt-2">Telnyx ID: {{ $faxJob->telnyx_fax_id }}</p>
                 @endif
+                <div class="mt-3 flex justify-center">
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
             </div>
         @elseif($faxJob->getCurrentStep() == 3)
-            <div class="bg-green-50 rounded-lg p-4">
+            <div class="bg-green-50 rounded-lg p-4 status-card">
                 <h3 class="font-semibold text-green-800 mb-2">✅ Fax Delivered Successfully!</h3>
                 <p class="text-green-700">Your fax has been successfully delivered to {{ $faxJob->recipient_number }}.</p>
                 @if($faxJob->telnyx_status)
@@ -188,7 +263,7 @@
                 @endif
             </div>
         @elseif($faxJob->getCurrentStep() == 4)
-            <div class="bg-green-50 rounded-lg p-4">
+            <div class="bg-green-50 rounded-lg p-4 status-card">
                 <h3 class="font-semibold text-green-800 mb-2">🎉 Complete!</h3>
                 <p class="text-green-700">Your fax has been delivered and confirmation email sent to {{ $faxJob->sender_email }}.</p>
             </div>
@@ -196,7 +271,7 @@
     </div>
 
     <!-- Fax Details -->
-    <div class="bg-gray-50 rounded-lg p-6 mb-8">
+    <div class="bg-gray-50 rounded-lg p-6 mb-8 status-card">
         <h3 class="font-semibold text-gray-800 mb-4">Fax Details</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="space-y-2">
@@ -233,18 +308,18 @@
     <!-- Action Buttons -->
     <div class="text-center space-y-4">
         @if($faxJob->getCurrentStep() < 4)
-            <div class="bg-blue-50 rounded-lg p-4">
+            <div class="bg-blue-50 rounded-lg p-4 status-card">
                 <p class="text-sm text-blue-700 mb-3">This page will automatically refresh to show updates.</p>
                 <button onclick="window.location.reload()" 
-                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-                    Refresh Status
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors transform hover:scale-105">
+                    🔄 Refresh Status
                 </button>
             </div>
         @endif
         
         <div class="pt-4">
             <a href="{{ route('fax.step1') }}" 
-               class="inline-block bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-3 px-8 rounded-md font-semibold transition-all duration-200">
+               class="inline-block bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-3 px-8 rounded-md font-semibold transition-all duration-200 transform hover:scale-105">
                 Send Another Fax
             </a>
         </div>
@@ -257,6 +332,22 @@
     setTimeout(function() {
         window.location.reload();
     }, 5000);
+    
+    // Add a subtle countdown indicator
+    let countdown = 5;
+    const countdownElement = document.createElement('div');
+    countdownElement.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm shadow-lg';
+    countdownElement.innerHTML = `Auto-refresh in ${countdown}s`;
+    document.body.appendChild(countdownElement);
+    
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        countdownElement.innerHTML = `Auto-refresh in ${countdown}s`;
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            countdownElement.innerHTML = 'Refreshing...';
+        }
+    }, 1000);
 </script>
 @endif
 @endsection 
