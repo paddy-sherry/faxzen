@@ -5,8 +5,8 @@
 @section('content')
 <div class="bg-white rounded-lg shadow-md p-8">
     <div class="mb-8">
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online For $3</h1>
-        <p class="text-center text-gray-600 mb-6">Send faxes online with instant delivery. Trusted by thousands of people and businesses worldwide. </p>
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online</h1>
+        <p class="text-center text-gray-600 mb-6">Send faxes online for $3 with tracked delivery. Trusted by thousands of people and businesses worldwide. </p>
         <div class="text-center mb-6">
             <div class="flex items-center justify-center space-x-6 mb-4">
                 <div class="flex items-center space-x-2">
@@ -25,7 +25,7 @@
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    <span class="text-sm text-gray-600 font-medium">Instant Delivery</span>
+                    <span class="text-sm text-gray-600 font-medium">Tracked Delivery</span>
                 </div>
             </div>
        
@@ -176,27 +176,6 @@
     </form>
 </div>
 
-<div class="mt-8 bg-white border border-purple-500 rounded-lg p-6">
-    <h3 class="text-lg font-semibold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent mb-4">How it works</h3>
-    <div class="grid md:grid-cols-3 gap-6">
-        <div class="text-center">
-            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">1</div>
-            <h4 class="font-semibold text-gray-800">Upload File</h4>
-            <p class="text-sm text-gray-600">Upload your PDF document or image and enter the fax number</p>
-        </div>
-        <div class="text-center">
-            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">2</div>
-            <h4 class="font-semibold text-gray-800">Enter Details</h4>
-            <p class="text-sm text-gray-600">Provide your name and email address</p>
-        </div>
-        <div class="text-center">
-            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">3</div>
-            <h4 class="font-semibold text-gray-800">Pay & Send</h4>
-            <p class="text-sm text-gray-600">Complete payment and we'll send your fax instantly</p>
-        </div>
-    </div>
-</div>
-
 <!-- Hero Section with Image -->
 <div class="mt-12 bg-white rounded-lg shadow-md overflow-hidden">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
@@ -220,6 +199,29 @@
         </div>
     </div>
 </div>
+
+<div class="mt-8 bg-white border border-purple-500 rounded-lg p-6">
+    <h3 class="text-lg font-semibold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent mb-4">How it works</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center">
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">1</div>
+            <h4 class="font-semibold text-gray-800">Upload File</h4>
+            <p class="text-sm text-gray-600">Upload your PDF document or image and enter the fax number</p>
+        </div>
+        <div class="text-center">
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">2</div>
+            <h4 class="font-semibold text-gray-800">Enter Details</h4>
+            <p class="text-sm text-gray-600">Provide your name and email address</p>
+        </div>
+        <div class="text-center">
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">3</div>
+            <h4 class="font-semibold text-gray-800">Pay & Send</h4>
+            <p class="text-sm text-gray-600">Complete payment and we'll send your fax instantly</p>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- Customer Reviews & Trust Indicators -->
 <div class="mt-8 grid md:grid-cols-2 gap-8">
