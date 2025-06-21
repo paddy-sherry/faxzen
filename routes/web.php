@@ -10,7 +10,7 @@ Route::match(['GET', 'POST'], '/', [FaxController::class, 'step1'])->name('fax.s
 Route::prefix('fax')->name('fax.')->group(function () {
     // Step 2: Enter sender details
     Route::get('/step2/{faxJob}', [FaxController::class, 'step2'])->name('step2');
-    Route::post('/step2/{faxJob}', [FaxController::class, 'processStep2']);
+    Route::post('/step2/{faxJob}', [FaxController::class, 'processStep2'])->name('step2.process');
     
     // Payment success
     Route::get('/payment/success/{faxJob}', [FaxController::class, 'paymentSuccess'])->name('payment.success');
@@ -28,3 +28,5 @@ Route::prefix('fax')->name('fax.')->group(function () {
         ]);
     })->name('document');
 });
+
+

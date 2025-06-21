@@ -456,6 +456,176 @@ document.addEventListener('DOMContentLoaded', function() {
         fileName.textContent = `Selected: ${name}`;
         fileName.classList.remove('hidden');
     }
+
+    // Fax number validation
+    const countryCodeSelect = document.getElementById('country_code');
+    const recipientNumberInput = document.getElementById('recipient_number');
+    const form = document.querySelector('form');
+    
+    // Add validation feedback elements
+    const phoneContainer = recipientNumberInput.closest('div').parentElement;
+    let validationMessage = phoneContainer.querySelector('.validation-message');
+    if (!validationMessage) {
+        validationMessage = document.createElement('p');
+        validationMessage.className = 'validation-message mt-1 text-sm hidden';
+        phoneContainer.appendChild(validationMessage);
+    }
+
+    function validateFaxNumber() {
+        const countryCode = countryCodeSelect.value;
+        const number = recipientNumberInput.value.replace(/[^0-9]/g, '');
+        
+        // Clear previous validation
+        validationMessage.classList.add('hidden');
+        recipientNumberInput.classList.remove('border-red-500', 'border-green-500');
+        
+        if (!number) return;
+        
+        let isValid = true;
+        let message = '';
+        
+        // Basic length check
+        if (number.length < 7) {
+            isValid = false;
+            message = 'Fax number must be at least 7 digits long.';
+        } else if (number.length > 15) {
+            isValid = false;
+            message = 'Fax number is too long (maximum 15 digits).';
+        } else {
+            // Country-specific validation
+            switch (countryCode) {
+                case '+1': // US/Canada
+                    if (number.length !== 10) {
+                        isValid = false;
+                        message = 'US/Canada fax numbers must be 10 digits long.';
+                    } else if (['0', '1'].includes(number[0])) {
+                        isValid = false;
+                        message = 'Area code cannot start with 0 or 1.';
+                    } else if (['0', '1'].includes(number[3])) {
+                        isValid = false;
+                        message = 'Exchange code cannot start with 0 or 1.';
+                                                              } else if (['000', '911'].includes(number.substring(0, 3))) {
+                         isValid = false;
+                         message = 'Invalid area code.';
+                     }
+                    break;
+                case '+44': // UK
+                    if (number.length < 10 || number.length > 11) {
+                        isValid = false;
+                        message = 'UK fax numbers must be 10-11 digits long.';
+                    }
+                    break;
+                case '+33': // France
+                    if (number.length !== 9) {
+                        isValid = false;
+                        message = 'French fax numbers must be 9 digits long.';
+                    }
+                    break;
+                case '+49': // Germany
+                    if (number.length < 10 || number.length > 12) {
+                        isValid = false;
+                        message = 'German fax numbers must be 10-12 digits long.';
+                    }
+                    break;
+                case '+39': // Italy
+                    if (number.length < 9 || number.length > 10) {
+                        isValid = false;
+                        message = 'Italian fax numbers must be 9-10 digits long.';
+                    }
+                    break;
+                case '+34': // Spain
+                    if (number.length !== 9) {
+                        isValid = false;
+                        message = 'Spanish fax numbers must be 9 digits long.';
+                    }
+                    break;
+                case '+61': // Australia
+                    if (number.length !== 9) {
+                        isValid = false;
+                        message = 'Australian fax numbers must be 9 digits long.';
+                    }
+                    break;
+                default:
+                    if (number.length < 7 || number.length > 12) {
+                        isValid = false;
+                        message = 'Fax number must be 7-12 digits long for this country.';
+                    }
+            }
+        }
+        
+        // Check for invalid patterns
+        if (isValid) {
+            // All same digits
+            if (/^(\d)\1+$/.test(number)) {
+                isValid = false;
+                message = 'Fax number cannot be all the same digit.';
+            }
+            // Sequential digits
+            else if (['0123456789', '1234567890', '9876543210', '0987654321'].includes(number)) {
+                isValid = false;
+                message = 'Fax number cannot be sequential digits.';
+            }
+                         // Common test numbers (be less restrictive for fax numbers)
+             else if (['0000000000', '1111111111', '2222222222', '3333333333', '4444444444', '6666666666', '7777777777', '8888888888', '9999999999'].includes(number)) {
+                 isValid = false;
+                 message = 'Please enter a real fax number.';
+             }
+        }
+        
+        // Show validation result
+        if (number.length >= 7) { // Only show validation for numbers long enough
+            if (isValid) {
+                recipientNumberInput.classList.add('border-green-500');
+                validationMessage.textContent = '✓ Valid fax number';
+                validationMessage.className = 'validation-message mt-1 text-sm text-green-600';
+                validationMessage.classList.remove('hidden');
+            } else {
+                recipientNumberInput.classList.add('border-red-500');
+                validationMessage.textContent = message;
+                validationMessage.className = 'validation-message mt-1 text-sm text-red-600';
+                validationMessage.classList.remove('hidden');
+            }
+        }
+        
+        return isValid;
+    }
+
+    // Update placeholder based on country selection
+    function updatePlaceholder() {
+        const countryCode = countryCodeSelect.value;
+        const placeholders = {
+            '+1': '5551234567',        // US/Canada
+            '+44': '2012345678',       // UK
+            '+33': '123456789',        // France  
+            '+49': '301234567',        // Germany
+            '+39': '0212345678',       // Italy
+            '+34': '912345678',        // Spain
+            '+353': '12345678',        // Ireland
+            '+61': '212345678',        // Australia
+            '+81': '312345678',        // Japan
+            '+86': '1012345678',       // China
+        };
+        
+        recipientNumberInput.placeholder = placeholders[countryCode] || '1234567890';
+    }
+
+        // Add event listeners for real-time validation
+    recipientNumberInput.addEventListener('input', validateFaxNumber);
+    countryCodeSelect.addEventListener('change', function() {
+        updatePlaceholder();
+        validateFaxNumber();
+    });
+    
+    // Set initial placeholder
+    updatePlaceholder();
+    
+    // Validate on form submit
+    form.addEventListener('submit', function(e) {
+        if (!validateFaxNumber() && recipientNumberInput.value.replace(/[^0-9]/g, '').length >= 7) {
+            e.preventDefault();
+            recipientNumberInput.focus();
+        }
+    });
 });
 </script>
 @endsection 

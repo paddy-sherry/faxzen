@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\File;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
+use App\Rules\ValidFaxNumber;
 
 class FaxController extends Controller
 {
@@ -27,7 +28,11 @@ class FaxController extends Controller
         // Handle POST request - process the form
         $request->validate([
             'country_code' => 'required|string',
-            'recipient_number' => 'required|string|min:7|max:15',
+            'recipient_number' => [
+                'required',
+                'string',
+                new ValidFaxNumber($request->country_code)
+            ],
             'pdf_file' => [
                 'required',
                 File::types(['pdf', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'])
@@ -202,4 +207,6 @@ class FaxController extends Controller
 
         return redirect()->route('fax.step1')->with('error', 'Payment not completed or invalid.');
     }
+
+
 }
