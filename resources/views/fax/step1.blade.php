@@ -223,7 +223,50 @@
     </div>
 </div>
 
-
+<!-- Real-Time Tracking Section -->
+<div class="mt-8 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <!-- Text Content -->
+        <div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                Track Your Fax Delivery in Real-Time
+            </h3>
+            <p class="text-gray-600 mb-4">
+                Never wonder if your fax was delivered again. Our advanced tracking system shows you exactly where your fax is in the delivery process.
+            </p>
+            <div class="space-y-2">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-sm text-gray-700">Live status updates every step of the way</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-sm text-gray-700">Confirmed delivery notifications</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-sm text-gray-700">No more guessing if your fax arrived</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screenshot Placeholder -->
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            <div class="bg-gray-100 rounded-md h-64 flex items-center justify-center">
+                <div class="text-center text-gray-500">
+                    
+                    <img src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/465b9b6d-58da-48b7-340e-37cc26372600/public">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Customer Reviews & Trust Indicators -->
 <div class="mt-8 grid md:grid-cols-2 gap-8">

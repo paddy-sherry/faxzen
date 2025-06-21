@@ -102,10 +102,24 @@ php artisan fax:check-status --job-id=58
 php artisan fax:check-status --hours=6
 ```
 
-### Cron Job Setup
+### Automatic Status Checking
 
-Add this to your crontab to automatically check status every 5 minutes:
+The system is configured to automatically check fax status every 2 minutes using Laravel's task scheduler.
 
+#### Development
+Start the scheduler:
+```bash
+php artisan schedule:work
+```
+
+#### Production
+Add this to your crontab to run Laravel's scheduler:
+```bash
+* * * * * cd /path/to/faxzen && php artisan schedule:run >> /dev/null 2>&1
+```
+
+#### Manual Override
+You can still run manual checks:
 ```bash
 */5 * * * * cd /path/to/faxzen && php artisan fax:check-status >/dev/null 2>&1
 ```
