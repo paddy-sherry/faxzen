@@ -257,8 +257,8 @@
         </div>
         
         <!-- Screenshot Placeholder -->
-        <div class="bg-white rounded-lg shadow-lg p-4">
-            <div class="bg-gray-100 rounded-md h-64 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-lg ">
+            <div class=" rounded-md h-64 flex items-center justify-center">
                 <div class="text-center text-gray-500">
                     
                     <img src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/465b9b6d-58da-48b7-340e-37cc26372600/public">
