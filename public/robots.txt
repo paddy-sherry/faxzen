@@ -1,2 +1,35 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Allow all search engines to crawl the main pages
+Allow: /
+
+# Disallow sensitive or private areas
+Disallow: /fax/step2
+Disallow: /fax/step3
+Disallow: /fax/status/
+Disallow: /fax/success
+Disallow: /webhooks/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /storage/
+Disallow: /vendor/
+Disallow: /.env
+Disallow: /config/
+Disallow: /database/
+Disallow: /bootstrap/cache/
+
+# Prevent crawling of dynamic parameters
+Disallow: /*?*
+
+# Allow CSS and JS files for proper rendering
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /favicon.ico
+
+# Sitemap location
+Sitemap: https://faxzen.com/sitemap.xml
+
+# Crawl delay to be respectful to server resources
+Crawl-delay: 1
