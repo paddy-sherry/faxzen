@@ -91,8 +91,13 @@ class CheckFaxStatus extends Command
                         
                         // Send confirmation email if not already sent
                         if (!$faxJob->email_sent) {
-                            $faxJob->markEmailSent();
-                            $this->info("  📧 Marked email as sent");
+                            try {
+                                \Mail::to($faxJob->sender_email)->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
+                                $faxJob->markEmailSent();
+                                $this->info("  📧 Confirmation email sent successfully");
+                            } catch (\Exception $e) {
+                                $this->error("  ❌ Failed to send confirmation email: " . $e->getMessage());
+                            }
                         }
                     }
                     break;

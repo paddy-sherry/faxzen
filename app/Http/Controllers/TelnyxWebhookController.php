@@ -139,7 +139,19 @@ class TelnyxWebhookController extends Controller
             'fax_data' => $faxData
         ]);
 
-        // TODO: Send failure notification email
+        // Send failure notification email
+        try {
+            \Mail::to($faxJob->sender_email)->send(new \App\Mail\FaxDeliveryFailed($faxJob));
+            Log::info('Failure notification email sent', [
+                'fax_job_id' => $faxJob->id,
+                'recipient_email' => $faxJob->sender_email
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send failure notification email', [
+                'fax_job_id' => $faxJob->id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -163,18 +175,25 @@ class TelnyxWebhookController extends Controller
     protected function sendConfirmationEmail(FaxJob $faxJob)
     {
         try {
+            // Send the actual email
+            \Mail::to($faxJob->sender_email)->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
+            
+            // Mark email as sent
             $faxJob->markEmailSent();
             
-            // TODO: Implement actual email sending
-            Log::info('Confirmation email marked as sent via webhook', [
+            Log::info('Confirmation email sent successfully via webhook', [
                 'fax_job_id' => $faxJob->id,
-                'recipient_email' => $faxJob->sender_email
+                'recipient_email' => $faxJob->sender_email,
+                'delivered_at' => $faxJob->delivered_at
             ]);
         } catch (\Exception $e) {
-            Log::error('Failed to mark email as sent via webhook', [
+            Log::error('Failed to send confirmation email via webhook', [
                 'fax_job_id' => $faxJob->id,
+                'recipient_email' => $faxJob->sender_email,
                 'error' => $e->getMessage()
             ]);
+            
+            // Don't mark as sent if email failed
         }
     }
 }
