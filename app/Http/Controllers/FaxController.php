@@ -68,10 +68,8 @@ class FaxController extends Controller
             'status' => FaxJob::STATUS_PENDING,
             'sender_name' => '',
             'sender_email' => '',
-            'is_compressed' => false,
+
             'original_file_size' => $originalSize,
-            'compressed_file_size' => $originalSize,
-            'compression_ratio' => 0,
         ]);
 
         return redirect()->route('fax.step2', $faxJob->hash);

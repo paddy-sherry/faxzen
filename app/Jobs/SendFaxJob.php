@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\FaxJob;
-use App\Services\KrakenCompressionService;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -48,11 +48,8 @@ class SendFaxJob implements ShouldQueue
             // Move file from local to R2 if needed
             $r2FilePath = $this->ensureFileOnR2();
 
-            // Compress the file if not already compressed
+            // Use the R2 file path directly
             $finalFilePath = $r2FilePath;
-            if (!$this->faxJob->is_compressed) {
-                $finalFilePath = $this->compressFile($r2FilePath);
-            }
 
             $mediaUrl = $this->getFileUrl($finalFilePath);
             
@@ -64,8 +61,7 @@ class SendFaxJob implements ShouldQueue
                 'media_url' => $mediaUrl,
                 'file_path' => $finalFilePath,
                 'file_name' => $this->faxJob->file_original_name,
-                'is_compressed' => $this->faxJob->fresh()->is_compressed,
-                'compression_ratio' => $this->faxJob->fresh()->compression_ratio
+                'file_size' => $this->faxJob->original_file_size
             ]);
 
             // Create a fax using Telnyx API
@@ -246,57 +242,7 @@ class SendFaxJob implements ShouldQueue
         }
     }
 
-    /**
-     * Compress the file using Kraken.io service
-     */
-    protected function compressFile(string $r2FilePath): string
-    {
-        try {
-            Log::info("Starting file compression", [
-                'fax_job_id' => $this->faxJob->id,
-                'r2_file_path' => $r2FilePath,
-                'original_file_size' => $this->faxJob->original_file_size
-            ]);
 
-            $compressionService = new KrakenCompressionService();
-            $compressionResult = $compressionService->compressAndStore($r2FilePath, 'r2');
-            
-            if ($compressionResult && $compressionResult['compressed_path']) {
-                // Update fax job with compression results
-                $this->faxJob->update([
-                    'is_compressed' => $compressionResult['is_compressed'],
-                    'compressed_file_size' => $compressionResult['compressed_size'],
-                    'compression_ratio' => $compressionResult['compression_ratio'],
-                ]);
-
-                Log::info("File compressed successfully", [
-                    'fax_job_id' => $this->faxJob->id,
-                    'original_size' => $compressionResult['original_size'],
-                    'compressed_size' => $compressionResult['compressed_size'],
-                    'compression_ratio' => $compressionResult['compression_ratio'],
-                    'compressed_path' => $compressionResult['compressed_path']
-                ]);
-
-                return $compressionResult['compressed_path'];
-            } else {
-                Log::warning("File compression failed, using original file", [
-                    'fax_job_id' => $this->faxJob->id,
-                    'r2_file_path' => $r2FilePath
-                ]);
-
-                return $r2FilePath;
-            }
-        } catch (\Exception $e) {
-            Log::error("Compression failed with exception", [
-                'fax_job_id' => $this->faxJob->id,
-                'error' => $e->getMessage(),
-                'r2_file_path' => $r2FilePath
-            ]);
-
-            // If compression fails, continue with original file
-            return $r2FilePath;
-        }
-    }
 
     protected function getFileUrl(string $filePath): string
     {

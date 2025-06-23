@@ -20,10 +20,8 @@ class FaxJob extends Model
         'retry_attempts',
         'last_retry_at',
         'error_message',
-        'is_compressed',
+
         'original_file_size',
-        'compressed_file_size',
-        'compression_ratio',
         'is_preparing',
         'is_sending',
         'is_delivered',
