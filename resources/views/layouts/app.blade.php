@@ -43,6 +43,11 @@
     <footer class="bg-white border-t mt-16">
         <div class="max-w-4xl mx-auto px-4 py-8">
             <div class="text-center text-gray-600">
+                <div class="mb-4">
+                    <a href="{{ route('terms') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Terms of Service</a>
+                    <span class="text-gray-400">|</span>
+                    <a href="mailto:support@faxzen.com" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Contact</a>
+                </div>
                 <p>&copy; {{ date('Y') }} FaxZen. All rights reserved.</p>
             </div>
         </div>

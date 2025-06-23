@@ -36,4 +36,9 @@ Route::prefix('fax')->name('fax.')->group(function () {
 // Telnyx webhook endpoint
 Route::post('/webhooks/telnyx', [TelnyxWebhookController::class, 'handle'])->name('webhooks.telnyx');
 
+// Static pages
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');
+
 
