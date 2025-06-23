@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '▷ Send Fax Online for $3 - Fast & Secure Online Fax Service')
+@section('title', '▷ Send Fax Online With Tracked Delivery. No Account Needed')
 
 @section('meta_description', 'Send fax online instantly for $3. Upload PDF documents, enter fax number, and send faxes online with tracked delivery. No fax machine required. Trusted worldwide')
 
