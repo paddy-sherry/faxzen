@@ -317,12 +317,7 @@
             </div>
         @endif
         
-        <div class="pt-4">
-            <a href="{{ route('fax.step1') }}" 
-               class="inline-block bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-3 px-8 rounded-md font-semibold transition-all duration-200 transform hover:scale-105">
-                Send Another Fax
-            </a>
-        </div>
+   
     </div>
 </div>
 
@@ -331,7 +326,7 @@
     // Auto-refresh every 5 seconds if not complete
     setTimeout(function() {
         window.location.reload();
-    }, 5000);
+    }, 10000);
     
     // Add a subtle countdown indicator
     let countdown = 5;
