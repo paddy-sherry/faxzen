@@ -46,4 +46,9 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
+// Admin routes with HTTP Basic Auth
+Route::middleware(['auth.basic'])->group(function () {
+    Route::get('/admin/fax-jobs', [App\Http\Controllers\AdminController::class, 'faxJobs'])->name('admin.fax-jobs');
+});
+
 
