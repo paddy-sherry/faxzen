@@ -131,7 +131,7 @@
             <div class="logo">📠 FaxZen</div>
             <div class="success-icon">✓</div>
             <h1 class="title">Fax Delivered Successfully!</h1>
-            <p class="subtitle">Your fax has been confirmed as delivered to the recipient.</p>
+            <p class="subtitle">Your fax has been confirmed as delivered to the recipient. Receipt included below.</p>
         </div>
 
         <div class="details-card">
@@ -161,12 +161,71 @@
                 <span class="details-label">Status:</span>
                 <span class="status-badge">{{ $deliveryStatus }}</span>
             </div>
+        </div>
+
+        @if($paymentDetails)
+        <!-- Payment Receipt Section -->
+        <div class="details-card" style="border-left: 4px solid #8b5cf6;">
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <div style="background-color: #8b5cf6; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 14px;">💳</div>
+                <h3 style="margin: 0; color: #1f2937;">Payment Receipt</h3>
+            </div>
             
+            <div class="details-row">
+                <span class="details-label">Service:</span>
+                <span class="details-value">Fax Transmission</span>
+            </div>
+            
+            <div class="details-row">
+                <span class="details-label">Subtotal:</span>
+                <span class="details-value">${{ number_format($paymentDetails['amount_subtotal'], 2) }}</span>
+            </div>
+            
+            @if(isset($paymentDetails['total_details']['amount_tax']) && $paymentDetails['total_details']['amount_tax'] > 0)
+            <div class="details-row">
+                <span class="details-label">Tax:</span>
+                <span class="details-value">${{ number_format($paymentDetails['total_details']['amount_tax'] / 100, 2) }}</span>
+            </div>
+            @endif
+            
+            <div class="details-row" style="border-top: 2px solid #e5e7eb; padding-top: 12px; font-weight: 600;">
+                <span class="details-label">Total Paid:</span>
+                <span class="details-value" style="color: #059669;">${{ number_format($paymentDetails['amount_total'], 2) }} {{ $paymentDetails['currency'] }}</span>
+            </div>
+            
+            @if($paymentDetails['last4'])
+            <div class="details-row">
+                <span class="details-label">Payment Method:</span>
+                <span class="details-value">{{ ucfirst($paymentDetails['brand'] ?? 'Card') }} •••• {{ $paymentDetails['last4'] }}</span>
+            </div>
+            @endif
+            
+            <div class="details-row">
+                <span class="details-label">Transaction Date:</span>
+                <span class="details-value">{{ date('M j, Y \a\t g:i A T', $paymentDetails['created']) }}</span>
+            </div>
+            
+            <div class="details-row">
+                <span class="details-label">Transaction ID:</span>
+                <span class="details-value" style="font-family: monospace; font-size: 12px;">{{ $paymentDetails['payment_intent_id'] }}</span>
+            </div>
+            
+            @if($paymentDetails['receipt_url'])
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="{{ $paymentDetails['receipt_url'] }}" style="background-color: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">📄 View Official Stripe Receipt</a>
+            </div>
+            @endif
+        </div>
+        @else
+        <!-- Fallback if payment details not available -->
+        <div class="details-card">
+            <h3 style="margin-top: 0; color: #1f2937;">Payment Information</h3>
             <div class="details-row">
                 <span class="details-label">Amount Paid:</span>
                 <span class="details-value">${{ number_format($faxJob->amount, 2) }}</span>
             </div>
         </div>
+        @endif
 
         <div style="text-align: center; margin: 30px 0;">
             <p style="color: #6b7280; margin-bottom: 15px;">Need to send another fax?</p>
@@ -188,6 +247,11 @@
                 <a href="{{ config('app.url') }}">Visit FaxZen.com</a> | 
                 <a href="mailto:support@faxzen.com">Contact Support</a>
             </p>
+            @if($paymentDetails && $paymentDetails['receipt_url'])
+            <p style="font-size: 13px; color: #6b7280; margin-top: 15px;">
+                📧 Keep this email for your records. You can also <a href="{{ $paymentDetails['receipt_url'] }}" style="color: #8b5cf6;">download your official receipt from Stripe</a>.
+            </p>
+            @endif
             <p style="font-size: 12px; color: #9ca3af; margin-top: 20px;">
                 This is an automated message confirming your fax delivery. Please do not reply to this email.
             </p>
