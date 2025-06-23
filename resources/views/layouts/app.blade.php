@@ -46,7 +46,7 @@
                 <div class="mb-4">
                     <a href="{{ route('terms') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Terms of Service</a>
                     <span class="text-gray-400">|</span>
-                    <a href="mailto:support@faxzen.com" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Contact</a>
+                    <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Contact</a>
                 </div>
                 <p>&copy; {{ date('Y') }} FaxZen. All rights reserved.</p>
             </div>

@@ -41,4 +41,8 @@ Route::get('/terms', function () {
     return view('terms');
 })->name('terms');
 
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
 
