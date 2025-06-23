@@ -465,7 +465,7 @@
 
                 <div class="border border-gray-200 rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">How much does it cost to send a fax?</h3>
-                    <p class="text-gray-600">Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Pay only for what you use with secure Stripe payment processing.</p>
+                    <p class="text-gray-600">$3 per fax. Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Pay only for what you use with secure Stripe payment processing.</p>
                 </div>
             </div>
         </div>
