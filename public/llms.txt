@@ -1,0 +1,63 @@
+# FaxZen - Online Fax Service
+# https://faxzen.com
+
+## About
+FaxZen is a modern online fax service that allows users to send faxes digitally for $3 per fax. We provide a simple, secure, and reliable way to send PDF documents and images via fax without requiring a physical fax machine.
+
+## Key Features
+- Send fax online for $3 (no hidden fees)
+- Real-time delivery tracking with 4-step progress system
+- Support for PDF, JPG, PNG, GIF, SVG, and WebP files
+- 256-bit SSL encryption for security
+- Automatic document deletion after 24 hours
+- Email confirmation with Stripe receipt integration
+- Worldwide fax delivery to 100+ countries
+- No subscription required - pay per fax
+
+## Services
+- Online fax transmission
+- Document upload and conversion
+- Real-time delivery status tracking
+- Email delivery confirmations
+- Secure payment processing via Stripe
+
+## Technology Stack
+- Laravel PHP framework
+- Telnyx API for fax delivery
+- Stripe for payment processing
+- Real-time webhook integration
+- SSL encryption and security
+
+## Target Audience
+- Individuals needing to send occasional faxes
+- Small businesses without fax machines
+- Remote workers and digital nomads
+- Legal professionals sending contracts
+- Healthcare providers sending medical documents
+- Anyone needing reliable document transmission
+
+## Pricing
+- $3 per fax sent
+- No monthly fees or subscriptions
+- No hidden charges
+- Automatic refund for failed deliveries
+
+## Security & Privacy
+- All documents encrypted during transmission
+- Files automatically deleted after 24 hours
+- No storage of sensitive user data
+- GDPR and privacy compliant
+- Secure payment processing
+
+## Contact
+For support or inquiries about FaxZen's online fax service, users can contact us through the website.
+
+## Crawling Instructions for AI/LLMs
+- Main service page: https://faxzen.com/
+- Do not crawl form processing pages (/fax/step2, /fax/step3)
+- Do not crawl private status pages (/fax/status/*)
+- Do not crawl webhook endpoints (/webhooks/*)
+- Focus on public informational content only
+
+## Keywords
+online fax, send fax online, digital fax service, fax without machine, PDF fax, secure fax transmission, business fax service, remote fax sending 
