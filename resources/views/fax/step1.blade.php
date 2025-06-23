@@ -429,6 +429,60 @@
     </div>
 </div>
 
+<!-- FAQ Section -->
+<div class="mt-12 bg-white rounded-lg shadow-md p-8">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Frequently Asked Questions</h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-6">
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">How do I know if my fax was delivered?</h3>
+                    <p class="text-gray-600">You'll receive real-time status updates and an email confirmation once your fax is successfully delivered. You can also track the progress on your status page with our 4-step tracking system.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">What file formats do you support?</h3>
+                    <p class="text-gray-600">We support PDF, JPG, PNG, GIF, SVG, and WebP files up to 50MB in size. Most document types can be easily converted to PDF before uploading.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">How secure is my document?</h3>
+                    <p class="text-gray-600">All documents are encrypted with 256-bit SSL during transmission and automatically deleted from our servers after 24 hours. Your privacy and security are our top priorities.</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Can I get a refund if my fax fails?</h3>
+                    <p class="text-gray-600">Yes! We automatically refund failed faxes due to technical issues on our end. Refunds are processed within 5-7 business days back to your original payment method.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Do you support international fax numbers?</h3>
+                    <p class="text-gray-600">Yes! We support fax delivery to over 100 countries worldwide. Simply select your country code when entering the recipient fax number.</p>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">How much does it cost to send a fax?</h3>
+                    <p class="text-gray-600">Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Pay only for what you use with secure Stripe payment processing.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <p class="text-gray-600 mb-4">Have more questions?</p>
+            <a href="{{ route('contact') }}" 
+               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold rounded-md transition-all duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Contact Support
+            </a>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const dropZone = document.getElementById('drop-zone');
