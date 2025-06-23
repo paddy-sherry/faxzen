@@ -74,15 +74,7 @@ class SendFaxJob implements ShouldQueue
                 'store_media' => true,
             ];
 
-            // Add webhook URL if configured
-            $webhookUrl = config('services.telnyx.webhook_url');
-            if ($webhookUrl) {
-                $faxCreateParams['webhook_url'] = $webhookUrl;
-                Log::info("Adding webhook URL to fax request", [
-                    'fax_job_id' => $this->faxJob->id,
-                    'webhook_url' => $webhookUrl
-                ]);
-            }
+            // Note: No webhook URL - using console job polling for status updates
 
             $fax = Fax::create($faxCreateParams);
 
@@ -93,7 +85,7 @@ class SendFaxJob implements ShouldQueue
                 'status' => $fax->status ?? 'unknown'
             ]);
 
-            // Update the fax job with Telnyx fax ID - wait for webhook for delivery confirmation
+            // Update the fax job with Telnyx fax ID - console job will poll for delivery status
             $this->faxJob->update([
                 'status' => FaxJob::STATUS_SENT,
                 'telnyx_fax_id' => $fax->id,
@@ -107,13 +99,13 @@ class SendFaxJob implements ShouldQueue
                 'telnyx_fax_id' => $fax->id,
                 'recipient' => $this->faxJob->recipient_number,
                 'telnyx_status' => $fax->status ?? 'queued',
-                'note' => 'Waiting for webhook delivery confirmation'
+                'note' => 'Console job will check delivery status every 2 minutes'
             ]);
 
             // Clean up local file if it exists
             $this->cleanupLocalFile();
 
-            // Note: Email will be sent via webhook when delivery is confirmed
+            // Note: Email will be sent via console job when delivery is confirmed
 
         } catch (\Exception $e) {
             $this->faxJob->update([

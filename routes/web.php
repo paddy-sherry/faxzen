@@ -19,8 +19,10 @@ Route::prefix('fax')->name('fax.')->group(function () {
     // Status tracking page
     Route::get('/status/{faxJob:hash}', [FaxController::class, 'status'])->name('status');
     
-    // Document serving route (for Telnyx to access PDFs)
+    // Document serving route (for Telnyx to access PDFs via temporary signed URLs)
     Route::get('/document/{filename}', function ($filename) {
+        // Sanitize filename to prevent directory traversal
+        $filename = basename($filename);
         $path = storage_path('app/fax_documents/' . $filename);
         
         if (!file_exists($path)) {
@@ -33,8 +35,7 @@ Route::prefix('fax')->name('fax.')->group(function () {
     })->name('document');
 });
 
-// Telnyx webhook endpoint
-Route::post('/webhooks/telnyx', [TelnyxWebhookController::class, 'handle'])->name('webhooks.telnyx');
+// Webhook endpoint removed - using console job polling instead
 
 // Static pages
 Route::get('/terms', function () {

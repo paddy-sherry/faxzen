@@ -9,7 +9,7 @@ Disallow: /fax/step2
 Disallow: /fax/step3
 Disallow: /fax/status/
 Disallow: /fax/success
-Disallow: /webhooks/
+
 Disallow: /admin/
 Disallow: /api/
 Disallow: /storage/
