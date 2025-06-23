@@ -242,7 +242,7 @@
         @elseif($faxJob->getCurrentStep() == 2)
             <div class="bg-yellow-50 rounded-lg p-4 status-card breathe-animation">
                 <h3 class="font-semibold text-yellow-800 mb-2">📤 Sending Your Fax</h3>
-                <p class="text-yellow-700">Your fax is being sent to {{ $faxJob->recipient_number }}.</p>
+                <p class="text-yellow-700">Your fax is being sent to {{ $faxJob->recipient_number }}. Please allow up to 10 minutes.</p>
                 
                 <div class="mt-3 flex justify-center">
                     <div class="flex space-x-1">
