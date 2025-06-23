@@ -243,9 +243,7 @@
             <div class="bg-yellow-50 rounded-lg p-4 status-card breathe-animation">
                 <h3 class="font-semibold text-yellow-800 mb-2">📤 Sending Your Fax</h3>
                 <p class="text-yellow-700">Your fax is being sent to {{ $faxJob->recipient_number }}.</p>
-                @if($faxJob->telnyx_fax_id)
-                    <p class="text-xs text-yellow-600 mt-2">Telnyx ID: {{ $faxJob->telnyx_fax_id }}</p>
-                @endif
+                
                 <div class="mt-3 flex justify-center">
                     <div class="flex space-x-1">
                         <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
