@@ -21,6 +21,7 @@
             }
         }
     </script>
+    <script defer data-domain="faxzen.com" src="https://plausible.io/js/script.tagged-events.js"></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <header class="bg-white shadow-sm border-b">
