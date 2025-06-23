@@ -30,6 +30,7 @@ class CheckFaxStatus extends Command
     public function handle()
     {
         // Set up Telnyx API
+        Log::debug('checking fax jobs');
         Telnyx::setApiKey(config('services.telnyx.api_key'));
         \Telnyx\Telnyx::$apiBase = config('services.telnyx.api_base');
 
@@ -60,6 +61,7 @@ class CheckFaxStatus extends Command
             }
         }
 
+        Log::debug('checking fax jobs finished');
         $this->info('Fax status check completed');
     }
 
