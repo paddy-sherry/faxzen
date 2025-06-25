@@ -46,6 +46,13 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
+// Blog routes
+Route::get('/blog', [App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{post}', [App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
+
+// Sitemap route
+Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
 // Admin routes with HTTP Basic Auth
 Route::middleware(['auth.basic'])->group(function () {
     Route::get('/admin/fax-jobs', [App\Http\Controllers\AdminController::class, 'faxJobs'])->name('admin.fax-jobs');

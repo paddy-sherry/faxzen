@@ -22,6 +22,7 @@
         }
     </script>
     <script defer data-domain="faxzen.com" src="https://plausible.io/js/script.tagged-events.js"></script>
+    @stack('styles')
 </head>
 <body class="bg-gray-50 min-h-screen">
     <header class="bg-white shadow-sm border-b">
@@ -45,6 +46,8 @@
         <div class="max-w-4xl mx-auto px-4 py-8">
             <div class="text-center text-gray-600">
                 <div class="mb-4">
+                    <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Blog</a>
+                    <span class="text-gray-400">|</span>
                     <a href="{{ route('terms') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Terms of Service</a>
                     <span class="text-gray-400">|</span>
                     <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Contact</a>
