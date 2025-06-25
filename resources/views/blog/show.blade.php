@@ -10,6 +10,13 @@
     margin-bottom: 1.25rem;
     line-height: 1.7;
 }
+.blog-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+}
 .blog-content h3 {
     margin-top: 2rem;
     margin-bottom: 1rem;
@@ -51,6 +58,21 @@
 }
 .blog-content div[style*="background-color"] {
     margin: 1.5rem 0;
+}
+
+/* Smooth scrolling for jump links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Offset scroll position to account for any fixed headers */
+.blog-content h2[id] {
+    scroll-margin-top: 20px;
+}
+
+/* Table of contents styling enhancements */
+.blog-content a[href^="#"]:hover {
+    text-decoration: underline;
 }
 </style>
 @endpush

@@ -132,18 +132,38 @@ class Post extends Model
     }
 
     /**
-     * Get content with CTA button inserted
+     * Get content with CTA button inserted, H3 converted to H2, and table of contents added
      */
     public function getContentWithCtaAttribute()
     {
         $content = $this->content;
         
-        // Find the first </p> tag and the first <h3> tag
-        $firstParagraphEnd = strpos($content, '</p>');
-        $firstH3Start = strpos($content, '<h3');
+        // First, convert H3 tags to H2 and add IDs
+        $content = $this->convertH3ToH2WithIds($content);
         
-        // Only insert CTA if both tags exist and paragraph comes before h3
-        if ($firstParagraphEnd !== false && $firstH3Start !== false && $firstParagraphEnd < $firstH3Start) {
+        // Generate table of contents
+        $tableOfContents = $this->generateTableOfContents($content);
+        
+        // Add table of contents at the beginning if headings exist
+        if (!empty($tableOfContents)) {
+            $tocHtml = '<div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #6366f1; margin-bottom: 30px;">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #374151; font-size: 1.125rem; font-weight: 600;">Table of Contents</h3>
+                <ul style="margin: 0; padding-left: 20px; list-style-type: none;">
+                    ' . implode('', array_map(function($item) {
+                        return '<li style="margin-bottom: 8px;"><a href="#' . $item['id'] . '" style="color: #6366f1; text-decoration: none; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color=\'#4f46e5\'" onmouseout="this.style.color=\'#6366f1\'">' . $item['title'] . '</a></li>';
+                    }, $tableOfContents)) . '
+                </ul>
+            </div>';
+            
+            $content = $tocHtml . $content;
+        }
+        
+        // Find the first </p> tag and the first <h2> tag (now that we converted h3 to h2)
+        $firstParagraphEnd = strpos($content, '</p>');
+        $firstH2Start = strpos($content, '<h2');
+        
+        // Only insert CTA if both tags exist and paragraph comes before h2
+        if ($firstParagraphEnd !== false && $firstH2Start !== false && $firstParagraphEnd < $firstH2Start) {
             $ctaButton = '
 <div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 12px; border: 1px solid #e5e7eb;">
     <a href="' . url('/') . '" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl text-lg">
@@ -161,5 +181,76 @@ class Post extends Model
         }
         
         return $content;
+    }
+
+    /**
+     * Convert H3 tags to H2 tags with IDs for jump links
+     */
+    private function convertH3ToH2WithIds($content)
+    {
+        // Pattern to match H3 tags and capture the content
+        $pattern = '/<h3([^>]*)>(.*?)<\/h3>/i';
+        
+        return preg_replace_callback($pattern, function($matches) {
+            $attributes = $matches[1];
+            $headingText = $matches[2];
+            
+            // Generate ID from heading text
+            $id = $this->generateHeadingId($headingText);
+            
+            // Check if ID already exists in attributes
+            if (strpos($attributes, 'id=') === false) {
+                $attributes .= ' id="' . $id . '"';
+            }
+            
+            return '<h2' . $attributes . '>' . $headingText . '</h2>';
+        }, $content);
+    }
+
+    /**
+     * Generate table of contents from H2 headings
+     */
+    private function generateTableOfContents($content)
+    {
+        $tableOfContents = [];
+        
+        // Pattern to match H2 tags with IDs
+        $pattern = '/<h2[^>]*id=["\']([^"\']*)["\'][^>]*>(.*?)<\/h2>/i';
+        
+        preg_match_all($pattern, $content, $matches, PREG_SET_ORDER);
+        
+        foreach ($matches as $match) {
+            $id = $match[1];
+            $title = strip_tags($match[2]);
+            
+            $tableOfContents[] = [
+                'id' => $id,
+                'title' => $title
+            ];
+        }
+        
+        return $tableOfContents;
+    }
+
+    /**
+     * Generate a URL-friendly ID from heading text
+     */
+    private function generateHeadingId($headingText)
+    {
+        // Strip HTML tags and convert to lowercase
+        $text = strip_tags($headingText);
+        
+        // Remove special characters and convert spaces to hyphens
+        $id = preg_replace('/[^a-zA-Z0-9\s]/', '', $text);
+        $id = preg_replace('/\s+/', '-', trim($id));
+        $id = strtolower($id);
+        
+        // Remove multiple consecutive hyphens
+        $id = preg_replace('/-+/', '-', $id);
+        
+        // Remove leading/trailing hyphens
+        $id = trim($id, '-');
+        
+        return $id ?: 'heading-' . uniqid();
     }
 }
