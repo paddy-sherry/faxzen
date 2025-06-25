@@ -124,6 +124,14 @@ class Post extends Model
     }
 
     /**
+     * Get formatted published date with "Updated:" prefix for article pages
+     */
+    public function getFormattedPublishedDateWithUpdatedAttribute()
+    {
+        return $this->published_at ? 'Updated: ' . $this->published_at->format('M j, Y') : null;
+    }
+
+    /**
      * Get reading time text
      */
     public function getReadingTimeAttribute()
