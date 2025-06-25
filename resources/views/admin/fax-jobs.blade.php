@@ -1,32 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Fax Jobs</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'faxzen-purple': '#8B5CF6',
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">FaxZen Admin Panel</h1>
-            <p class="text-gray-600">Monitor fax job progress and status</p>
-        </div>
+@extends('admin.layout')
 
+@section('title', 'Fax Jobs')
+@section('page-title', 'Fax Jobs')
+@section('page-description', 'Monitor fax job progress and status')
+
+@section('content')
+    <div class="p-6 space-y-6">
         <!-- Filters -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="bg-gray-50 p-4 rounded-lg">
             <h2 class="text-lg font-semibold text-gray-800 mb-4">Filters</h2>
             <form method="GET" action="{{ route('admin.fax-jobs') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
@@ -60,7 +41,7 @@
         </div>
 
         <!-- Stats Summary -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             @php
                 $totalJobs = \App\Models\FaxJob::count();
                 $sentJobs = \App\Models\FaxJob::where('status', 'sent')->count();
@@ -69,30 +50,30 @@
                 $pendingJobs = \App\Models\FaxJob::whereIn('status', ['preparing', 'sending'])->count();
             @endphp
             
-            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+            <div class="bg-gray-50 rounded-lg p-4 text-center">
                 <div class="text-2xl font-bold text-gray-800">{{ $totalJobs }}</div>
                 <div class="text-sm text-gray-600">Total Jobs</div>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+            <div class="bg-green-50 rounded-lg p-4 text-center">
                 <div class="text-2xl font-bold text-green-600">{{ $sentJobs }}</div>
                 <div class="text-sm text-gray-600">Sent</div>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+            <div class="bg-green-50 rounded-lg p-4 text-center">
                 <div class="text-2xl font-bold text-green-700">{{ $deliveredJobs }}</div>
                 <div class="text-sm text-gray-600">Delivered</div>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+            <div class="bg-red-50 rounded-lg p-4 text-center">
                 <div class="text-2xl font-bold text-red-600">{{ $failedJobs }}</div>
                 <div class="text-sm text-gray-600">Failed</div>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+            <div class="bg-orange-50 rounded-lg p-4 text-center">
                 <div class="text-2xl font-bold text-orange-600">{{ $pendingJobs }}</div>
                 <div class="text-sm text-gray-600">Pending</div>
             </div>
         </div>
 
         <!-- Fax Jobs Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800">Fax Jobs ({{ $faxJobs->total() }} total)</h2>
             </div>
@@ -198,48 +179,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         <h3 class="mt-2 text-sm font-medium text-gray-900">No fax jobs found</h3>
-                        <p class="mt-1 text-sm text-gray-500">No fax jobs match your current filters.</p>
+                        <p class="mt-1 text-sm text-gray-500">Try adjusting your filters to see more results.</p>
                     </div>
                 </div>
             @endif
         </div>
-
-        <!-- Auto-refresh toggle -->
-        <div class="mt-6 bg-white rounded-lg shadow-md p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-sm font-medium text-gray-900">Auto-refresh</h3>
-                    <p class="text-sm text-gray-500">Automatically refresh the page every 30 seconds</p>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="auto-refresh" class="sr-only peer">
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-faxzen-purple"></div>
-                </label>
-            </div>
-        </div>
     </div>
-
-    <script>
-        // Auto-refresh functionality
-        let autoRefreshInterval;
-        const autoRefreshCheckbox = document.getElementById('auto-refresh');
-        
-        autoRefreshCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                autoRefreshInterval = setInterval(() => {
-                    window.location.reload();
-                }, 30000);
-            } else {
-                clearInterval(autoRefreshInterval);
-            }
-        });
-        
-        // Clear interval on page unload
-        window.addEventListener('beforeunload', () => {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-            }
-        });
-    </script>
-</body>
-</html>
+@endsection

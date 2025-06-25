@@ -56,6 +56,20 @@ Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'inde
 // Admin routes with HTTP Basic Auth
 Route::middleware(['auth.basic'])->group(function () {
     Route::get('/admin/fax-jobs', [App\Http\Controllers\AdminController::class, 'faxJobs'])->name('admin.fax-jobs');
+    
+    // Blog management routes
+    Route::prefix('admin/blog')->name('admin.blog.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\BlogController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\BlogController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\BlogController::class, 'store'])->name('store');
+        Route::get('/{post}', [App\Http\Controllers\Admin\BlogController::class, 'show'])->name('show');
+        Route::get('/{post}/edit', [App\Http\Controllers\Admin\BlogController::class, 'edit'])->name('edit');
+        Route::put('/{post}', [App\Http\Controllers\Admin\BlogController::class, 'update'])->name('update');
+        Route::delete('/{post}', [App\Http\Controllers\Admin\BlogController::class, 'destroy'])->name('destroy');
+        Route::post('/{post}/publish', [App\Http\Controllers\Admin\BlogController::class, 'publish'])->name('publish');
+        Route::post('/{post}/unpublish', [App\Http\Controllers\Admin\BlogController::class, 'unpublish'])->name('unpublish');
+        Route::post('/{post}/duplicate', [App\Http\Controllers\Admin\BlogController::class, 'duplicate'])->name('duplicate');
+    });
 });
 
 
