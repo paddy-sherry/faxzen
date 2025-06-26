@@ -4,6 +4,10 @@
 
 @section('meta_description', 'Terms of Service for FaxZen online fax service. Learn about our service terms, user responsibilities, and policies for sending faxes online.')
 
+@push('head')
+<link rel="canonical" href="{{ route('terms') }}">
+@endpush
+
 @section('content')
 <div class="bg-white rounded-lg shadow-md p-8 max-w-4xl mx-auto">
     <div class="mb-8">

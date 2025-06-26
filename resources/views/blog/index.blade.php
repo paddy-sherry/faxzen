@@ -4,6 +4,13 @@
 
 @section('meta_description', 'Stay updated with the latest fax tips, business guides, and industry news. Learn how to send faxes online efficiently and discover best practices for document transmission.')
 
+@push('head')
+<link rel="canonical" href="{{ route('blog.index') }}">
+@endpush
+
+@push('styles')
+@endpush
+
 @section('content')
 <div class="bg-white">
     <!-- Hero Section -->

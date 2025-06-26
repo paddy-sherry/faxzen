@@ -4,6 +4,10 @@
 
 @section('meta_description', $post->meta_description ?: Str::limit(strip_tags($post->excerpt), 155))
 
+@push('head')
+<link rel="canonical" href="{{ route('blog.show', $post->slug) }}">
+@endpush
+
 @push('styles')
 <style>
 .blog-content p {

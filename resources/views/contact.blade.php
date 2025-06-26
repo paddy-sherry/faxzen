@@ -4,6 +4,10 @@
 
 @section('meta_description', 'Contact FaxZen support for help with online fax services. Get assistance with fax delivery, technical issues, billing questions, and more.')
 
+@push('head')
+<link rel="canonical" href="{{ route('contact') }}">
+@endpush
+
 @section('content')
 <div class="bg-white rounded-lg shadow-md p-8 max-w-4xl mx-auto">
     <div class="mb-8">
