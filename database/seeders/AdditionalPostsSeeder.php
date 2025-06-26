@@ -20,7 +20,7 @@ class AdditionalPostsSeeder extends Seeder
                 'excerpt' => 'Learn how to send faxes without owning a physical fax machine. Discover online fax services, email-to-fax solutions, and mobile apps that make faxing simple and affordable.',
                 'meta_title' => 'How to Fax Without a Fax Machine - Online Fax Solutions 2025',
                 'meta_description' => 'Send faxes without a fax machine using online services, email, or mobile apps. Complete guide to modern fax solutions for home and business use.',
-                'meta_keywords' => 'fax without fax machine, online fax service, email to fax, mobile fax app',
+                'meta_keywords' => ['fax without fax machine', 'online fax service', 'email to fax', 'mobile fax app'],
                 'featured_image' => 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=400&fit=crop&crop=center',
                 'author_name' => 'Sarah Chen',
                 'content' => '<p>Gone are the days when sending a fax required owning a bulky fax machine. Today\'s digital world offers numerous convenient alternatives that allow you to send faxes from your computer, smartphone, or email without any physical hardware.</p><h2 id="online-fax-services">Online Fax Services: The Modern Solution</h2><p>Online fax services have revolutionized document transmission by eliminating the need for traditional fax machines. Popular services include FaxZen, which allows you to send a fax for just $3 with no monthly commitments. The process is straightforward: upload your PDF document, enter the recipient\'s fax number, and click send.</p><h2 id="email-to-fax-solutions">Email-to-Fax Solutions</h2><p>Many online fax services offer email-to-fax functionality, allowing you to send faxes directly from your email client. Simply attach your document to an email and send it to a special email address format. This method integrates seamlessly with your existing email workflow.</p><h2 id="mobile-fax-apps">Mobile Fax Apps</h2><p>Smartphone apps have made faxing even more accessible. Apps like CamScanner allow you to photograph documents with your phone\'s camera and send them as faxes immediately. These apps often include document enhancement features that improve image quality automatically.</p><h2 id="choosing-best-method">Choosing the Best Method</h2><p>Consider these factors when selecting a fax method: frequency of use, document types, security requirements, and delivery confirmation needs. For businesses sending fewer than 10 faxes monthly, pay-per-use services like FaxZen offer the most economical solution.</p>',
@@ -34,7 +34,13 @@ class AdditionalPostsSeeder extends Seeder
         $this->addAllArticles($articles, $baseDate);
 
         foreach ($articles as $articleData) {
-            Post::create($articleData);
+            // Check if post with this slug already exists
+            if (!Post::where('slug', $articleData['slug'])->exists()) {
+                Post::create($articleData);
+                echo "Created: " . $articleData['title'] . "\n";
+            } else {
+                echo "Skipped (already exists): " . $articleData['title'] . "\n";
+            }
         }
     }
 
@@ -183,7 +189,7 @@ class AdditionalPostsSeeder extends Seeder
                 'excerpt' => $article['excerpt'],
                 'meta_title' => $article['title'] . ' | FaxZen',
                 'meta_description' => $article['excerpt'],
-                'meta_keywords' => $article['keywords'],
+                'meta_keywords' => explode(', ', $article['keywords']),
                 'featured_image' => 'https://images.unsplash.com/photo-' . (1551434678 + $index) . '-e076c223a692?w=800&h=400&fit=crop&crop=center',
                 'author_name' => ['Sarah Chen', 'Michael Rodriguez', 'Jennifer Walsh', 'Robert Kim', 'Lisa Thompson'][array_rand(['Sarah Chen', 'Michael Rodriguez', 'Jennifer Walsh', 'Robert Kim', 'Lisa Thompson'])],
                 'content' => $this->generateContent($article['title'], $article['keywords']),

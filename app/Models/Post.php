@@ -25,6 +25,7 @@ class Post extends Model
     protected $casts = [
         'is_featured' => 'boolean',
         'published_at' => 'datetime',
+        'meta_keywords' => 'array',
     ];
 
     /**
