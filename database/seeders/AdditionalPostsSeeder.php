@@ -34,12 +34,16 @@ class AdditionalPostsSeeder extends Seeder
         $this->addAllArticles($articles, $baseDate);
 
         foreach ($articles as $articleData) {
-            // Check if post with this slug already exists
-            if (!Post::where('slug', $articleData['slug'])->exists()) {
-                Post::create($articleData);
+            // Use updateOrCreate to either create new posts or update existing ones
+            $post = Post::updateOrCreate(
+                ['slug' => $articleData['slug']], // Find by slug
+                $articleData                      // Update with new data
+            );
+            
+            if ($post->wasRecentlyCreated) {
                 echo "Created: " . $articleData['title'] . "\n";
             } else {
-                echo "Skipped (already exists): " . $articleData['title'] . "\n";
+                echo "Updated: " . $articleData['title'] . "\n";
             }
         }
     }
@@ -193,7 +197,7 @@ class AdditionalPostsSeeder extends Seeder
                 'featured_image' => 'https://images.unsplash.com/photo-' . (1551434678 + $index) . '-e076c223a692?w=800&h=400&fit=crop&crop=center',
                 'author_name' => ['Sarah Chen', 'Michael Rodriguez', 'Jennifer Walsh', 'Robert Kim', 'Lisa Thompson'][array_rand(['Sarah Chen', 'Michael Rodriguez', 'Jennifer Walsh', 'Robert Kim', 'Lisa Thompson'])],
                 'content' => $this->generateContent($article['title'], $article['keywords']),
-                'read_time_minutes' => rand(3, 5),
+                'read_time_minutes' => 5,
                 'is_featured' => false,
                 'published_at' => $baseDate->copy()->addWeeks($article['week']),
             ];
@@ -204,6 +208,83 @@ class AdditionalPostsSeeder extends Seeder
 
     private function generateContent($title, $keywords)
     {
-        return '<p>This comprehensive guide covers everything you need to know about ' . strtolower(str_replace(['How to ', 'Can You ', 'Can I '], '', $title)) . '. Modern fax solutions have evolved significantly, offering convenient alternatives to traditional fax machines.</p><h2 id="getting-started">Getting Started</h2><p>The process is straightforward and can be completed in just a few minutes. Whether you\'re sending business documents, contracts, or personal papers, these methods provide reliable transmission with delivery confirmation.</p><h2 id="step-by-step-guide">Step-by-Step Instructions</h2><p>Follow these detailed steps to successfully send your fax. Most services offer user-friendly interfaces that make the process intuitive even for first-time users. FaxZen provides an excellent solution at just $3 per fax.</p><h2 id="best-practices">Best Practices and Tips</h2><p>To ensure successful transmission, follow these proven strategies. Proper document formatting and recipient number verification significantly improve delivery rates. Always use high-quality scans or PDF files for best results.</p><h2 id="troubleshooting">Common Issues and Solutions</h2><p>If you encounter problems, these troubleshooting tips will help resolve most common issues quickly. Check your internet connection, verify the recipient\'s fax number, and ensure your document is in a supported format.</p><h2 id="cost-comparison">Cost and Value Analysis</h2><p>Compare different options to find the most cost-effective solution for your needs. Online services like FaxZen offer competitive pricing with no monthly commitments, making them ideal for occasional users who want reliable fax transmission.</p>';
+        $keywordArray = explode(', ', $keywords);
+        $mainKeyword = $keywordArray[0];
+        
+        return '<p>In today\'s digital landscape, understanding how to ' . strtolower(str_replace(['How to ', 'Can You ', 'Can I ', 'How ', 'What ', 'Why '], '', $title)) . ' has become essential for modern businesses and individuals alike. This comprehensive guide will walk you through everything you need to know about this important process.</p>
+
+<p>The traditional methods of document transmission have evolved significantly over the past decade. Where businesses once relied solely on physical fax machines, today\'s solutions offer unprecedented convenience, security, and reliability. Whether you\'re a small business owner, healthcare professional, legal practitioner, or individual user, mastering these modern techniques can save you time, money, and frustration.</p>
+
+<h2 id="understanding-the-basics">Understanding the Fundamentals</h2>
+
+<p>Before diving into the specific steps, it\'s crucial to understand the underlying technology and principles. Modern fax transmission leverages internet protocols to convert documents into digital signals that can be received by traditional fax machines or digital services. This hybrid approach ensures compatibility while providing enhanced features.</p>
+
+<p>The process involves several key components: document preparation, number verification, transmission protocols, and delivery confirmation. Each step plays a vital role in ensuring successful delivery. Understanding these fundamentals helps you troubleshoot issues and optimize your workflow for maximum efficiency.</p>
+
+<p>Security considerations are paramount in today\'s environment. End-to-end encryption, secure transmission protocols, and proper document handling ensure your sensitive information remains protected throughout the entire process. This is particularly important for industries with strict compliance requirements.</p>
+
+<h2 id="step-by-step-implementation">Step-by-Step Implementation Guide</h2>
+
+<p>The implementation process can be broken down into manageable steps that anyone can follow. First, ensure your documents are properly formatted and optimized for transmission. High-quality PDFs typically yield the best results, though most services accept various file formats including images and Microsoft Office documents.</p>
+
+<p>Next, verify the recipient\'s information carefully. Double-checking fax numbers prevents costly mistakes and ensures your documents reach their intended destination. Many services offer number validation features that can help identify potential issues before transmission begins.</p>
+
+<p>The actual transmission process varies depending on your chosen method, but most modern solutions provide intuitive interfaces that guide you through each step. Real-time status updates keep you informed of progress, while delivery confirmations provide peace of mind that your documents arrived successfully.</p>
+
+<h2 id="choosing-the-right-solution">Selecting the Best Method for Your Needs</h2>
+
+<p>With numerous options available, choosing the right solution depends on your specific requirements. Consider factors such as transmission frequency, document types, security needs, and budget constraints. Occasional users might prefer pay-per-use services like FaxZen, which offers transparent pricing at just $3 per fax with no monthly commitments.</p>
+
+<p>For businesses with higher volume requirements, subscription-based services might provide better value. However, many organizations find that hybrid approaches work best, using different methods depending on the specific situation and requirements.</p>
+
+<p>Integration capabilities are another important consideration. Some solutions offer seamless integration with existing email systems, document management platforms, or business applications. This can significantly streamline workflows and reduce manual intervention.</p>
+
+<h2 id="advanced-features-and-optimization">Advanced Features and Optimization Techniques</h2>
+
+<p>Modern solutions offer advanced features that go far beyond basic transmission. Scheduled sending allows you to prepare documents in advance and have them transmitted at optimal times. Bulk transmission capabilities enable efficient handling of multiple documents or recipients.</p>
+
+<p>Document enhancement features can automatically improve image quality, adjust contrast, and optimize file sizes for faster transmission. These features are particularly valuable when working with scanned documents or photos taken with mobile devices.</p>
+
+<p>Tracking and analytics provide valuable insights into transmission patterns, success rates, and potential areas for improvement. This data can help optimize workflows and identify recurring issues before they become problematic.</p>
+
+<h2 id="troubleshooting-common-issues">Common Challenges and Solutions</h2>
+
+<p>Even with modern technology, transmission issues can occasionally occur. Understanding common problems and their solutions can save significant time and frustration. Network connectivity issues are among the most frequent causes of transmission failures, particularly in areas with unreliable internet service.</p>
+
+<p>Document formatting problems can also cause issues. Overly complex layouts, unusual fonts, or extremely large file sizes may result in transmission errors or poor quality output. Simplifying document formats and optimizing file sizes often resolves these issues.</p>
+
+<p>Recipient-side problems, such as busy signals, paper jams, or full memory, are beyond your direct control but can be mitigated by choosing services that offer automatic retry capabilities and detailed error reporting.</p>
+
+<h2 id="security-and-compliance">Security Best Practices and Compliance</h2>
+
+<p>Maintaining security throughout the transmission process requires attention to multiple factors. Document encryption during transmission protects against interception, while secure storage practices ensure sensitive information isn\'t unnecessarily retained on servers.</p>
+
+<p>For regulated industries, compliance with standards such as HIPAA, SOX, or industry-specific requirements is crucial. Many professional-grade services offer compliance features specifically designed to meet these stringent requirements.</p>
+
+<p>Access controls and audit trails provide additional security layers, allowing organizations to track who sent what documents and when. This level of accountability is essential for many business and legal applications.</p>
+
+<h2 id="cost-considerations">Cost Analysis and Value Proposition</h2>
+
+<p>Understanding the true cost of different transmission methods requires looking beyond simple per-page pricing. Factor in setup costs, monthly fees, maintenance requirements, and hidden charges that some providers impose.</p>
+
+<p>Traditional fax machines involve significant ongoing costs including phone lines, maintenance, supplies, and physical space. Online services eliminate most of these expenses while providing enhanced capabilities and reliability.</p>
+
+<p>Time savings represent another important cost consideration. Streamlined digital processes can save hours of manual work, particularly for businesses that handle large volumes of documents regularly.</p>
+
+<h2 id="future-trends">Future Trends and Developments</h2>
+
+<p>The landscape continues evolving with new technologies and changing business requirements. Cloud-based solutions are becoming increasingly sophisticated, offering better integration, enhanced security, and improved user experiences.</p>
+
+<p>Mobile optimization is another key trend, with more solutions offering full-featured mobile applications that enable transmission from anywhere. This mobility is particularly valuable for field workers, traveling professionals, and remote teams.</p>
+
+<p>Artificial intelligence and machine learning are beginning to play roles in document optimization, recipient verification, and predictive analytics. These technologies promise to make the process even more efficient and reliable.</p>
+
+<h2 id="conclusion">Making the Right Choice</h2>
+
+<p>Successfully implementing modern transmission methods requires understanding your specific needs, evaluating available options, and choosing solutions that provide the right balance of features, security, and cost-effectiveness.</p>
+
+<p>Whether you\'re sending occasional documents or managing high-volume transmission requirements, services like FaxZen provide reliable, secure, and cost-effective solutions that eliminate the hassles of traditional methods while ensuring your documents reach their destinations quickly and safely.</p>
+
+<p>Take the time to evaluate your requirements carefully, test different solutions, and choose the approach that best fits your workflow. With the right tools and understanding, document transmission becomes a seamless part of your business operations rather than a source of frustration and delay.</p>';
     }
 }
