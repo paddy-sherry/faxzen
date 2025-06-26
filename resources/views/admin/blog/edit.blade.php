@@ -222,7 +222,7 @@
                         <input type="text" 
                                name="meta_keywords" 
                                id="meta_keywords"
-                               value="{{ old('meta_keywords', $post->meta_keywords) }}"
+                               value="{{ old('meta_keywords', is_array($post->meta_keywords) ? implode(', ', $post->meta_keywords) : $post->meta_keywords) }}"
                                placeholder="fax, online fax, send fax"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple">
                         <p class="mt-1 text-sm text-gray-500">Comma-separated keywords</p>

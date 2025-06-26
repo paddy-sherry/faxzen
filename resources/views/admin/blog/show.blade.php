@@ -188,7 +188,7 @@
                         @if($post->meta_keywords)
                             <div>
                                 <strong class="text-gray-700">Meta Keywords:</strong>
-                                <div class="text-gray-600 mt-1">{{ $post->meta_keywords }}</div>
+                                <div class="text-gray-600 mt-1">{{ is_array($post->meta_keywords) ? implode(', ', $post->meta_keywords) : $post->meta_keywords }}</div>
                             </div>
                         @endif
                     </div>

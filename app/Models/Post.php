@@ -261,4 +261,26 @@ class Post extends Model
         
         return $id ?: 'heading-' . uniqid();
     }
+
+    /**
+     * Mutator for meta_keywords - convert comma-separated string to array
+     */
+    public function setMetaKeywordsAttribute($value)
+    {
+        if (is_string($value) && !empty($value)) {
+            // Convert comma-separated string to array
+            $keywords = array_map('trim', explode(',', $value));
+            // Remove empty values
+            $keywords = array_filter($keywords, function($keyword) {
+                return !empty($keyword);
+            });
+            $this->attributes['meta_keywords'] = json_encode(array_values($keywords));
+        } elseif (is_array($value)) {
+            // If it's already an array, just encode it
+            $this->attributes['meta_keywords'] = json_encode($value);
+        } else {
+            // If empty or null, set to null
+            $this->attributes['meta_keywords'] = null;
+        }
+    }
 }
