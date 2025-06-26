@@ -483,6 +483,68 @@
     </div>
 </div>
 
+<!-- Latest Blog Articles Section -->
+@if($latestPosts->count() > 0)
+<div class="mt-12 bg-white rounded-lg shadow-md p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Latest from Our Blog</h2>
+            <p class="text-gray-600">Stay updated with the latest tips, guides, and industry insights</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            @foreach($latestPosts as $post)
+            <article class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200">
+                @if($post->featured_image)
+                <div class="h-48 bg-gray-200">
+                    <img src="{{ $post->featured_image }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                </div>
+                @endif
+                
+                <div class="p-6">
+                    <div class="flex items-center text-sm text-gray-500 mb-3">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        {{ $post->formatted_published_date }}
+                        <span class="mx-2">•</span>
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        {{ $post->reading_time }}
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mb-3 hover:text-purple-600 transition-colors">
+                        <a href="{{ $post->url }}">{{ $post->title }}</a>
+                    </h3>
+                    
+                    <p class="text-gray-600 mb-4 leading-relaxed">{{ Str::limit($post->excerpt, 120) }}</p>
+                    
+                    <a href="{{ $post->url }}" 
+                       class="inline-flex items-center text-purple-600 hover:text-purple-700 font-medium transition-colors">
+                        Read More
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </article>
+            @endforeach
+        </div>
+        
+        <div class="text-center mt-8">
+            <a href="{{ route('blog.index') }}" 
+               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold rounded-md transition-all duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                </svg>
+                View All Articles
+            </a>
+        </div>
+    </div>
+</div>
+@endif
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const dropZone = document.getElementById('drop-zone');
@@ -642,10 +704,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         message = 'Spanish fax numbers must be 9 digits long.';
                     }
                     break;
+                case '+353': // Ireland
+                    if (number.length !== 8) {
+                        isValid = false;
+                        message = 'Irish fax numbers must be 8 digits long.';
+                    }
+                    break;
                 case '+61': // Australia
                     if (number.length !== 9) {
                         isValid = false;
                         message = 'Australian fax numbers must be 9 digits long.';
+                    }
+                    break;
+                case '+81': // Japan
+                    if (number.length !== 10) {
+                        isValid = false;
+                        message = 'Japanese fax numbers must be 10 digits long.';
+                    }
+                    break;
+                case '+86': // China
+                    if (number.length !== 10) {
+                        isValid = false;
+                        message = 'Chinese fax numbers must be 10 digits long.';
                     }
                     break;
                 default:

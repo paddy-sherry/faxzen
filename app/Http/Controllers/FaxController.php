@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendFaxJob;
 use App\Models\FaxJob;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\File;
@@ -22,7 +23,13 @@ class FaxController extends Controller
     {
         // Handle GET request - show the form
         if ($request->isMethod('GET')) {
-            return view('fax.step1');
+            // Get the latest 2 published blog posts
+            $latestPosts = Post::published()
+                ->orderBy('published_at', 'desc')
+                ->take(2)
+                ->get();
+            
+            return view('fax.step1', compact('latestPosts'));
         }
 
         // Handle POST request - process the form
