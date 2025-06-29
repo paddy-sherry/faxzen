@@ -129,7 +129,7 @@
     <div class="container">
         <div class="header">
             <div class="logo">📠 FaxZen</div>
-            <div class="success-icon">✓</div>
+            <div class="success-icon"></div>
             <h1 class="title">Fax Delivered Successfully!</h1>
             <p class="subtitle">Your fax has been confirmed as delivered to the recipient. Receipt included below.</p>
         </div>
