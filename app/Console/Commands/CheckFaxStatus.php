@@ -15,7 +15,7 @@ class CheckFaxStatus extends Command
      *
      * @var string
      */
-    protected $signature = 'fax:check-status {--job-id= : Check specific fax job ID} {--hours=2 : Check faxes from last N hours}';
+    protected $signature = 'fax:check-status {--job-id= : Check specific fax job ID} {--hours=2 : Check faxes from last N hours} {--send-missing-emails : Send emails for delivered faxes without confirmation emails}';
 
     /**
      * The console command description.
@@ -36,6 +36,7 @@ class CheckFaxStatus extends Command
 
         $jobId = $this->option('job-id');
         $hours = $this->option('hours');
+        $sendMissingEmails = $this->option('send-missing-emails');
 
         if ($jobId) {
             // Check specific job
@@ -45,6 +46,19 @@ class CheckFaxStatus extends Command
                 return;
             }
             $this->checkSingleFax($faxJob);
+        } elseif ($sendMissingEmails) {
+            // Send emails for delivered faxes that don't have confirmation emails
+            $faxJobs = FaxJob::where('is_delivered', true)
+                ->where('email_sent', false)
+                ->whereNotNull('sender_email')
+                ->get();
+
+            $this->info("Found {$faxJobs->count()} delivered fax jobs without confirmation emails...");
+
+            foreach ($faxJobs as $faxJob) {
+                $this->sendMissingEmail($faxJob);
+                usleep(250000); // Sleep 0.25 seconds between emails
+            }
         } else {
             // Check recent jobs that haven't been delivered yet
             $faxJobs = FaxJob::where('status', FaxJob::STATUS_SENT)
@@ -90,17 +104,23 @@ class CheckFaxStatus extends Command
                     if (!$faxJob->is_delivered) {
                         $faxJob->markDelivered($fax->status, json_encode($fax->toArray()));
                         $this->info("  ✅ Marked as delivered");
-                        
-                        // Send confirmation email if not already sent
-                        if (!$faxJob->email_sent) {
-                            try {
-                                \Mail::to($faxJob->sender_email)->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
-                                $faxJob->markEmailSent();
-                                $this->info("  📧 Confirmation email sent successfully");
-                            } catch (\Exception $e) {
-                                $this->error("  ❌ Failed to send confirmation email: " . $e->getMessage());
-                            }
+                    }
+                    
+                    // Send confirmation email if not already sent (regardless of when it was marked delivered)
+                    if (!$faxJob->email_sent) {
+                        try {
+                            \Mail::to($faxJob->sender_email)->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
+                            $faxJob->markEmailSent();
+                            $this->info("  📧 Confirmation email sent successfully");
+                        } catch (\Exception $e) {
+                            $this->error("  ❌ Failed to send confirmation email: " . $e->getMessage());
+                            Log::error("Failed to send fax confirmation email", [
+                                'fax_job_id' => $faxJob->id,
+                                'error' => $e->getMessage()
+                            ]);
                         }
+                    } else {
+                        $this->line("  📧 Email already sent");
                     }
                     break;
 
@@ -136,6 +156,35 @@ class CheckFaxStatus extends Command
             Log::error("Failed to check fax status via command", [
                 'fax_job_id' => $faxJob->id,
                 'telnyx_fax_id' => $faxJob->telnyx_fax_id,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Send missing confirmation email for delivered fax
+     */
+    protected function sendMissingEmail(FaxJob $faxJob)
+    {
+        try {
+            $this->line("Sending email for fax job {$faxJob->id} to {$faxJob->sender_email}...");
+            
+            \Mail::to($faxJob->sender_email)->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
+            $faxJob->markEmailSent();
+            
+            $this->info("  ✅ Confirmation email sent successfully");
+            
+            Log::info("Missing fax confirmation email sent", [
+                'fax_job_id' => $faxJob->id,
+                'recipient_email' => $faxJob->sender_email
+            ]);
+            
+        } catch (\Exception $e) {
+            $this->error("  ❌ Failed to send email for fax {$faxJob->id}: " . $e->getMessage());
+            
+            Log::error("Failed to send missing fax confirmation email", [
+                'fax_job_id' => $faxJob->id,
+                'recipient_email' => $faxJob->sender_email,
                 'error' => $e->getMessage()
             ]);
         }

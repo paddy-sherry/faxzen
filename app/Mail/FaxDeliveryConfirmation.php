@@ -30,7 +30,7 @@ class FaxDeliveryConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '✅ Fax Delivered + Receipt - ' . $this->faxJob->file_original_name,
+            subject: '✅ FaxZen Delivery Confirmation. #'.$this->faxJob->id,
             from: config('mail.from.address', 'noreply@faxzen.com'),
         );
     }
