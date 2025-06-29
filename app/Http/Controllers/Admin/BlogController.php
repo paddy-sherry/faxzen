@@ -187,6 +187,11 @@ class BlogController extends Controller
             $post->save();
         }
 
+        // Return JSON for AJAX requests
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Blog post updated successfully!']);
+        }
+
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog post updated successfully!');
     }

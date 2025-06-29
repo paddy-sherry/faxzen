@@ -268,6 +268,17 @@
         </div>
     </form>
 
+    <!-- Floating Update Button -->
+    <button id="floating-update-btn" type="button"
+        class="fixed bottom-8 right-8 z-50 px-8 py-4 bg-faxzen-purple text-white rounded-full shadow-lg hover:bg-faxzen-purple-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-faxzen-purple text-lg font-semibold hidden">
+        Update Post
+    </button>
+
+    <!-- Success Toast -->
+    <div id="update-success-toast" class="fixed bottom-24 right-8 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-lg font-semibold hidden">
+        Post updated!
+    </div>
+
     <!-- Hidden duplicate form -->
     <form id="duplicate-form" method="POST" action="{{ route('admin.blog.duplicate', $post->id) }}" style="display: none;">
         @csrf
@@ -332,5 +343,63 @@
             updateCharCount('excerpt', 'excerpt_count', 500);
         }
     });
+
+    // Floating Update Button logic
+    const form = document.querySelector('form[action*="admin/blog/update"]');
+    const floatingBtn = document.getElementById('floating-update-btn');
+    let formChanged = false;
+
+    if (form && floatingBtn) {
+        // Show floating button when form changes
+        form.addEventListener('input', () => {
+            formChanged = true;
+            floatingBtn.classList.remove('hidden');
+        });
+
+        // Hide button on submit
+        form.addEventListener('submit', () => {
+            floatingBtn.classList.add('hidden');
+        });
+
+        // AJAX submit on floating button click
+        floatingBtn.addEventListener('click', function() {
+            const formData = new FormData(form);
+            floatingBtn.disabled = true;
+            floatingBtn.textContent = 'Saving...';
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData
+            })
+            .then(response => {
+                floatingBtn.disabled = false;
+                floatingBtn.textContent = 'Update Post';
+                if (response.ok) {
+                    showSuccessToast();
+                    formChanged = false;
+                    floatingBtn.classList.add('hidden');
+                } else {
+                    response.json().then(data => {
+                        alert('Error: ' + (data.message || 'Could not update post.'));
+                    });
+                }
+            })
+            .catch(() => {
+                floatingBtn.disabled = false;
+                floatingBtn.textContent = 'Update Post';
+                alert('Network error. Please try again.');
+            });
+        });
+    }
+
+    function showSuccessToast() {
+        const toast = document.getElementById('update-success-toast');
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 2000);
+    }
 </script>
 @endpush 
