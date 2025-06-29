@@ -450,6 +450,11 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">How secure is my document?</h3>
                     <p class="text-gray-600">All documents are encrypted with 256-bit SSL during transmission and automatically deleted from our servers after 24 hours. Your privacy and security are our top priorities.</p>
                 </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Does the recipient see my email address displayed on the fax?</h3>
+                    <p class="text-gray-600">No. The recipient does not see your email address. This is used so we we can send your confirmation receipt. If you want the recipient to know your email, add a cover letter to the PDF.</p>
+                </div>
             </div>
 
             <div class="space-y-6">
