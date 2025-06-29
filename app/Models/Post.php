@@ -172,15 +172,10 @@ class Post extends Model
         
         // Only insert CTA if both tags exist and paragraph comes before h2
         if ($firstParagraphEnd !== false && $firstH2Start !== false && $firstParagraphEnd < $firstH2Start) {
-            $ctaButton = '
-<div style="text-align: center; margin: 2rem 0; padding: 1.5rem; background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-radius: 12px; border: 1px solid #e5e7eb;">
-    <a href="' . url('/') . '" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl text-lg">
-        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-        </svg>
-        Send Fax Now
-    </a>
-    <p style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem;">Start sending faxes online in seconds - No account required</p>
+            $ctaButton = '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+  <h3 style="color: white; margin-bottom: 15px; font-size: 24px;">Ready To Fax?</h3>
+  <p style="margin-bottom: 20px; font-size: 18px; opacity: 0.9;">Start sending faxes online in seconds - No account required</p>
+  <a href="/send-fax" style="background: #ff6b6b; color: white; padding: 15px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 18px; display: inline-block; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(255,107,107,0.4);">Send Fax Now 🚀</a>
 </div>';
             
             // Insert CTA after the first paragraph
