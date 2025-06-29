@@ -18,7 +18,7 @@ class HowToFaxFromIphoneSeeder extends Seeder
   <a href="/send-fax" style="background: #ff6b6b; color: white; padding: 15px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 18px; display: inline-block; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(255,107,107,0.4);">Start Now</a>
 </div>
 
-<img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=400&fit=crop&crop=center&q=80" alt="Faxing from iPhone" style="width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=400&fit=crop&crop=center&q=80" alt="iPhone on desk" style="width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
 
 <h2>Table of Contents</h2>
 <ul>
@@ -114,7 +114,7 @@ class HowToFaxFromIphoneSeeder extends Seeder
                 'meta_title' => 'How to Fax from iPhone: Complete Guide for Mobile Faxing in 2025',
                 'meta_description' => 'Learn how to fax from your iPhone in 2025. Step-by-step guide, best apps, troubleshooting, and expert tips for secure, fast mobile faxing. Start faxing today!',
                 'meta_keywords' => ['fax', 'iphone', 'mobile', 'guide', '2025'],
-                'featured_image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=400&fit=crop&crop=center&q=80',
+                'featured_image' => 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=400&fit=crop&crop=center&q=80',
                 'author_name' => 'FaxZen Staff',
                 'read_time_minutes' => 5,
                 'is_featured' => false,
