@@ -175,7 +175,7 @@ class Post extends Model
         if ($firstParagraphEnd !== false && $firstH2Start !== false && $firstParagraphEnd < $firstH2Start) {
             $ctaButton = '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
   <h3 style="color: white; margin-bottom: 15px; font-size: 24px;">Ready To Fax?</h3>
-  <p style="margin-bottom: 20px; font-size: 18px; opacity: 0.9;">Start sending faxes online in seconds - No account required</p>
+  <p style="margin-bottom: 20px; font-size: 18px; opacity: 0.9;">Start sending faxes online in seconds with FaxZen - No account required</p>
   <a href="/send-fax" style="background: #ff6b6b; color: white; padding: 15px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 18px; display: inline-block; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(255,107,107,0.4);">Send Fax Now 🚀</a>
 </div>';
             
