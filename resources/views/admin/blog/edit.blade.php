@@ -129,6 +129,19 @@
                         <p class="mt-1 text-sm text-gray-500">Leave blank to save as draft</p>
                     </div>
 
+                    <!-- Updated At -->
+                    <div class="mb-4">
+                        <label for="updated_at" class="block text-sm font-medium text-gray-700 mb-1">
+                            Last Updated
+                        </label>
+                        <input type="datetime-local" 
+                               name="updated_at" 
+                               id="updated_at"
+                               value="{{ old('updated_at', $post->updated_at ? $post->updated_at->format('Y-m-d\TH:i') : '') }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple">
+                        <p class="mt-1 text-sm text-gray-500">Change the last updated date/time for this post.</p>
+                    </div>
+
                     <!-- Featured -->
                     <div>
                         <label class="flex items-center">

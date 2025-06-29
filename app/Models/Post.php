@@ -20,6 +20,7 @@ class Post extends Model
         'is_featured',
         'read_time_minutes',
         'published_at',
+        'updated_at',
     ];
 
     protected $casts = [
@@ -128,7 +129,7 @@ class Post extends Model
      */
     public function getFormattedPublishedDateWithUpdatedAttribute()
     {
-        return $this->published_at ? 'Updated: ' . $this->published_at->format('M j, Y') : null;
+        return $this->updated_at ? 'Updated: ' . $this->updated_at->format('M j, Y') : null;
     }
 
     /**

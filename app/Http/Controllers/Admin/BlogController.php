@@ -144,6 +144,7 @@ class BlogController extends Controller
             'author_name' => 'required|string|max:100',
             'is_featured' => 'boolean',
             'published_at' => 'nullable|date',
+            'updated_at' => 'nullable|date',
         ]);
 
         // Update slug if title changed
@@ -174,7 +175,17 @@ class BlogController extends Controller
         $wordCount = str_word_count(strip_tags($validated['content'] . ' ' . $validated['excerpt']));
         $validated['read_time_minutes'] = max(1, ceil($wordCount / 200));
 
+        // If updated_at is provided, set it explicitly
+        if (!empty($validated['updated_at'])) {
+            $post->updated_at = Carbon::parse($validated['updated_at']);
+        }
+
         $post->update($validated);
+
+        // If updated_at was set, save it
+        if (!empty($validated['updated_at'])) {
+            $post->save();
+        }
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog post updated successfully!');
