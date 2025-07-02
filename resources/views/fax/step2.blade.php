@@ -40,18 +40,7 @@
     <form action="{{ route('fax.step2', $faxJob->hash) }}" method="POST" class="space-y-6">
         @csrf
         
-        <div>
-            <label for="sender_name" class="block text-sm font-medium text-gray-700 mb-2">
-                Your Full Name <span class="text-red-500">*</span>
-            </label>
-            <input type="text" 
-                   id="sender_name" 
-                   name="sender_name" 
-                   value="{{ old('sender_name', $faxJob->sender_name) }}"
-                   placeholder="John Doe"
-                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue"
-                   required>
-        </div>
+
 
         <div>
             <label for="sender_email" class="block text-sm font-medium text-gray-700 mb-2">

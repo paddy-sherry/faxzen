@@ -9,7 +9,6 @@ class FaxJob extends Model
     protected $fillable = [
         'hash',
         'recipient_number',
-        'sender_name',
         'sender_email',
         'file_path',
         'file_original_name',

@@ -281,10 +281,6 @@
                     <span class="text-gray-600">Document:</span>
                     <span class="font-medium">{{ $faxJob->file_original_name }}</span>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600">From:</span>
-                    <span class="font-medium">{{ $faxJob->sender_name }}</span>
-                </div>
             </div>
             <div class="space-y-2">
                 <div class="flex justify-between">

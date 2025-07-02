@@ -106,7 +106,6 @@
                                         {{ $job->recipient_number }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-900">
-                                        <div>{{ $job->sender_name }}</div>
                                         <div class="text-gray-500 text-xs">{{ $job->sender_email }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

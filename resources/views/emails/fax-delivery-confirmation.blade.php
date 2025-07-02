@@ -148,11 +148,6 @@
             </div>
             
             <div class="details-row">
-                <span class="details-label">From:</span>
-                <span class="details-value">{{ $faxJob->sender_name }}</span>
-            </div>
-            
-            <div class="details-row">
                 <span class="details-label">Delivered:</span>
                 <span class="details-value">{{ $deliveredAt }}</span>
             </div>
