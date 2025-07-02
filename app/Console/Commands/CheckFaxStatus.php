@@ -70,10 +70,11 @@ class CheckFaxStatus extends Command
                 ->whereNotNull('telnyx_fax_id')
                 ->where('created_at', '>=', now()->subHours($hours))
                 ->get();
-
+                Log::debug('checking fax jobs 6');
             $this->info("Checking {$faxJobs->count()} fax jobs from the last {$hours} hours...");
-
+            
             foreach ($faxJobs as $faxJob) {
+                Log::debug('checking fax jobs 7');
                 $this->checkSingleFax($faxJob);
                 usleep(500000); // Sleep 0.5 seconds between API calls
             }
@@ -89,10 +90,12 @@ class CheckFaxStatus extends Command
     protected function checkSingleFax(FaxJob $faxJob)
     {
         try {
+            Log::debug('checking fax jobs 8');
             $this->line("Checking fax job {$faxJob->id} (Telnyx ID: {$faxJob->telnyx_fax_id})...");
 
             // Retrieve fax status from Telnyx
             $fax = Fax::retrieve($faxJob->telnyx_fax_id);
+            Log::debug('checking fax jobs 9');
             
             $this->info("  Current status: {$fax->status}");
 
@@ -101,10 +104,11 @@ class CheckFaxStatus extends Command
                 'telnyx_status' => $fax->status,
                 'delivery_details' => json_encode($fax->toArray())
             ]);
-
+            Log::debug('checking fax jobs 10');
             // Handle status changes
             switch ($fax->status) {
                 case 'delivered':
+                    Log::debug('checking fax jobs 11');
                     if (!$faxJob->is_delivered) {
                         $faxJob->markDelivered($fax->status, json_encode($fax->toArray()));
                         $this->info("  ✅ Marked as delivered");
@@ -112,9 +116,11 @@ class CheckFaxStatus extends Command
                     
                     // Send confirmation email if not already sent (regardless of when it was marked delivered)
                     if (!$faxJob->email_sent) {
+                        Log::debug('checking fax jobs 12');
                         try {
                             \Mail::to($faxJob->sender_email)->bcc('faxzen.com+656498d49b@invite.trustpilot.com')->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
                             $faxJob->markEmailSent();
+                            Log::debug('checking fax jobs 13');
                             $this->info("  📧 Confirmation email sent successfully");
                         } catch (\Exception $e) {
                             $this->error("  ❌ Failed to send confirmation email: " . $e->getMessage());
@@ -129,6 +135,7 @@ class CheckFaxStatus extends Command
                     break;
 
                 case 'failed':
+                    Log::debug('checking fax jobs 14');
                     $faxJob->update([
                         'status' => FaxJob::STATUS_FAILED,
                         'error_message' => $fax->failure_reason ?? 'Fax delivery failed'
@@ -137,6 +144,7 @@ class CheckFaxStatus extends Command
                     break;
 
                 case 'sending':
+                    Log::debug('checking fax jobs 15');
                     if (!$faxJob->is_sending) {
                         $faxJob->markSendingStarted();
                         $this->info("  📤 Marked as sending");
@@ -171,11 +179,12 @@ class CheckFaxStatus extends Command
     protected function sendMissingEmail(FaxJob $faxJob)
     {
         try {
+            Log::debug('checking fax jobs 16');
             $this->line("Sending email for fax job {$faxJob->id} to {$faxJob->sender_email}...");
             
             \Mail::to($faxJob->sender_email)->bcc('faxzen.com+656498d49b@invite.trustpilot.com')->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
             $faxJob->markEmailSent();
-            
+            Log::debug('checking fax jobs 17');
             $this->info("  ✅ Confirmation email sent successfully");
             
             Log::info("Missing fax confirmation email sent", [
