@@ -73,6 +73,7 @@ class FaxController extends Controller
             'file_original_name' => $file->getClientOriginalName(),
             'amount' => config('services.faxzen.price'),
             'status' => FaxJob::STATUS_PENDING,
+            'sender_name' => '',
             'sender_email' => '',
 
             'original_file_size' => $originalSize,
@@ -93,6 +94,7 @@ class FaxController extends Controller
     public function processStep2(Request $request, FaxJob $faxJob)
     {
         $request->validate([
+            'sender_name' => 'required|string|max:255',
             'sender_email' => 'required|email:rfc,dns|max:255',
         ]);
 
@@ -102,6 +104,7 @@ class FaxController extends Controller
 
         // Update the fax job with sender details
         $faxJob->update([
+            'sender_name' => $request->sender_name,
             'sender_email' => $request->sender_email,
             'status' => FaxJob::STATUS_PAYMENT_PENDING,
         ]);
@@ -134,8 +137,8 @@ class FaxController extends Controller
                     'currency' => 'usd',
                     'tax_behavior' => 'exclusive',
                     'product_data' => [
-                        'name' => 'FaxZen.com',
-                        'description' => "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}",
+                        'name' => 'FaxZen.com fax delivery',
+                        'description' => "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}\nSender: {$faxJob->sender_name}",
                         'images' => [
                             'https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/f022f0ec-15f5-465d-ab48-764bd2a96100/public', // Professional fax/document icon - replace with your logo
                         ],
@@ -165,6 +168,7 @@ class FaxController extends Controller
             'metadata' => [
                 'fax_job_id' => $faxJob->id,
                 'recipient_number' => $faxJob->recipient_number,
+                'sender_name' => $faxJob->sender_name,
                 'sender_email' => $faxJob->sender_email,
                 'document_name' => $faxJob->file_original_name,
                 'service' => 'fax_transmission',
