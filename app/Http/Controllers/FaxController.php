@@ -137,7 +137,7 @@ class FaxController extends Controller
                     'currency' => 'usd',
                     'tax_behavior' => 'exclusive',
                     'product_data' => [
-                        'name' => 'Fax Sending Service',
+                        'name' => 'FaxZen.com',
                         'description' => "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}\nSender: {$faxJob->sender_name}",
                         'images' => [
                             'https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/f022f0ec-15f5-465d-ab48-764bd2a96100/public', // Professional fax/document icon - replace with your logo
