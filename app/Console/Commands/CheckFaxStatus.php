@@ -30,7 +30,7 @@ class CheckFaxStatus extends Command
     public function handle()
     {
         // Set up Telnyx API
-        Log::debug('checking fax jobs');
+        Log::debug('checking fax jobs 1');
         Telnyx::setApiKey(config('services.telnyx.api_key'));
         \Telnyx\Telnyx::$apiBase = config('services.telnyx.api_base');
 
@@ -39,6 +39,7 @@ class CheckFaxStatus extends Command
         $sendMissingEmails = $this->option('send-missing-emails');
 
         if ($jobId) {
+           Log::debug('checking fax jobs 2');
             // Check specific job
             $faxJob = FaxJob::find($jobId);
             if (!$faxJob) {
@@ -47,6 +48,7 @@ class CheckFaxStatus extends Command
             }
             $this->checkSingleFax($faxJob);
         } elseif ($sendMissingEmails) {
+            Log::debug('checking fax jobs 3');
             // Send emails for delivered faxes that don't have confirmation emails
             $faxJobs = FaxJob::where('is_delivered', true)
                 ->where('email_sent', false)
@@ -56,10 +58,12 @@ class CheckFaxStatus extends Command
             $this->info("Found {$faxJobs->count()} delivered fax jobs without confirmation emails...");
 
             foreach ($faxJobs as $faxJob) {
+                Log::debug('checking fax jobs 4');
                 $this->sendMissingEmail($faxJob);
                 usleep(250000); // Sleep 0.25 seconds between emails
             }
         } else {
+            Log::debug('checking fax jobs 5');
             // Check recent jobs that haven't been delivered yet
             $faxJobs = FaxJob::where('status', FaxJob::STATUS_SENT)
                 ->where('is_delivered', false)
