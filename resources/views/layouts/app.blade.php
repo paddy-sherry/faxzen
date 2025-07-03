@@ -33,6 +33,7 @@
         <div class="max-w-4xl mx-auto px-4 py-2">
             <div class="flex items-center justify-between">
                 <a href="/"><img src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/42ca1bda-1138-4c31-ca0c-479017295900/public"></a>
+                <a href="https://ie.trustpilot.com/review/faxzen.com" target="_blank"><img src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/09c81071-c875-4f11-a575-5ae2d1167400/public"></a>
                 
                 <!-- Navigation Links -->
                 <nav class="hidden md:flex items-center space-x-6">
