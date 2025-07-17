@@ -31,16 +31,43 @@ class AdminController extends Controller
         return view('admin.fax-jobs', compact('faxJobs'));
     }
 
-    public function retryFaxJob(FaxJob $faxJob)
+    public function retryFaxJob($id, Request $request)
     {
+        // Find the fax job
+        $faxJob = FaxJob::find($id);
+        
+        if (!$faxJob) {
+            $errorMsg = "Fax job #{$id} not found.";
+            
+            if ($request->isMethod('GET')) {
+                return response()->json(['error' => $errorMsg], 404);
+            }
+            
+            return redirect()->route('admin.fax-jobs')->with('error', $errorMsg);
+        }
+        
         // Check if the job can be retried
         if (!$faxJob->canRetry()) {
-            return redirect()->route('admin.fax-jobs')->with('error', "Fax job #{$faxJob->id} has already used all retry attempts.");
+            $errorMsg = "Fax job #{$faxJob->id} has already used all retry attempts.";
+            
+            // For GET requests, return JSON or simple response
+            if ($request->isMethod('GET')) {
+                return response()->json(['error' => $errorMsg], 400);
+            }
+            
+            return redirect()->route('admin.fax-jobs')->with('error', $errorMsg);
         }
 
         // Check if job is in a retryable state
         if ($faxJob->status !== FaxJob::STATUS_FAILED) {
-            return redirect()->route('admin.fax-jobs')->with('error', "Fax job #{$faxJob->id} is not in a failed state and cannot be retried.");
+            $errorMsg = "Fax job #{$faxJob->id} is not in a failed state and cannot be retried.";
+            
+            // For GET requests, return JSON or simple response
+            if ($request->isMethod('GET')) {
+                return response()->json(['error' => $errorMsg], 400);
+            }
+            
+            return redirect()->route('admin.fax-jobs')->with('error', $errorMsg);
         }
 
         try {
@@ -58,10 +85,28 @@ class AdminController extends Controller
             // Dispatch the SendFaxJob
             SendFaxJob::dispatch($faxJob);
 
-            return redirect()->route('admin.fax-jobs')->with('success', "Fax job #{$faxJob->id} has been queued for retry. It will be processed shortly.");
+            $successMsg = "Fax job #{$faxJob->id} has been queued for retry. It will be processed shortly.";
+            
+            // For GET requests, return JSON response
+            if ($request->isMethod('GET')) {
+                return response()->json([
+                    'success' => $successMsg,
+                    'job_id' => $faxJob->id,
+                    'new_status' => $faxJob->status
+                ]);
+            }
+
+            return redirect()->route('admin.fax-jobs')->with('success', $successMsg);
 
         } catch (\Exception $e) {
-            return redirect()->route('admin.fax-jobs')->with('error', "Failed to retry fax job #{$faxJob->id}: " . $e->getMessage());
+            $errorMsg = "Failed to retry fax job #{$faxJob->id}: " . $e->getMessage();
+            
+            // For GET requests, return JSON error
+            if ($request->isMethod('GET')) {
+                return response()->json(['error' => $errorMsg], 500);
+            }
+            
+            return redirect()->route('admin.fax-jobs')->with('error', $errorMsg);
         }
     }
 } 
