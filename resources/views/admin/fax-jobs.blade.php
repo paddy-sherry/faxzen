@@ -6,6 +6,19 @@
 
 @section('content')
     <div class="p-6 space-y-6">
+        
+        <!-- Flash Messages -->
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+        
+        @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
         <!-- Filters -->
         <div class="bg-gray-50 p-4 rounded-lg">
             <h2 class="text-lg font-semibold text-gray-800 mb-4">Filters</h2>
@@ -91,6 +104,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telnyx ID</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -147,6 +161,16 @@
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $colorClass }}">
                                             {{ ucfirst($job->status) }}
                                         </span>
+                                        @if($job->status === 'failed' && $job->error_message)
+                                            <div class="text-xs text-red-600 mt-1" title="{{ $job->error_message }}">
+                                                {{ Str::limit($job->error_message, 30) }}
+                                            </div>
+                                        @endif
+                                        @if($job->retry_attempts > 0)
+                                            <div class="text-xs text-gray-500 mt-1">
+                                                Retries: {{ $job->retry_attempts }}
+                                            </div>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
                                         @if($job->telnyx_fax_id)
@@ -160,6 +184,22 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         <div>{{ $job->created_at->format('M j, Y') }}</div>
                                         <div class="text-gray-500 text-xs">{{ $job->created_at->format('g:i A') }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        @if($job->status === 'failed' && $job->canRetry())
+                                            <form method="POST" action="{{ route('admin.fax-jobs.retry', $job->id) }}" class="inline">
+                                                @csrf
+                                                <button type="submit" 
+                                                        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200"
+                                                        onclick="return confirm('Are you sure you want to retry fax job #{{ $job->id }}? This will attempt to send the fax again.')">
+                                                    🔄 Retry
+                                                </button>
+                                            </form>
+                                        @elseif($job->status === 'failed')
+                                            <span class="text-gray-400 text-xs">No retries left</span>
+                                        @else
+                                            <span class="text-gray-400 text-xs">-</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

@@ -56,6 +56,7 @@ Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'inde
 // Admin routes with HTTP Basic Auth
 Route::middleware(['auth.basic'])->group(function () {
     Route::get('/admin/fax-jobs', [App\Http\Controllers\AdminController::class, 'faxJobs'])->name('admin.fax-jobs');
+    Route::post('/admin/fax-jobs/{faxJob}/retry', [App\Http\Controllers\AdminController::class, 'retryFaxJob'])->name('admin.fax-jobs.retry');
     
     // Blog management routes
     Route::prefix('admin/blog')->name('admin.blog.')->group(function () {
