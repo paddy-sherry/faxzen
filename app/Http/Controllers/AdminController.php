@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\FaxJob;
 use App\Jobs\SendFaxJob;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Telnyx\Telnyx;
+use Telnyx\Fax;
 
 class AdminController extends Controller
 {
@@ -107,6 +110,112 @@ class AdminController extends Controller
             }
             
             return redirect()->route('admin.fax-jobs')->with('error', $errorMsg);
+        }
+    }
+
+    public function checkStatus($id, Request $request)
+    {
+        $faxJob = FaxJob::find($id);
+        
+        if (!$faxJob) {
+            return response()->json(['error' => "Fax job #{$id} not found."], 404);
+        }
+
+        if (!$faxJob->telnyx_fax_id) {
+            return response()->json(['error' => "Fax job #{$id} doesn't have a Telnyx fax ID."], 400);
+        }
+
+        try {
+            // Set up Telnyx API
+            Telnyx::setApiKey(config('services.telnyx.api_key'));
+            \Telnyx\Telnyx::$apiBase = config('services.telnyx.api_base');
+
+            // Retrieve fax status from Telnyx
+            $fax = Fax::retrieve($faxJob->telnyx_fax_id);
+
+            // Store old status for comparison
+            $oldStatus = $faxJob->telnyx_status;
+            $oldDbStatus = $faxJob->status;
+
+            // Update our database with the latest status
+            $faxJob->update([
+                'telnyx_status' => $fax->status,
+                'delivery_details' => json_encode($fax->toArray())
+            ]);
+
+            // Handle status changes (reusing logic from CheckFaxStatus command)
+            switch ($fax->status) {
+                case 'delivered':
+                    if (!$faxJob->is_delivered) {
+                        $faxJob->markDelivered($fax->status, json_encode($fax->toArray()));
+                    }
+                    
+                    // Send confirmation email if not already sent
+                    if (!$faxJob->email_sent) {
+                        try {
+                            \Mail::to($faxJob->sender_email)->bcc('faxzen.com+656498d49b@invite.trustpilot.com')->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
+                            $faxJob->markEmailSent();
+                        } catch (\Exception $e) {
+                            Log::error("Failed to send fax confirmation email via manual check", [
+                                'fax_job_id' => $faxJob->id,
+                                'error' => $e->getMessage()
+                            ]);
+                        }
+                    }
+                    break;
+
+                case 'failed':
+                    $faxJob->update([
+                        'status' => FaxJob::STATUS_FAILED,
+                        'error_message' => $fax->failure_reason ?? 'Fax delivery failed'
+                    ]);
+                    break;
+
+                case 'sending':
+                    if (!$faxJob->is_sending) {
+                        $faxJob->markSendingStarted();
+                    }
+                    break;
+            }
+
+            // Refresh the model to get updated data
+            $faxJob->refresh();
+
+            Log::info("Fax status checked manually", [
+                'fax_job_id' => $faxJob->id,
+                'telnyx_fax_id' => $faxJob->telnyx_fax_id,
+                'old_telnyx_status' => $oldStatus,
+                'new_telnyx_status' => $fax->status,
+                'old_db_status' => $oldDbStatus,
+                'new_db_status' => $faxJob->status
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Status updated successfully",
+                'fax_job_id' => $faxJob->id,
+                'old_status' => $oldStatus,
+                'new_status' => $fax->status,
+                'updated_data' => [
+                    'status' => $faxJob->status,
+                    'telnyx_status' => $faxJob->telnyx_status,
+                    'is_delivered' => $faxJob->is_delivered,
+                    'is_sending' => $faxJob->is_sending,
+                    'email_sent' => $faxJob->email_sent,
+                    'error_message' => $faxJob->error_message,
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error("Failed to check fax status manually", [
+                'fax_job_id' => $faxJob->id,
+                'telnyx_fax_id' => $faxJob->telnyx_fax_id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'error' => "Failed to check status: " . $e->getMessage()
+            ], 500);
         }
     }
 } 

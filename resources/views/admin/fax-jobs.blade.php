@@ -149,17 +149,19 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @php
                                             $statusColors = [
-                                                'sent' => 'bg-green-100 text-green-800',
                                                 'delivered' => 'bg-green-100 text-green-800',
-                                                'email_sent' => 'bg-green-100 text-green-800',
                                                 'failed' => 'bg-red-100 text-red-800',
-                                                'preparing' => 'bg-orange-100 text-orange-800',
                                                 'sending' => 'bg-orange-100 text-orange-800',
+                                                'queued' => 'bg-blue-100 text-blue-800',
+                                                'media.processed' => 'bg-yellow-100 text-yellow-800',
                                             ];
-                                            $colorClass = $statusColors[$job->status] ?? 'bg-gray-100 text-gray-800';
+                                            
+                                            // Use telnyx_status if available, fallback to status
+                                            $displayStatus = $job->telnyx_status ?? $job->status;
+                                            $colorClass = $statusColors[$displayStatus] ?? 'bg-gray-100 text-gray-800';
                                         @endphp
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $colorClass }}">
-                                            {{ ucfirst($job->status) }}
+                                            {{ $displayStatus ? ucfirst(str_replace(['_', '.'], [' ', ' '], $displayStatus)) : 'Unknown' }}
                                         </span>
                                         @if($job->status === 'failed' && $job->error_message)
                                             <div class="text-xs text-red-600 mt-1" title="{{ $job->error_message }}">
@@ -186,20 +188,31 @@
                                         <div class="text-gray-500 text-xs">{{ $job->created_at->format('g:i A') }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        @if($job->status === 'failed' && $job->canRetry())
-                                            <form method="POST" action="{{ route('admin.fax-jobs.retry', $job->id) }}" class="inline">
-                                                @csrf
-                                                <button type="submit" 
-                                                        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200"
-                                                        onclick="return confirm('Are you sure you want to retry fax job #{{ $job->id }}? This will attempt to send the fax again.')">
-                                                    🔄 Retry
+                                        <div class="flex gap-2">
+                                            @if($job->telnyx_fax_id)
+                                                <button type="button" 
+                                                        class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200 check-status-btn"
+                                                        data-job-id="{{ $job->id }}"
+                                                        data-telnyx-id="{{ $job->telnyx_fax_id }}">
+                                                    📊 Check Status
                                                 </button>
-                                            </form>
-                                        @elseif($job->status === 'failed')
-                                            <span class="text-gray-400 text-xs">No retries left</span>
-                                        @else
-                                            <span class="text-gray-400 text-xs">-</span>
-                                        @endif
+                                            @endif
+                                            
+                                            @if($job->status === 'failed' && $job->canRetry())
+                                                <form method="POST" action="{{ route('admin.fax-jobs.retry', $job->id) }}" class="inline">
+                                                    @csrf
+                                                    <button type="submit" 
+                                                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200"
+                                                            onclick="return confirm('Are you sure you want to retry fax job #{{ $job->id }}? This will attempt to send the fax again.')">
+                                                        🔄 Retry
+                                                    </button>
+                                                </form>
+                                            @elseif($job->status === 'failed')
+                                                <span class="text-gray-400 text-xs">No retries left</span>
+                                            @elseif(!$job->telnyx_fax_id)
+                                                <span class="text-gray-400 text-xs">-</span>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -225,3 +238,157 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle check status button clicks
+    document.querySelectorAll('.check-status-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const jobId = this.dataset.jobId;
+            const telnyxId = this.dataset.telnyxId;
+            const originalText = this.innerHTML;
+            const originalClass = this.className;
+            
+            // Disable button and show loading state
+            this.disabled = true;
+            this.innerHTML = '⏳ Checking...';
+            this.className = this.className.replace('bg-purple-600 hover:bg-purple-700', 'bg-gray-400');
+            
+            // Make AJAX request to check status
+            fetch(`/admin/fax-jobs/${jobId}/check-status`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showNotification('success', `Status updated! ${data.old_status || 'Unknown'} → ${data.new_status}`);
+                    
+                    // Update the row with new data
+                    updateJobRow(jobId, data.updated_data);
+                    
+                    // If status changed significantly, consider refreshing the page
+                    if (data.updated_data.status !== data.old_status && 
+                        (data.new_status === 'delivered' || data.new_status === 'failed')) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                } else {
+                    showNotification('error', data.error || 'Failed to check status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Network error while checking status');
+            })
+            .finally(() => {
+                // Re-enable button
+                this.disabled = false;
+                this.innerHTML = originalText;
+                this.className = originalClass;
+            });
+        });
+    });
+    
+    function updateJobRow(jobId, updatedData) {
+        const row = document.querySelector(`[data-job-id="${jobId}"]`).closest('tr');
+        if (!row) return;
+        
+        // Update status badge
+        const statusCell = row.querySelector('td:nth-child(6)'); // Status column
+        if (statusCell) {
+            const statusBadge = statusCell.querySelector('.px-2');
+            if (statusBadge && updatedData.telnyx_status) {
+                // Update status text
+                statusBadge.textContent = updatedData.telnyx_status.charAt(0).toUpperCase() + updatedData.telnyx_status.slice(1);
+                
+                // Update status color based on new status
+                statusBadge.className = statusBadge.className.replace(/bg-\w+-\d+\s+text-\w+-\d+/, '');
+                if (updatedData.telnyx_status === 'delivered') {
+                    statusBadge.className += ' bg-green-100 text-green-800';
+                } else if (updatedData.telnyx_status === 'failed') {
+                    statusBadge.className += ' bg-red-100 text-red-800';
+                } else if (updatedData.telnyx_status === 'sending') {
+                    statusBadge.className += ' bg-orange-100 text-orange-800';
+                } else {
+                    statusBadge.className += ' bg-gray-100 text-gray-800';
+                }
+            }
+            
+            // Show error message if status is failed
+            if (updatedData.error_message) {
+                let errorDiv = statusCell.querySelector('.text-red-600');
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.className = 'text-xs text-red-600 mt-1';
+                    statusCell.appendChild(errorDiv);
+                }
+                errorDiv.textContent = updatedData.error_message.substring(0, 30) + (updatedData.error_message.length > 30 ? '...' : '');
+                errorDiv.title = updatedData.error_message;
+            }
+        }
+    }
+    
+    function showNotification(type, message) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg transition-all duration-300 transform translate-x-full`;
+        notification.style.minWidth = '300px';
+        
+        if (type === 'success') {
+            notification.className += ' bg-green-100 border border-green-400 text-green-700';
+        } else {
+            notification.className += ' bg-red-100 border border-red-400 text-red-700';
+        }
+        
+        notification.innerHTML = `
+            <div class="flex">
+                <div class="flex-1">
+                    <span class="block sm:inline">${message}</span>
+                </div>
+                <div class="ml-4">
+                    <button type="button" class="close-notification text-gray-400 hover:text-gray-600">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            removeNotification(notification);
+        }, 5000);
+        
+        // Handle close button
+        notification.querySelector('.close-notification').addEventListener('click', () => {
+            removeNotification(notification);
+        });
+    }
+    
+    function removeNotification(notification) {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }
+});
+</script>
+@endpush
