@@ -25,10 +25,12 @@ class FaxJob extends Model
         'is_sending',
         'is_delivered',
         'email_sent',
+        'reminder_email_sent',
         'prepared_at',
         'sending_started_at',
         'delivered_at',
         'email_sent_at',
+        'reminder_email_sent_at',
         'delivery_details',
         'telnyx_status',
     ];
@@ -40,10 +42,12 @@ class FaxJob extends Model
         'sending_started_at' => 'datetime',
         'delivered_at' => 'datetime',
         'email_sent_at' => 'datetime',
+        'reminder_email_sent_at' => 'datetime',
         'is_preparing' => 'boolean',
         'is_sending' => 'boolean',
         'is_delivered' => 'boolean',
         'email_sent' => 'boolean',
+        'reminder_email_sent' => 'boolean',
     ];
 
     const STATUS_PENDING = 'pending';
@@ -154,5 +158,27 @@ class FaxJob extends Model
             'email_sent' => true,
             'email_sent_at' => now()
         ]);
+    }
+
+    /**
+     * Mark reminder email as sent
+     */
+    public function markReminderEmailSent()
+    {
+        $this->update([
+            'reminder_email_sent' => true,
+            'reminder_email_sent_at' => now()
+        ]);
+    }
+
+    /**
+     * Check if this fax job should receive a reminder email
+     */
+    public function shouldReceiveReminder($hoursThreshold = 24): bool
+    {
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_PAYMENT_PENDING])
+            && $this->created_at <= now()->subHours($hoursThreshold)
+            && !empty($this->sender_email)
+            && !$this->reminder_email_sent;
     }
 }

@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Schedule fax status checking every 2 minutes
 app(Schedule::class)->command('fax:check-status')->everyTwoMinutes();
+
+// Schedule fax reminder emails to be sent daily at 10 AM
+app(Schedule::class)->command('fax:send-reminders')->dailyAt('15:00');
