@@ -194,13 +194,44 @@
         </div>
 
         <div style="background-color: #fef2f2; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <h4 style="color: #dc2626; margin-top: 0;">Common Reasons for Failure</h4>
-            <ul style="color: #374151; margin: 0; padding-left: 20px;">
-                <li>The recipient's fax machine was busy or not answering</li>
-                <li>The fax number may be incorrect or out of service</li>
-                <li>The recipient's fax machine ran out of paper or toner</li>
-                <li>Network connectivity issues during transmission</li>
-            </ul>
+            <h4 style="color: #dc2626; margin-top: 0;">
+                @if(str_contains(strtolower($failureReason), 'receiver_call_dropped'))
+                    What Happened: Receiver Disconnected
+                @elseif(str_contains(strtolower($failureReason), 'sender_call_dropped'))
+                    What Happened: Sender Disconnected
+                @else
+                    Common Reasons for Failure
+                @endif
+            </h4>
+            
+            @if(str_contains(strtolower($failureReason), 'receiver_call_dropped'))
+                <p style="color: #374151; margin: 0 0 10px 0;">
+                    The receiving fax machine disconnected during transmission. This commonly happens when:
+                </p>
+                <ul style="color: #374151; margin: 0; padding-left: 20px;">
+                    <li>The recipient's fax machine ran out of paper during transmission</li>
+                    <li>Power issues or network problems at the receiving location</li>
+                    <li>The receiving fax machine has compatibility issues</li>
+                    <li>Line interference caused the connection to drop</li>
+                </ul>
+                <p style="color: #059669; margin: 10px 0 0 0; font-weight: 600;">
+                    💡 <strong>Tip:</strong> This error often resolves on retry. Contact the recipient to ensure their fax machine has paper and is ready.
+                </p>
+            @elseif(str_contains(strtolower($failureReason), 'sender_call_dropped'))
+                <p style="color: #374151; margin: 0 0 10px 0;">
+                    The connection was dropped during transmission. This may have been caused by network issues.
+                </p>
+                <p style="color: #059669; margin: 10px 0 0 0; font-weight: 600;">
+                    💡 <strong>Tip:</strong> This error often resolves on retry.
+                </p>
+            @else
+                <ul style="color: #374151; margin: 0; padding-left: 20px;">
+                    <li>The recipient's fax machine was busy or not answering</li>
+                    <li>The fax number may be incorrect or out of service</li>
+                    <li>The recipient's fax machine ran out of paper or toner</li>
+                    <li>Network connectivity issues during transmission</li>
+                </ul>
+            @endif
         </div>
 
         <div style="text-align: center; margin: 30px 0;">

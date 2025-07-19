@@ -164,8 +164,19 @@
                                             {{ $displayStatus ? ucfirst(str_replace(['_', '.'], [' ', ' '], $displayStatus)) : 'Unknown' }}
                                         </span>
                                         @if($job->status === 'failed' && $job->error_message)
-                                            <div class="text-xs text-red-600 mt-1" title="{{ $job->error_message }}">
+                                            @php
+                                                $isRetryableError = in_array($job->error_message, [
+                                                    'receiver_call_dropped',
+                                                    'sender_call_dropped', 
+                                                    'timeout',
+                                                    'busy'
+                                                ]);
+                                            @endphp
+                                            <div class="text-xs mt-1 {{ $isRetryableError ? 'text-orange-600' : 'text-red-600' }}" title="{{ $job->error_message }}">
                                                 {{ Str::limit($job->error_message, 30) }}
+                                                @if($isRetryableError)
+                                                    <span class="text-orange-500">⟲</span>
+                                                @endif
                                             </div>
                                         @endif
                                         @if($job->retry_attempts > 0)

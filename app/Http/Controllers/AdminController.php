@@ -165,9 +165,17 @@ class AdminController extends Controller
                     break;
 
                 case 'failed':
+                    $failureReason = $fax->failure_reason ?? 'Fax delivery failed';
+                    $isRetryableFailure = in_array($failureReason, [
+                        'receiver_call_dropped',
+                        'sender_call_dropped', 
+                        'timeout',
+                        'busy'
+                    ]);
+                    
                     $faxJob->update([
                         'status' => FaxJob::STATUS_FAILED,
-                        'error_message' => $fax->failure_reason ?? 'Fax delivery failed'
+                        'error_message' => $failureReason
                     ]);
                     break;
 

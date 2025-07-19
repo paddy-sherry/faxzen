@@ -136,11 +136,27 @@ class CheckFaxStatus extends Command
 
                 case 'failed':
                     Log::debug('checking fax jobs 14');
+                    
+                    // Check for specific failure reasons that might be retryable
+                    $failureReason = $fax->failure_reason ?? 'Fax delivery failed';
+                    $isRetryableFailure = in_array($failureReason, [
+                        'receiver_call_dropped',
+                        'sender_call_dropped', 
+                        'timeout',
+                        'busy'
+                    ]);
+                    
                     $faxJob->update([
                         'status' => FaxJob::STATUS_FAILED,
-                        'error_message' => $fax->failure_reason ?? 'Fax delivery failed'
+                        'error_message' => $failureReason
                     ]);
-                    $this->error("  ❌ Marked as failed: " . ($fax->failure_reason ?? 'Unknown reason'));
+                    
+                    if ($isRetryableFailure && $faxJob->canRetry()) {
+                        $this->error("  ❌ Marked as failed (retryable): " . $failureReason);
+                        $this->line("  🔄 This error type can often be resolved by retrying");
+                    } else {
+                        $this->error("  ❌ Marked as failed: " . $failureReason);
+                    }
                     break;
 
                 case 'sending':
