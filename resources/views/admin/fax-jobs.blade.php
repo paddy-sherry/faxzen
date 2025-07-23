@@ -171,10 +171,14 @@
                                                     'timeout',
                                                     'busy'
                                                 ]);
+                                                $isEcmError = str_contains(strtolower($job->error_message), 'ecm') || 
+                                                              str_contains(strtolower($job->error_message), 'error_correction');
                                             @endphp
-                                            <div class="text-xs mt-1 {{ $isRetryableError ? 'text-orange-600' : 'text-red-600' }}" title="{{ $job->error_message }}">
+                                            <div class="text-xs mt-1 {{ $isEcmError ? 'text-purple-600' : ($isRetryableError ? 'text-orange-600' : 'text-red-600') }}" title="{{ $job->error_message }}">
                                                 {{ Str::limit($job->error_message, 30) }}
-                                                @if($isRetryableError)
+                                                @if($isEcmError)
+                                                    <span class="text-purple-500" title="ECM Compatibility Issue">🔧</span>
+                                                @elseif($isRetryableError)
                                                     <span class="text-orange-500">⟲</span>
                                                 @endif
                                             </div>

@@ -181,4 +181,31 @@ class FaxJob extends Model
             && !empty($this->sender_email)
             && !$this->reminder_email_sent;
     }
+
+    /**
+     * Check if this fax job failed due to ECM compatibility issues
+     */
+    public function hasEcmError(): bool
+    {
+        if ($this->status !== self::STATUS_FAILED || empty($this->error_message)) {
+            return false;
+        }
+
+        return str_contains(strtolower($this->error_message), 'ecm') || 
+               str_contains(strtolower($this->error_message), 'error_correction') ||
+               str_contains(strtolower($this->error_message), 'invalid_ecm_response');
+    }
+
+    /**
+     * Get user-friendly explanation for ECM errors
+     */
+    public function getEcmErrorExplanation(): ?string
+    {
+        if (!$this->hasEcmError()) {
+            return null;
+        }
+
+        return "ECM (Error Correction Mode) compatibility issue with the receiving fax machine. " .
+               "Ask the recipient to disable ECM on their fax machine and try again.";
+    }
 }

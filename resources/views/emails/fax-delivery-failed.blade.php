@@ -204,7 +204,19 @@
                 @endif
             </h4>
             
-            @if(str_contains(strtolower($failureReason), 'receiver_call_dropped'))
+            @if(str_contains(strtolower($failureReason), 'ecm') || str_contains(strtolower($failureReason), 'error_correction'))
+                <p style="color: #374151; margin: 0 0 10px 0;">
+                    <strong>ECM Compatibility Issue:</strong> The receiving fax machine has Error Correction Mode (ECM) compatibility problems.
+                </p>
+                <ul style="color: #374151; margin: 0; padding-left: 20px;">
+                    <li>The recipient's fax machine uses incompatible ECM settings</li>
+                    <li>Their fax machine may be older and have ECM bugs</li>
+                    <li>Network quality issues are interfering with ECM protocol</li>
+                </ul>
+                <p style="color: #d97706; margin: 10px 0 0 0; font-weight: 600;">
+                    🔧 <strong>Solution:</strong> Ask the recipient to temporarily disable ECM (Error Correction Mode) on their fax machine, then try sending again.
+                </p>
+            @elseif(str_contains(strtolower($failureReason), 'receiver_call_dropped'))
                 <p style="color: #374151; margin: 0 0 10px 0;">
                     The receiving fax machine disconnected during transmission. This commonly happens when:
                 </p>

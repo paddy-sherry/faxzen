@@ -146,12 +146,20 @@ class CheckFaxStatus extends Command
                         'busy'
                     ]);
                     
+                    // Check for ECM-related errors that need special handling
+                    $isEcmError = str_contains(strtolower($failureReason), 'ecm') || 
+                                  str_contains(strtolower($failureReason), 'error_correction');
+                    
                     $faxJob->update([
                         'status' => FaxJob::STATUS_FAILED,
                         'error_message' => $failureReason
                     ]);
                     
-                    if ($isRetryableFailure && $faxJob->canRetry()) {
+                    if ($isEcmError) {
+                        $this->error("  ❌ Marked as failed (ECM compatibility): " . $failureReason);
+                        $this->line("  🔧 ECM error: Receiving fax machine has ECM compatibility issues");
+                        $this->line("  💡 Suggestion: Contact recipient to disable ECM on their fax machine");
+                    } elseif ($isRetryableFailure && $faxJob->canRetry()) {
                         $this->error("  ❌ Marked as failed (retryable): " . $failureReason);
                         $this->line("  🔄 This error type can often be resolved by retrying");
                     } else {

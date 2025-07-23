@@ -173,6 +173,10 @@ class AdminController extends Controller
                         'busy'
                     ]);
                     
+                    // Check for ECM-related errors
+                    $isEcmError = str_contains(strtolower($failureReason), 'ecm') || 
+                                  str_contains(strtolower($failureReason), 'error_correction');
+                    
                     $faxJob->update([
                         'status' => FaxJob::STATUS_FAILED,
                         'error_message' => $failureReason
