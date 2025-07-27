@@ -83,7 +83,7 @@ class FaxController extends Controller
 
     public function step2(FaxJob $faxJob)
     {
-        if ($faxJob->status !== FaxJob::STATUS_PENDING) {
+        if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
             return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
         }
 
@@ -96,7 +96,7 @@ class FaxController extends Controller
             'sender_email' => 'required|email:rfc,dns|max:255',
         ]);
 
-        if ($faxJob->status !== FaxJob::STATUS_PENDING) {
+        if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
             return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
         }
 

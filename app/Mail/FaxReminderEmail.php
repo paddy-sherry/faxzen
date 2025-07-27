@@ -45,7 +45,7 @@ class FaxReminderEmail extends Mailable
             with: [
                 'faxJob' => $this->faxJob,
                 'continueUrl' => route('fax.step2', $this->faxJob->hash),
-                'hoursAgo' => now()->diffInHours($this->faxJob->created_at),
+                'hoursAgo' => round($this->faxJob->created_at->diffInHours()),
                 'fileName' => $this->faxJob->file_original_name,
                 'recipientNumber' => $this->faxJob->recipient_number,
             ]
