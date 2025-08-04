@@ -211,7 +211,7 @@
             </div>
 
             <div style="text-align: center;">
-                <a href="{{ $continueUrl }}" class="cta-button">
+                <a href="{{ $continueUrl }}" class="cta-button" style="color: white !important;">
                     Complete My Fax Now →
                 </a>
             </div>
