@@ -15,7 +15,7 @@ class SendFaxReminders extends Command
      *
      * @var string
      */
-    protected $signature = 'fax:send-reminders {--hours=24 : Send reminders for faxes older than N hours} {--dry-run : Show what would be sent without actually sending}';
+    protected $signature = 'fax:send-reminders {--hours=12 : Send reminders for faxes older than N hours} {--dry-run : Show what would be sent without actually sending}';
 
     /**
      * The console command description.

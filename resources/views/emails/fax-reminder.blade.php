@@ -169,7 +169,7 @@
         <div class="header">
             <div class="logo">📠 FaxZen</div>
             <h1 class="title">Don't forget your fax!</h1>
-            <p class="subtitle">Complete your fax transmission in just a few clicks</p>
+            <p class="subtitle">Finish sending your fax in a few clicks</p>
         </div>
 
         <div class="urgency-indicator">
@@ -183,7 +183,7 @@
 
             <p style="font-size: 16px; margin-bottom: 20px;">
                 We noticed you started sending a fax but didn't finish the process. Your document is ready to go - 
-                it just needs your sender information and payment to complete the transmission.
+                it just needs your sender information and payment.
             </p>
 
             <div class="file-info">
@@ -221,7 +221,6 @@
                 <ul>
                     <li><strong>Fast & Reliable:</strong> Documents delivered in seconds</li>
                     <li><strong>Professional Quality:</strong> High-resolution transmission</li>
-                    <li><strong>Secure:</strong> Your documents are protected and encrypted</li>
                     <li><strong>Delivery Confirmation:</strong> Get notified when your fax arrives</li>
                 </ul>
             </div>
