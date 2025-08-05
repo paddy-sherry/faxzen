@@ -70,7 +70,7 @@
                    placeholder="john@example.com"
                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue"
                    required>
-            <p class="mt-1 text-sm text-gray-500">We'll send you a confirmation when your fax is sent</p>
+            <p class="mt-1 text-sm text-gray-500">We'll send you a confirmation when your fax is delivered</p>
         </div>
 
         <div class="flex space-x-4 pt-4">

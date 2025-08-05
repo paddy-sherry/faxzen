@@ -157,9 +157,14 @@
                 gap: 4px;
             }
             .cta-button {
-                display: block;
-                text-align: center;
-                margin: 20px 0;
+                display: block !important;
+                text-align: center !important;
+                margin: 20px auto !important;
+                width: 90% !important;
+                max-width: 280px !important;
+                padding: 18px 20px !important;
+                font-size: 16px !important;
+                background-color: #8b5cf6 !important;
             }
         }
     </style>
@@ -211,7 +216,7 @@
             </div>
 
             <div style="text-align: center;">
-                <a href="{{ $continueUrl }}" class="cta-button" style="color: white !important;">
+                <a href="{{ $continueUrl }}" class="cta-button" style="display: inline-block !important; background-color: #8b5cf6 !important; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white !important; padding: 16px 32px !important; text-decoration: none !important; border-radius: 8px !important; font-weight: 600 !important; font-size: 16px !important; text-align: center !important; margin: 20px auto !important; border: none !important; width: auto !important; max-width: 280px !important;">
                     Complete My Fax Now →
                 </a>
             </div>
