@@ -57,13 +57,62 @@
     <form action="{{ route('fax.step2', $faxJob->hash) }}" method="POST" class="space-y-6">
         @csrf
         
-
-
-        <!-- Pricing Options -->
-        <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-4">
-                Choose Your Option <span class="text-red-500">*</span>
-            </label>
+        @auth
+            @if(Auth::user()->hasCredits())
+                <!-- User has credits - show credit usage interface -->
+                <div class="bg-green-50 border border-green-200 rounded-md p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <svg class="h-6 w-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <h3 class="text-lg font-semibold text-green-800">Using Your Fax Credits</h3>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-green-200">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm text-gray-600">You have</p>
+                                <p class="text-2xl font-bold text-green-600">{{ Auth::user()->fax_credits }} credits</p>
+                                <p class="text-sm text-gray-500">available</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600">This fax will use</p>
+                                <p class="text-xl font-semibold text-gray-900">1 credit</p>
+                                <p class="text-sm text-gray-500">{{ Auth::user()->fax_credits - 1 }} remaining after</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <!-- User logged in but no credits - show payment options -->
+                <div class="bg-orange-50 border border-orange-200 rounded-md p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-orange-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-orange-600">
+                                <strong>No Credits Available</strong> You need to purchase credits or pay per fax to continue.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pricing Options -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-4">
+                        Choose Your Option <span class="text-red-500">*</span>
+                    </label>
+            @endif
+        @else
+            <!-- User not logged in - show payment options -->
+            <!-- Pricing Options -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-4">
+                    Choose Your Option <span class="text-red-500">*</span>
+                </label>
+        @endauth
             <div class="space-y-4">
                 <!-- One-time Payment Option -->
                 <div class="flex items-start">
@@ -130,7 +179,13 @@
                     </div>
                 </div>
             </div>
+        @auth
+            @if(!Auth::user()->hasCredits())
+                </div>  
+            @endif
+        @else
         </div>
+        @endauth
 
         <div>
             <label for="sender_email" class="block text-sm font-medium text-gray-700 mb-2">
@@ -153,7 +208,15 @@
             </a>
             <button type="submit" 
                     class="flex-1 bg-faxzen-blue text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-faxzen-blue transition-colors font-semibold">
-                Continue to Payment →
+                @auth
+                    @if(Auth::user()->hasCredits())
+                        Send Fax (Use 1 Credit) →
+                    @else
+                        Continue to Payment →
+                    @endif
+                @else
+                    Continue to Payment →
+                @endauth
             </button>
         </div>
     </form>
@@ -167,66 +230,158 @@
         <h3 class="text-lg font-semibold text-green-800">What happens next?</h3>
     </div>
     
-    <!-- One-time payment flow -->
-    <div id="onetime-flow" class="payment-flow">
-        <ul class="text-sm text-green-700 space-y-2">
-            <li class="flex items-start">
-                <span class="mr-2">•</span>
-                <span>Complete payment securely with Stripe</span>
-            </li>
-            <li class="flex items-start">
-                <span class="mr-2">•</span>
-                <span>Your fax will be sent immediately after payment</span>
-            </li>
-            <li class="flex items-start">
-                <span class="mr-2">•</span>
-                <span>You'll receive an email confirmation when sent</span>
-            </li>
-        </ul>
-    </div>
-    
-    <!-- Credits flow -->
-    <div id="credits-flow" class="payment-flow hidden">
-        <ul class="text-sm text-green-700 space-y-2">
-            <li class="flex items-start">
-                <span class="mr-2">•</span>
-                <span>Complete payment securely with Stripe</span>
-            </li>
-            <li class="flex items-start">
-                <span class="mr-2">•</span>
-                <span>Your account will be created with 20 fax credits</span>
-            </li>
-            <li class="flex items-start">
-                <span class="mr-2">•</span>
-                <span>Your first fax will be sent immediately</span>
-            </li>
-            <li class="flex items-start">
-                <span class="mr-2">•</span>
-                <span>Set up your password later to access your dashboard</span>
-            </li>
-        </ul>
-    </div>
+    @auth
+        @if(Auth::user()->hasCredits())
+            <!-- User has credits flow -->
+            <ul class="text-sm text-green-700 space-y-2">
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>1 credit will be deducted from your account</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>Your fax will be sent immediately</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>You'll receive an email confirmation when delivered</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>View your fax history in your dashboard</span>
+                </li>
+            </ul>
+        @else
+            <!-- User logged in but no credits - show payment flows -->
+            <!-- One-time payment flow -->
+            <div id="onetime-flow" class="payment-flow">
+                <ul class="text-sm text-green-700 space-y-2">
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Complete payment securely with Stripe</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Your fax will be sent immediately after payment</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>You'll receive an email confirmation when sent</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Credits flow -->
+            <div id="credits-flow" class="payment-flow hidden">
+                <ul class="text-sm text-green-700 space-y-2">
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Complete payment securely with Stripe</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>20 more credits will be added to your account</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Your fax will be sent immediately</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>View your updated credit balance in your dashboard</span>
+                    </li>
+                </ul>
+            </div>
+        @endif
+    @else
+        <!-- User not logged in - show payment flows -->
+        <!-- One-time payment flow -->
+        <div id="onetime-flow" class="payment-flow">
+            <ul class="text-sm text-green-700 space-y-2">
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>Complete payment securely with Stripe</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>Your fax will be sent immediately after payment</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>You'll receive an email confirmation when sent</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Credits flow -->
+        <div id="credits-flow" class="payment-flow hidden">
+            <ul class="text-sm text-green-700 space-y-2">
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>Complete payment securely with Stripe</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>Your account will be created with 20 fax credits</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>Your first fax will be sent immediately</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="mr-2">•</span>
+                    <span>Access your dashboard via magic link authentication</span>
+                </li>
+            </ul>
+        </div>
+    @endauth
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const onetimeRadio = document.getElementById('payment_type_onetime');
-    const creditsRadio = document.getElementById('payment_type_credits');
-    const onetimeFlow = document.getElementById('onetime-flow');
-    const creditsFlow = document.getElementById('credits-flow');
+@auth
+    @if(!Auth::user()->hasCredits())
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const onetimeRadio = document.getElementById('payment_type_onetime');
+            const creditsRadio = document.getElementById('payment_type_credits');
+            const onetimeFlow = document.getElementById('onetime-flow');
+            const creditsFlow = document.getElementById('credits-flow');
 
-    function updateFlow() {
-        if (onetimeRadio.checked) {
-            onetimeFlow.classList.remove('hidden');
-            creditsFlow.classList.add('hidden');
-        } else {
-            onetimeFlow.classList.add('hidden');
-            creditsFlow.classList.remove('hidden');
+            function updateFlow() {
+                if (onetimeRadio.checked) {
+                    onetimeFlow.classList.remove('hidden');
+                    creditsFlow.classList.add('hidden');
+                } else {
+                    onetimeFlow.classList.add('hidden');
+                    creditsFlow.classList.remove('hidden');
+                }
+            }
+
+            onetimeRadio.addEventListener('change', updateFlow);
+            creditsRadio.addEventListener('change', updateFlow);
+        });
+        </script>
+    @endif
+@else
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const onetimeRadio = document.getElementById('payment_type_onetime');
+        const creditsRadio = document.getElementById('payment_type_credits');
+        const onetimeFlow = document.getElementById('onetime-flow');
+        const creditsFlow = document.getElementById('credits-flow');
+
+        function updateFlow() {
+            if (onetimeRadio.checked) {
+                onetimeFlow.classList.remove('hidden');
+                creditsFlow.classList.add('hidden');
+            } else {
+                onetimeFlow.classList.add('hidden');
+                creditsFlow.classList.remove('hidden');
+            }
         }
-    }
 
-    onetimeRadio.addEventListener('change', updateFlow);
-    creditsRadio.addEventListener('change', updateFlow);
-});
-</script>
+        onetimeRadio.addEventListener('change', updateFlow);
+        creditsRadio.addEventListener('change', updateFlow);
+    });
+    </script>
+@endauth
 @endsection 

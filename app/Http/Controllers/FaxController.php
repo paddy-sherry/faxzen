@@ -93,6 +93,41 @@ class FaxController extends Controller
 
     public function processStep2(Request $request, FaxJob $faxJob)
     {
+        // Check if user is authenticated and has credits
+        if (auth()->check() && auth()->user()->hasCredits()) {
+            // User has credits - process fax immediately without payment
+            $request->validate([
+                'sender_email' => 'required|email:rfc,dns|max:255',
+            ]);
+
+            if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
+                return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
+            }
+
+            // Update fax job with sender email
+            $faxJob->update([
+                'sender_email' => $request->sender_email,
+                'status' => FaxJob::STATUS_PAID,
+                'prepared_at' => now(),
+                'amount' => 0, // Mark as credit usage
+            ]);
+
+            // Deduct one credit from user
+            auth()->user()->deductCredit();
+
+            // Dispatch the fax job
+            \App\Jobs\SendFaxJob::dispatch($faxJob);
+
+            Log::info('Fax sent using user credits', [
+                'fax_job_id' => $faxJob->id,
+                'user_id' => auth()->id(),
+                'remaining_credits' => auth()->user()->fresh()->fax_credits
+            ]);
+
+            return redirect()->route('fax.status', $faxJob->hash);
+        }
+
+        // User not authenticated or no credits - proceed with payment flow
         $request->validate([
             'sender_email' => 'required|email:rfc,dns|max:255',
             'payment_type' => 'required|in:onetime,credits',
