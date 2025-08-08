@@ -12,12 +12,18 @@
                 <p class="text-gray-600 mt-1">Job #{{ $faxJob->id }}</p>
             </div>
             <div class="text-right">
-                @if($faxJob->status === 'delivered')
+                @if($faxJob->telnyx_status === 'delivered')
                     <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800">✓ Delivered</span>
-                @elseif($faxJob->status === 'failed')
+                @elseif($faxJob->telnyx_status === 'failed')
                     <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-red-100 text-red-800">✗ Failed</span>
-                @elseif($faxJob->status === 'sent')
-                    <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800">📤 Sent</span>
+                @elseif($faxJob->telnyx_status === 'sending')
+                    <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800">📤 Sending</span>
+                @elseif($faxJob->telnyx_status === 'queued')
+                    <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-yellow-100 text-yellow-800">⏳ Queued</span>
+                @elseif($faxJob->telnyx_status === 'media.processed')
+                    <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-purple-100 text-purple-800">🔄 Processing</span>
+                @elseif($faxJob->telnyx_status)
+                    <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($faxJob->telnyx_status) }}</span>
                 @elseif($faxJob->status === 'paid')
                     <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-yellow-100 text-yellow-800">⏳ Processing</span>
                 @else
@@ -125,7 +131,7 @@
         </div>
 
         <!-- Status Messages -->
-        @if($faxJob->status === 'delivered')
+        @if($faxJob->telnyx_status === 'delivered')
             <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -139,7 +145,7 @@
                     </div>
                 </div>
             </div>
-        @elseif($faxJob->status === 'failed')
+        @elseif($faxJob->telnyx_status === 'failed')
             <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -161,7 +167,7 @@
                     </div>
                 </div>
             </div>
-        @elseif($faxJob->status === 'sent')
+        @elseif($faxJob->telnyx_status === 'sending')
             <div class="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -170,8 +176,36 @@
                         </svg>
                     </div>
                     <div class="ml-3">
-                        <h3 class="text-sm font-medium text-blue-800">Fax Sent</h3>
-                        <p class="text-sm text-blue-700 mt-1">Your fax has been sent and is being processed for delivery. We'll update the status once delivery is confirmed.</p>
+                        <h3 class="text-sm font-medium text-blue-800">Fax Sending</h3>
+                        <p class="text-sm text-blue-700 mt-1">Your fax is currently being transmitted. We'll update the status once delivery is confirmed.</p>
+                    </div>
+                </div>
+            </div>
+        @elseif($faxJob->telnyx_status === 'queued')
+            <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Fax Queued</h3>
+                        <p class="text-sm text-yellow-700 mt-1">Your fax is queued for transmission and will begin sending shortly.</p>
+                    </div>
+                </div>
+            </div>
+        @elseif($faxJob->status === 'paid' && !$faxJob->telnyx_status)
+            <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Processing Payment</h3>
+                        <p class="text-sm text-yellow-700 mt-1">Your payment has been received and your fax is being prepared for transmission.</p>
                     </div>
                 </div>
             </div>
@@ -184,7 +218,7 @@
                 ← Back to Dashboard
             </a>
             
-            @if($faxJob->status === 'failed')
+            @if($faxJob->telnyx_status === 'failed')
                 <a href="{{ route('fax.step1') }}" 
                    class="bg-faxzen-blue text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-faxzen-blue transition-colors font-semibold">
                     Try Again
