@@ -46,20 +46,23 @@
             padding: 40px 30px;
         }
         .access-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            display: inline-block !important;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
             color: white !important;
-            padding: 16px 32px;
+            padding: 16px 32px !important;
             text-decoration: none !important;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            text-align: center;
-            margin: 20px 0;
-            box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            font-size: 16px !important;
+            text-align: center !important;
+            margin: 20px 0 !important;
+            box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3) !important;
             transition: all 0.3s ease;
-            width: auto;
-            max-width: 280px;
+            width: auto !important;
+            min-width: 200px !important;
+            max-width: 280px !important;
+            border: none !important;
+            font-family: 'Helvetica Neue', Arial, sans-serif !important;
         }
         .security-info {
             background-color: #f0f9ff;
@@ -93,9 +96,23 @@
             .access-button {
                 display: block !important;
                 text-align: center !important;
-                margin: 20px auto !important;
                 width: 90% !important;
                 max-width: 280px !important;
+                min-width: 200px !important;
+                padding: 18px 20px !important;
+                font-size: 16px !important;
+                background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 8px !important;
+                font-family: 'Helvetica Neue', Arial, sans-serif !important;
+            }
+            table {
+                width: 100% !important;
+            }
+            td {
+                width: 100% !important;
+                text-align: center !important;
             }
         }
     </style>
@@ -121,10 +138,16 @@
                 Click the secure button below to access your account. This link will expire in <strong>1 hour</strong> for your security.
             </p>
 
-            <div style="text-align: center;">
-                <a href="{{ $accessUrl }}" class="access-button">
-                    🚀 Access My Account Securely
-                </a>
+            <div style="text-align: center; margin: 30px 0;">
+                <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                    <tr>
+                        <td style="border-radius: 8px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); text-align: center;">
+                            <a href="{{ $accessUrl }}" class="access-button" style="display: inline-block !important; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important; color: white !important; padding: 16px 32px !important; text-decoration: none !important; border-radius: 8px !important; font-weight: 600 !important; font-size: 16px !important; text-align: center !important; border: none !important; width: auto !important; min-width: 200px !important; max-width: 280px !important; box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3) !important; font-family: 'Helvetica Neue', Arial, sans-serif !important;">
+                                🚀 Access My Account Securely
+                            </a>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <div class="security-info">
