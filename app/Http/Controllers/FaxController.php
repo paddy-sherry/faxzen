@@ -7,6 +7,7 @@ use App\Models\FaxJob;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\File;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
@@ -209,9 +210,13 @@ class FaxController extends Controller
             // Retrieve the checkout session to verify payment
             $session = Session::retrieve($sessionId);
             
-            if ($session->payment_status === 'paid' && $session->metadata->fax_job_id == $faxJob->id) {
+
+            
+            if ($session->payment_status === 'paid' && (string)$session->metadata->fax_job_id === (string)$faxJob->id) {
                 $paymentType = $session->metadata->payment_type ?? 'onetime';
                 $isCreditsPackage = $paymentType === 'credits';
+                
+
                 
                 if ($isCreditsPackage) {
                     // Create or find user account for credits package
@@ -226,12 +231,15 @@ class FaxController extends Controller
                             'credits_purchased_at' => now(),
                             'stripe_customer_id' => $session->customer,
                         ]);
+                        Log::info('Created new user account for credits package', ['user_id' => $user->id, 'email' => $user->email, 'initial_credits' => $user->fax_credits]);
                     } else {
                         // Add credits to existing account
+                        $beforeCredits = $user->fax_credits;
                         $user->addCredits(20);
                         if ($user->stripe_customer_id === null) {
                             $user->update(['stripe_customer_id' => $session->customer]);
                         }
+                        Log::info('Added credits to existing user', ['user_id' => $user->id, 'credits_added' => 20, 'total_credits' => $user->fresh()->fax_credits]);
                     }
                     
                     // Deduct one credit for this fax
@@ -246,11 +254,29 @@ class FaxController extends Controller
 
                 // Dispatch the job to send the fax
                 SendFaxJob::dispatch($faxJob);
+                
+                Log::info('Payment processed successfully', [
+                    'fax_job_id' => $faxJob->id,
+                    'payment_type' => $paymentType,
+                    'amount' => $isCreditsPackage ? '$20.00 (20 credits)' : '$3.00 (one-time)'
+                ]);
 
                 // Redirect to status page instead of success page
                 return redirect()->route('fax.status', $faxJob->hash);
+            } else {
+                Log::warning('Payment verification failed', [
+                    'payment_status' => $session->payment_status,
+                    'session_fax_job_id' => $session->metadata->fax_job_id ?? 'not_set',
+                    'actual_fax_job_id' => $faxJob->id,
+                    'session_id' => $sessionId
+                ]);
             }
         } catch (\Exception $e) {
+            Log::error('Payment verification exception', [
+                'error' => $e->getMessage(),
+                'fax_job_id' => $faxJob->id,
+                'session_id' => $sessionId
+            ]);
             return redirect()->route('fax.step1')->with('error', 'Payment verification failed.');
         }
 
