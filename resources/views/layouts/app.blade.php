@@ -46,7 +46,6 @@
                             <a href="{{ route('account.dashboard') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">
                                 My Account
                             </a>
-                            <span class="text-sm text-gray-500">{{ Auth::user()->fax_credits }} credits</span>
                             <form action="{{ route('logout') }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">
@@ -83,7 +82,6 @@
                     @auth
                         <div class="border-t border-gray-200 pt-2 mt-2">
                             <a href="{{ route('account.dashboard') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2 block">My Account</a>
-                            <div class="text-sm text-gray-500 py-2">{{ Auth::user()->fax_credits }} credits remaining</div>
                             <form action="{{ route('logout') }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2 text-left w-full">
