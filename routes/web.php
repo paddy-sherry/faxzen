@@ -53,6 +53,27 @@ Route::get('/blog/{post}', [App\Http\Controllers\BlogController::class, 'show'])
 // Sitemap route
 Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 
+// Account management routes
+Route::middleware(['auth'])->prefix('account')->name('account.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\AccountController::class, 'dashboard'])->name('dashboard');
+    Route::get('/settings', [App\Http\Controllers\AccountController::class, 'settings'])->name('settings');
+    Route::put('/settings', [App\Http\Controllers\AccountController::class, 'updateSettings'])->name('settings.update');
+    Route::get('/fax/{faxJob}', [App\Http\Controllers\AccountController::class, 'showFaxJob'])->name('fax-job');
+});
+
+// Secure account access (for users without password)
+Route::post('/account/send-access-link', [App\Http\Controllers\AccountController::class, 'sendAccessLink'])->name('account.send-access-link');
+Route::get('/account/verify-access/{token}', [App\Http\Controllers\AccountController::class, 'verifyAccess'])->name('account.verify-access');
+
+// Authentication routes (Passwordless magic link only)
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+});
+
 // Admin routes (authentication removed for easier access)
 Route::get('/admin/fax-jobs', [App\Http\Controllers\AdminController::class, 'faxJobs'])->name('admin.fax-jobs');
 Route::match(['GET', 'POST'], '/admin/fax-jobs/{id}/retry', [App\Http\Controllers\AdminController::class, 'retryFaxJob'])->name('admin.fax-jobs.retry');

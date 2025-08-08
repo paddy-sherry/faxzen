@@ -40,6 +40,23 @@
                     <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Blog</a>
                     <a href="{{ route('terms') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Terms</a>
                     <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Contact</a>
+                    
+                    @auth
+                        <div class="flex items-center space-x-4">
+                            <a href="{{ route('account.dashboard') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">
+                                My Account
+                            </a>
+                            <span class="text-sm text-gray-500">{{ Auth::user()->fax_credits }} credits</span>
+                            <form action="{{ route('logout') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <a href="{{ route('login') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Login</a>
+                    @endauth
                 </nav>
 
                 <!-- Mobile Menu Button -->
@@ -62,6 +79,22 @@
                     <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2">Blog</a>
                     <a href="{{ route('terms') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2">Terms</a>
                     <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2">Contact</a>
+                    
+                    @auth
+                        <div class="border-t border-gray-200 pt-2 mt-2">
+                            <a href="{{ route('account.dashboard') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2 block">My Account</a>
+                            <div class="text-sm text-gray-500 py-2">{{ Auth::user()->fax_credits }} credits remaining</div>
+                            <form action="{{ route('logout') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2 text-left w-full">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <a href="{{ route('login') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2">Login</a>
+                    @endauth
+                    
                     @if(!request()->is('/'))
                         <a href="/" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-md font-medium transition-all duration-200 text-center mt-2">
                             Send Fax

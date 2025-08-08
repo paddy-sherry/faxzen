@@ -59,6 +59,79 @@
         
 
 
+        <!-- Pricing Options -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-4">
+                Choose Your Option <span class="text-red-500">*</span>
+            </label>
+            <div class="space-y-4">
+                <!-- One-time Payment Option -->
+                <div class="flex items-start">
+                    <input type="radio" 
+                           id="payment_type_onetime" 
+                           name="payment_type" 
+                           value="onetime"
+                           checked
+                           class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
+                    <div class="ml-3 flex-1">
+                        <label for="payment_type_onetime" class="cursor-pointer">
+                            <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
+                                        <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-bold text-faxzen-blue">$3.00</div>
+                                        <div class="text-sm text-gray-500">per fax</div>
+                                    </div>
+                                </div>
+                                <ul class="mt-3 text-sm text-gray-600 space-y-1">
+                                    <li>• Send one fax immediately</li>
+                                    <li>• No account required</li>
+                                    <li>• Email confirmation included</li>
+                                </ul>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Account with Credits Option -->
+                <div class="flex items-start">
+                    <input type="radio" 
+                           id="payment_type_credits" 
+                           name="payment_type" 
+                           value="credits"
+                           class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
+                    <div class="ml-3 flex-1">
+                        <label for="payment_type_credits" class="cursor-pointer">
+                            <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">20-Fax Package</h3>
+                                        <p class="text-sm text-gray-600">Best value for regular users</p>
+                                        <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                            SAVE 67%
+                                        </span>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-bold text-faxzen-blue">$20.00</div>
+                                        <div class="text-sm text-gray-500">20 faxes ($1.00 each)</div>
+                                    </div>
+                                </div>
+                                <ul class="mt-3 text-sm text-gray-600 space-y-1">
+                                    <li>• Send 20 faxes anytime</li>
+                                    <li>• Account dashboard to track usage</li>
+                                    <li>• Fax history and confirmations</li>
+                                    <li>• Credits never expire</li>
+                                </ul>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div>
             <label for="sender_email" class="block text-sm font-medium text-gray-700 mb-2">
                 Your Email Address <span class="text-red-500">*</span>
@@ -93,19 +166,67 @@
         </svg>
         <h3 class="text-lg font-semibold text-green-800">What happens next?</h3>
     </div>
-    <ul class="text-sm text-green-700 space-y-2">
-        <li class="flex items-start">
-            <span class="mr-2">•</span>
-            <span>Complete payment securely with Stripe</span>
-        </li>
-        <li class="flex items-start">
-            <span class="mr-2">•</span>
-            <span>Your fax will be sent immediately after payment</span>
-        </li>
-        <li class="flex items-start">
-            <span class="mr-2">•</span>
-            <span>You'll receive an email confirmation when sent</span>
-        </li>
-    </ul>
+    
+    <!-- One-time payment flow -->
+    <div id="onetime-flow" class="payment-flow">
+        <ul class="text-sm text-green-700 space-y-2">
+            <li class="flex items-start">
+                <span class="mr-2">•</span>
+                <span>Complete payment securely with Stripe</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">•</span>
+                <span>Your fax will be sent immediately after payment</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">•</span>
+                <span>You'll receive an email confirmation when sent</span>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Credits flow -->
+    <div id="credits-flow" class="payment-flow hidden">
+        <ul class="text-sm text-green-700 space-y-2">
+            <li class="flex items-start">
+                <span class="mr-2">•</span>
+                <span>Complete payment securely with Stripe</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">•</span>
+                <span>Your account will be created with 20 fax credits</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">•</span>
+                <span>Your first fax will be sent immediately</span>
+            </li>
+            <li class="flex items-start">
+                <span class="mr-2">•</span>
+                <span>Set up your password later to access your dashboard</span>
+            </li>
+        </ul>
+    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const onetimeRadio = document.getElementById('payment_type_onetime');
+    const creditsRadio = document.getElementById('payment_type_credits');
+    const onetimeFlow = document.getElementById('onetime-flow');
+    const creditsFlow = document.getElementById('credits-flow');
+
+    function updateFlow() {
+        if (onetimeRadio.checked) {
+            onetimeFlow.classList.remove('hidden');
+            creditsFlow.classList.add('hidden');
+        } else {
+            onetimeFlow.classList.add('hidden');
+            creditsFlow.classList.remove('hidden');
+        }
+    }
+
+    onetimeRadio.addEventListener('change', updateFlow);
+    creditsRadio.addEventListener('change', updateFlow);
+});
+</script>
 @endsection 

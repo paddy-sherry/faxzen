@@ -17,3 +17,6 @@ app(Schedule::class)->command('fax:send-reminders')->dailyAt('01:00');
 
 // Schedule fax document cleanup daily at 2:00 AM (48 hours after creation)
 app(Schedule::class)->command('fax:cleanup-documents')->dailyAt('02:00');
+
+// Schedule expired token cleanup daily at 3:00 AM for security
+app(Schedule::class)->command('tokens:cleanup')->dailyAt('03:00');

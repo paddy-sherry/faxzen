@@ -20,7 +20,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'fax_credits',
+        'credits_purchased_at',
+        'stripe_customer_id',
     ];
 
     /**
@@ -42,7 +44,48 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'credits_purchased_at' => 'datetime',
         ];
     }
+
+    /**
+     * Check if user has available fax credits
+     */
+    public function hasCredits(): bool
+    {
+        return $this->fax_credits > 0;
+    }
+
+    /**
+     * Deduct one fax credit
+     */
+    public function deductCredit(): bool
+    {
+        if ($this->fax_credits > 0) {
+            $this->decrement('fax_credits');
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Add fax credits to account
+     */
+    public function addCredits(int $amount): void
+    {
+        $this->increment('fax_credits', $amount);
+        if ($this->credits_purchased_at === null) {
+            $this->update(['credits_purchased_at' => now()]);
+        }
+    }
+
+    /**
+     * Get all fax jobs sent by this user
+     */
+    public function faxJobs()
+    {
+        return $this->hasMany(\App\Models\FaxJob::class, 'sender_email', 'email');
+    }
+
+
 }

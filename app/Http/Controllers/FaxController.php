@@ -94,17 +94,34 @@ class FaxController extends Controller
     {
         $request->validate([
             'sender_email' => 'required|email:rfc,dns|max:255',
+            'payment_type' => 'required|in:onetime,credits',
         ]);
 
         if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
             return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
         }
 
-        // Update the fax job with sender details
+        $paymentType = $request->payment_type;
+        $isCreditsPackage = $paymentType === 'credits';
+
+        // Update the fax job with sender details and payment type
         $faxJob->update([
             'sender_email' => $request->sender_email,
             'status' => FaxJob::STATUS_PAYMENT_PENDING,
         ]);
+
+        // Determine pricing and product details
+        if ($isCreditsPackage) {
+            $amount = 2000; // $20.00 in cents
+            $productName = 'FaxZen.com - 20 Fax Credits Package';
+            $productDescription = "20 fax credits for your account\nFirst fax: {$faxJob->file_original_name} to {$faxJob->recipient_number}";
+            $submitMessage = 'Your account will be created with 20 fax credits, and your first fax will be sent immediately.';
+        } else {
+            $amount = $faxJob->amount * 100; // $3.00 in cents
+            $productName = 'FaxZen.com - Single Fax Delivery';
+            $productDescription = "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}";
+            $submitMessage = 'Your fax will be sent immediately after payment confirmation.';
+        }
 
         // Create Stripe checkout session
         $checkoutSession = Session::create([
@@ -123,7 +140,7 @@ class FaxController extends Controller
             ],
             'custom_text' => [
                 'submit' => [
-                    'message' => 'Your fax will be sent immediately after payment confirmation.',
+                    'message' => $submitMessage,
                 ],
                 'terms_of_service_acceptance' => [
                     'message' => 'By completing this purchase, you agree to our terms of service and privacy policy.',
@@ -134,13 +151,13 @@ class FaxController extends Controller
                     'currency' => 'usd',
                     'tax_behavior' => 'exclusive',
                     'product_data' => [
-                        'name' => 'FaxZen.com fax delivery',
-                        'description' => "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}",
+                        'name' => $productName,
+                        'description' => $productDescription,
                         'images' => [
-                            'https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/f022f0ec-15f5-465d-ab48-764bd2a96100/public', // Professional fax/document icon - replace with your logo
+                            'https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/f022f0ec-15f5-465d-ab48-764bd2a96100/public',
                         ],
                     ],
-                    'unit_amount' => $faxJob->amount * 100, // Convert to cents
+                    'unit_amount' => $amount,
                 ],
                 'quantity' => 1,
             ]],
@@ -168,6 +185,7 @@ class FaxController extends Controller
                 'sender_email' => $faxJob->sender_email,
                 'document_name' => $faxJob->file_original_name,
                 'service' => 'fax_transmission',
+                'payment_type' => $paymentType,
             ],
         ]);
 
@@ -192,6 +210,34 @@ class FaxController extends Controller
             $session = Session::retrieve($sessionId);
             
             if ($session->payment_status === 'paid' && $session->metadata->fax_job_id == $faxJob->id) {
+                $paymentType = $session->metadata->payment_type ?? 'onetime';
+                $isCreditsPackage = $paymentType === 'credits';
+                
+                if ($isCreditsPackage) {
+                    // Create or find user account for credits package
+                    $user = \App\Models\User::where('email', $faxJob->sender_email)->first();
+                    
+                    if (!$user) {
+                        // Create new passwordless user account
+                        $user = \App\Models\User::create([
+                            'name' => explode('@', $faxJob->sender_email)[0], // Use email prefix as default name
+                            'email' => $faxJob->sender_email,
+                            'fax_credits' => 20,
+                            'credits_purchased_at' => now(),
+                            'stripe_customer_id' => $session->customer,
+                        ]);
+                    } else {
+                        // Add credits to existing account
+                        $user->addCredits(20);
+                        if ($user->stripe_customer_id === null) {
+                            $user->update(['stripe_customer_id' => $session->customer]);
+                        }
+                    }
+                    
+                    // Deduct one credit for this fax
+                    $user->deductCredit();
+                }
+
                 // Update fax job status to paid and mark as prepared
                 $faxJob->update([
                     'status' => FaxJob::STATUS_PAID,
