@@ -1,39 +1,48 @@
 @extends('layouts.app')
 
-@section('title', 'Step 2 of 3 - Your Details | FaxZen')
+@section('title', 'Your Details - Step 2 of 3')
 
 @section('content')
-<div class="bg-white rounded-lg shadow-md p-8">
-    <div class="mb-8">
-        <div class="flex items-center justify-center mb-4">
-            <div class="flex items-center space-x-4">
-                <div class="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded-full font-semibold">✓</div>
-                <div class="w-16 h-0.5 bg-green-500"></div>
-                <div class="flex items-center justify-center w-8 h-8 bg-faxzen-blue text-white rounded-full font-semibold">2</div>
-                <div class="w-16 h-0.5 bg-gray-300"></div>
-                <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">3</div>
+<div class="max-w-2xl mx-auto">
+    <!-- Progress Bar -->
+    <div class="flex justify-center mb-8">
+        <div class="flex items-center">
+            <div class="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded-full">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="w-16 h-1 bg-green-500 mx-2"></div>
+            <div class="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full font-semibold">
+                2
+            </div>
+            <div class="w-16 h-1 bg-gray-300 mx-2"></div>
+            <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">
+                3
             </div>
         </div>
-        <h2 class="text-2xl font-bold text-center text-gray-800">Your Details</h2>
-        <p class="text-center text-gray-600 mt-2">Enter your contact information</p>
     </div>
 
-    <div class="bg-gray-50 rounded-lg p-4 mb-6">
-        <h3 class="font-semibold text-gray-800 mb-2">Fax Summary</h3>
-        <div class="text-sm text-gray-600 space-y-1">
-            <p><strong>To:</strong> {{ $faxJob->recipient_number }}</p>
-            <p><strong>Document:</strong> {{ $faxJob->file_original_name }}</p>
-            <p><strong>Price:</strong> ${{ number_format($faxJob->amount, 2) }}</p>
-        </div>
-    </div>
+    <h1 class="text-3xl font-bold text-center mb-2">Your Details</h1>
+    <p class="text-gray-600 text-center mb-8">Enter your contact information</p>
 
     @if ($errors->any())
         <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
-            <ul class="text-red-600 text-sm space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L10 11.414l1.293-1.293a1 1 0 001.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+                    <ul class="mt-1 text-sm text-red-700 list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
         </div>
     @endif
 
@@ -99,148 +108,76 @@
                     </div>
                 </div>
                 
-                <!-- Pricing Options -->
+                <!-- Pricing Options for authenticated users without credits -->
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-4">
                         Choose Your Option <span class="text-red-500">*</span>
                     </label>
                     <div class="space-y-4">
-                <!-- One-time Payment Option -->
-                <div class="flex items-start">
-                    <input type="radio" 
-                           id="payment_type_onetime" 
-                           name="payment_type" 
-                           value="onetime"
-                           checked
-                           class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
-                    <div class="ml-3 flex-1">
-                        <label for="payment_type_onetime" class="cursor-pointer">
-                            <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
-                                        <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
+                        <!-- One-time Payment Option -->
+                        <div class="flex items-start">
+                            <input type="radio" 
+                                   id="payment_type_onetime" 
+                                   name="payment_type" 
+                                   value="onetime"
+                                   checked
+                                   class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
+                            <div class="ml-3 flex-1">
+                                <label for="payment_type_onetime" class="cursor-pointer">
+                                    <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
+                                                <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-2xl font-bold text-faxzen-blue">$3.00</div>
+                                                <div class="text-sm text-gray-500">per fax</div>
+                                            </div>
+                                        </div>
+                                        <ul class="mt-3 text-sm text-gray-600 space-y-1">
+                                            <li>• Send one fax immediately</li>
+                                            <li>• No account required</li>
+                                            <li>• Email confirmation included</li>
+                                        </ul>
                                     </div>
-                                    <div class="text-right">
-                                        <div class="text-2xl font-bold text-faxzen-blue">$3.00</div>
-                                        <div class="text-sm text-gray-500">per fax</div>
-                                    </div>
-                                </div>
-                                <ul class="mt-3 text-sm text-gray-600 space-y-1">
-                                    <li>• Send one fax immediately</li>
-                                    <li>• No account required</li>
-                                    <li>• Email confirmation included</li>
-                                </ul>
+                                </label>
                             </div>
-                        </label>
-                    </div>
-                </div>
+                        </div>
 
-                <!-- Account with Credits Option -->
-                <div class="flex items-start">
-                    <input type="radio" 
-                           id="payment_type_credits" 
-                           name="payment_type" 
-                           value="credits"
-                           class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
-                    <div class="ml-3 flex-1">
-                        <label for="payment_type_credits" class="cursor-pointer">
-                            <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">20-Fax Package</h3>
-                                        <p class="text-sm text-gray-600">Best value for regular users</p>
-                                        <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                                            SAVE 67%
-                                        </span>
+                        <!-- Account with Credits Option -->
+                        <div class="flex items-start">
+                            <input type="radio" 
+                                   id="payment_type_credits" 
+                                   name="payment_type" 
+                                   value="credits"
+                                   class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
+                            <div class="ml-3 flex-1">
+                                <label for="payment_type_credits" class="cursor-pointer">
+                                    <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <h3 class="text-lg font-semibold text-gray-900">20-Fax Package</h3>
+                                                <p class="text-sm text-gray-600">Best value for regular users</p>
+                                                <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                                    SAVE 67%
+                                                </span>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-2xl font-bold text-faxzen-blue">$20.00</div>
+                                                <div class="text-sm text-gray-500">20 faxes ($1.00 each)</div>
+                                            </div>
+                                        </div>
+                                        <ul class="mt-3 text-sm text-gray-600 space-y-1">
+                                            <li>• Send 20 faxes anytime</li>
+                                            <li>• Account dashboard to track usage</li>
+                                            <li>• Fax history and confirmations</li>
+                                            <li>• Credits never expire</li>
+                                        </ul>
                                     </div>
-                                    <div class="text-right">
-                                        <div class="text-2xl font-bold text-faxzen-blue">$20.00</div>
-                                        <div class="text-sm text-gray-500">20 faxes ($1.00 each)</div>
-                                    </div>
-                                </div>
-                                <ul class="mt-3 text-sm text-gray-600 space-y-1">
-                                    <li>• Send 20 faxes anytime</li>
-                                    <li>• Account dashboard to track usage</li>
-                                    <li>• Fax history and confirmations</li>
-                                    <li>• Credits never expire</li>
-                                </ul>
+                                </label>
                             </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            </div>
-        @endauth
-        
-        @auth
-            @if(!Auth::user()->hasCredits())
-                <!-- User logged in but no credits - show payment options -->
-                <div class="space-y-4">
-                    <!-- One-time Payment Option -->
-                    <div class="flex items-start">
-                        <input type="radio" 
-                               id="payment_type_onetime" 
-                               name="payment_type" 
-                               value="onetime"
-                               checked
-                               class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
-                        <div class="ml-3 flex-1">
-                            <label for="payment_type_onetime" class="cursor-pointer">
-                                <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
-                                            <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="text-2xl font-bold text-faxzen-blue">$3.00</div>
-                                            <div class="text-sm text-gray-500">per fax</div>
-                                        </div>
-                                    </div>
-                                    <ul class="mt-3 text-sm text-gray-600 space-y-1">
-                                        <li>• Send one fax immediately</li>
-                                        <li>• No account required</li>
-                                        <li>• Email confirmation included</li>
-                                    </ul>
-                                </div>
-                            </label>
                         </div>
-                    </div>
-
-                    <!-- Account with Credits Option -->
-                    <div class="flex items-start">
-                        <input type="radio" 
-                               id="payment_type_credits" 
-                               name="payment_type" 
-                               value="credits"
-                               class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
-                        <div class="ml-3 flex-1">
-                            <label for="payment_type_credits" class="cursor-pointer">
-                                <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-900">20-Fax Package</h3>
-                                            <p class="text-sm text-gray-600">Best value for regular users</p>
-                                            <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                                                SAVE 67%
-                                            </span>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="text-2xl font-bold text-faxzen-blue">$20.00</div>
-                                            <div class="text-sm text-gray-500">20 faxes ($1.00 each)</div>
-                                        </div>
-                                    </div>
-                                    <ul class="mt-3 text-sm text-gray-600 space-y-1">
-                                        <li>• Send 20 faxes anytime</li>
-                                        <li>• Account dashboard to track usage</li>
-                                        <li>• Fax history and confirmations</li>
-                                        <li>• Credits never expire</li>
-                                    </ul>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
                     </div>
                 </div>
             @endif
@@ -499,17 +436,17 @@
             const creditsFlow = document.getElementById('credits-flow');
 
             function updateFlow() {
-                if (onetimeRadio.checked) {
+                if (onetimeRadio && onetimeRadio.checked) {
                     onetimeFlow.classList.remove('hidden');
                     creditsFlow.classList.add('hidden');
-                } else {
+                } else if (creditsRadio && creditsRadio.checked) {
                     onetimeFlow.classList.add('hidden');
                     creditsFlow.classList.remove('hidden');
                 }
             }
 
-            onetimeRadio.addEventListener('change', updateFlow);
-            creditsRadio.addEventListener('change', updateFlow);
+            if (onetimeRadio) onetimeRadio.addEventListener('change', updateFlow);
+            if (creditsRadio) creditsRadio.addEventListener('change', updateFlow);
         });
         </script>
     @endif
@@ -536,4 +473,4 @@
     });
     </script>
 @endauth
-@endsection 
+@endsection
