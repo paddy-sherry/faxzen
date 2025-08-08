@@ -256,19 +256,39 @@
             @endif
         @endauth
 
-        <div>
-            <label for="sender_email" class="block text-sm font-medium text-gray-700 mb-2">
-                Your Email Address <span class="text-red-500">*</span>
-            </label>
-            <input type="email" 
-                   id="sender_email" 
-                   name="sender_email" 
-                   value="{{ old('sender_email', $faxJob->sender_email) }}"
-                   placeholder="john@example.com"
-                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue"
-                   required>
-            <p class="mt-1 text-sm text-gray-500">We'll send you a confirmation when your fax is delivered</p>
-        </div>
+        @guest
+            <!-- Email field for non-authenticated users -->
+            <div>
+                <label for="sender_email" class="block text-sm font-medium text-gray-700 mb-2">
+                    Your Email Address <span class="text-red-500">*</span>
+                </label>
+                <input type="email" 
+                       id="sender_email" 
+                       name="sender_email" 
+                       value="{{ old('sender_email', $faxJob->sender_email) }}"
+                       placeholder="john@example.com"
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue"
+                       required>
+                <p class="mt-1 text-sm text-gray-500">We'll send you a confirmation when your fax is delivered</p>
+            </div>
+        @else
+            <!-- Hidden input for authenticated users - use their account email -->
+            <input type="hidden" name="sender_email" value="{{ Auth::user()->email }}">
+            
+            <!-- Show confirmation email info -->
+            <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+                <div class="flex items-center">
+                    <svg class="h-5 w-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <div>
+                        <p class="text-sm text-blue-700">
+                            <strong>Confirmation will be sent to:</strong> {{ Auth::user()->email }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endguest
 
         <div class="flex space-x-4 pt-4">
             <a href="{{ route('fax.step1') }}" 

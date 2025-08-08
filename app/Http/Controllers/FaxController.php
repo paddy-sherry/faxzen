@@ -96,17 +96,15 @@ class FaxController extends Controller
         // Check if user is authenticated and has credits
         if (auth()->check() && auth()->user()->hasCredits()) {
             // User has credits - process fax immediately without payment
-            $request->validate([
-                'sender_email' => 'required|email:rfc,dns|max:255',
-            ]);
+            // No need to validate sender_email as we use the authenticated user's email
 
             if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
                 return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
             }
 
-            // Update fax job with sender email
+            // Update fax job with sender email (use authenticated user's email)
             $faxJob->update([
-                'sender_email' => $request->sender_email,
+                'sender_email' => auth()->user()->email,
                 'status' => FaxJob::STATUS_PAID,
                 'prepared_at' => now(),
                 'amount' => 0, // Mark as credit usage
@@ -128,10 +126,20 @@ class FaxController extends Controller
         }
 
         // User not authenticated or no credits - proceed with payment flow
-        $request->validate([
-            'sender_email' => 'required|email:rfc,dns|max:255',
-            'payment_type' => 'required|in:onetime,credits',
-        ]);
+        if (auth()->check()) {
+            // Authenticated user without credits - no need to validate email
+            $request->validate([
+                'payment_type' => 'required|in:onetime,credits',
+            ]);
+            $senderEmail = auth()->user()->email;
+        } else {
+            // Guest user - validate email
+            $request->validate([
+                'sender_email' => 'required|email:rfc,dns|max:255',
+                'payment_type' => 'required|in:onetime,credits',
+            ]);
+            $senderEmail = $request->sender_email;
+        }
 
         if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
             return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
@@ -142,7 +150,7 @@ class FaxController extends Controller
 
         // Update the fax job with sender details and payment type
         $faxJob->update([
-            'sender_email' => $request->sender_email,
+            'sender_email' => $senderEmail,
             'status' => FaxJob::STATUS_PAYMENT_PENDING,
         ]);
 
@@ -164,7 +172,7 @@ class FaxController extends Controller
         $checkoutSession = Session::create([
             'payment_method_types' => ['card'],
             'mode' => 'payment',
-            'customer_email' => $faxJob->sender_email,
+            'customer_email' => $senderEmail,
             'billing_address_collection' => 'required',            
             'automatic_tax' => [
                 'enabled' => true,
@@ -219,7 +227,7 @@ class FaxController extends Controller
             'metadata' => [
                 'fax_job_id' => $faxJob->id,
                 'recipient_number' => $faxJob->recipient_number,
-                'sender_email' => $faxJob->sender_email,
+                'sender_email' => $senderEmail,
                 'document_name' => $faxJob->file_original_name,
                 'service' => 'fax_transmission',
                 'payment_type' => $paymentType,
