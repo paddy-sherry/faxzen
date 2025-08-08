@@ -104,17 +104,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-4">
                         Choose Your Option <span class="text-red-500">*</span>
                     </label>
-            @endif
-        @else
-            <!-- User not logged in - show payment options -->
-            <!-- Pricing Options -->
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-4">
-                    Choose Your Option <span class="text-red-500">*</span>
-                </label>
-        @else
-            <!-- User not logged in - show payment options -->
-            <div class="space-y-4">
+                    <div class="space-y-4">
                 <!-- One-time Payment Option -->
                 <div class="flex items-start">
                     <input type="radio" 
@@ -251,9 +241,82 @@
                             </label>
                         </div>
                     </div>
-                </div>
+                    </div>
                 </div>
             @endif
+        @else
+            <!-- User not logged in - show payment options -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-4">
+                    Choose Your Option <span class="text-red-500">*</span>
+                </label>
+                <div class="space-y-4">
+                    <!-- One-time Payment Option -->
+                    <div class="flex items-start">
+                        <input type="radio" 
+                               id="payment_type_onetime_guest" 
+                               name="payment_type" 
+                               value="onetime"
+                               checked
+                               class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
+                        <div class="ml-3 flex-1">
+                            <label for="payment_type_onetime_guest" class="cursor-pointer">
+                                <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
+                                            <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-faxzen-blue">$3.00</div>
+                                            <div class="text-sm text-gray-500">per fax</div>
+                                        </div>
+                                    </div>
+                                    <ul class="mt-3 text-sm text-gray-600 space-y-1">
+                                        <li>• Send one fax immediately</li>
+                                        <li>• No account required</li>
+                                        <li>• Email confirmation included</li>
+                                    </ul>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Account with Credits Option -->
+                    <div class="flex items-start">
+                        <input type="radio" 
+                               id="payment_type_credits_guest" 
+                               name="payment_type" 
+                               value="credits"
+                               class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
+                        <div class="ml-3 flex-1">
+                            <label for="payment_type_credits_guest" class="cursor-pointer">
+                                <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-gray-900">20-Fax Package</h3>
+                                            <p class="text-sm text-gray-600">Best value for regular users</p>
+                                            <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                                SAVE 67%
+                                            </span>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-faxzen-blue">$20.00</div>
+                                            <div class="text-sm text-gray-500">20 faxes ($1.00 each)</div>
+                                        </div>
+                                    </div>
+                                    <ul class="mt-3 text-sm text-gray-600 space-y-1">
+                                        <li>• Send 20 faxes anytime</li>
+                                        <li>• Account dashboard to track usage</li>
+                                        <li>• Fax history and confirmations</li>
+                                        <li>• Credits never expire</li>
+                                    </ul>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endauth
 
         @guest
@@ -453,23 +516,23 @@
 @else
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const onetimeRadio = document.getElementById('payment_type_onetime');
-        const creditsRadio = document.getElementById('payment_type_credits');
+        const onetimeRadio = document.getElementById('payment_type_onetime_guest');
+        const creditsRadio = document.getElementById('payment_type_credits_guest');
         const onetimeFlow = document.getElementById('onetime-flow');
         const creditsFlow = document.getElementById('credits-flow');
 
         function updateFlow() {
-            if (onetimeRadio.checked) {
+            if (onetimeRadio && onetimeRadio.checked) {
                 onetimeFlow.classList.remove('hidden');
                 creditsFlow.classList.add('hidden');
-            } else {
+            } else if (creditsRadio && creditsRadio.checked) {
                 onetimeFlow.classList.add('hidden');
                 creditsFlow.classList.remove('hidden');
             }
         }
 
-        onetimeRadio.addEventListener('change', updateFlow);
-        creditsRadio.addEventListener('change', updateFlow);
+        if (onetimeRadio) onetimeRadio.addEventListener('change', updateFlow);
+        if (creditsRadio) creditsRadio.addEventListener('change', updateFlow);
     });
     </script>
 @endauth
