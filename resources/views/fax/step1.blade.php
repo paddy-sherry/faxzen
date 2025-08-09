@@ -225,6 +225,107 @@
     </div>
 </div>
 
+<!-- Pricing Section -->
+<div class="mt-8 bg-white rounded-lg shadow-md p-8">
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Simple Pricing</h2>
+        <p class="text-gray-600">Choose the option that works best for you</p>
+    </div>
+    
+    <div class="grid gap-6 lg:grid-cols-2 max-w-4xl mx-auto">
+        <!-- One-time Payment -->
+        <div class="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800">One-time Payment</h3>
+                    <p class="text-gray-600">Perfect for occasional use</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">$3.00</div>
+                    <div class="text-sm text-gray-500">per fax</div>
+                </div>
+            </div>
+            <ul class="text-gray-600 space-y-2 mb-6">
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Send one fax immediately
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    No account required
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Email confirmation included
+                </li>
+            </ul>
+        </div>
+
+        <!-- 20-Fax Package -->
+        <div class="border border-purple-500 rounded-lg p-6 hover:shadow-lg transition-all duration-200 relative bg-gradient-to-br from-purple-50 to-purple-100">
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    SAVE 67%
+                </span>
+            </div>
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800">20-Fax Package</h3>
+                    <p class="text-gray-600">Best value for regular users</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">$20.00</div>
+                    <div class="text-sm text-gray-500">20 faxes ($1.00 each)</div>
+                </div>
+            </div>
+            <ul class="text-gray-600 space-y-2 mb-6">
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Send 20 faxes anytime
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Account dashboard to track usage
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Fax history and confirmations
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Credits never expire
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center mt-8">
+        <p class="text-gray-600 mb-4">Ready to get started?</p>
+        <a href="#" 
+           onclick="document.querySelector('form').scrollIntoView({ behavior: 'smooth' }); return false;"
+           class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold rounded-md transition-all duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            Upload Your Document
+        </a>
+    </div>
+</div>
+
 <!-- Real-Time Tracking Section -->
 <div class="mt-8 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
