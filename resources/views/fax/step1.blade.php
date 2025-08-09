@@ -226,7 +226,7 @@
 </div>
 
 <!-- Pricing Section -->
-<div class="mt-8 bg-white rounded-lg shadow-md p-8">
+<div id="pricing" class="mt-8 bg-white rounded-lg shadow-md p-8">
     <div class="text-center mb-8">
         <h2 class="text-3xl font-bold text-gray-800 mb-4">Simple Pricing</h2>
         <p class="text-gray-600">Choose the option that works best for you</p>

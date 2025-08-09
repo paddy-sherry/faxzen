@@ -37,8 +37,8 @@
                 
                 <!-- Navigation Links -->
                 <nav class="hidden md:flex items-center space-x-6">
+                    <a href="{{ route('fax.step1') }}#pricing" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Pricing</a>
                     <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Blog</a>
-                    <a href="{{ route('terms') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Terms</a>
                     <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Contact</a>
                     
                     @auth
@@ -76,7 +76,7 @@
             <div id="mobile-menu" class="md:hidden hidden border-t border-gray-200 mt-2 pt-2">
                 <div class="flex flex-col space-y-2">
                     <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2">Blog</a>
-                    <a href="{{ route('terms') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2">Terms</a>
+                    <a href="{{ route('fax.step1') }}#pricing" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2">Pricing</a>
                     <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium py-2">Contact</a>
                     
                     @auth
@@ -113,7 +113,7 @@
                 <div class="mb-4">
                     <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Blog</a>
                     <span class="text-gray-400">|</span>
-                    <a href="{{ route('terms') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Terms of Service</a>
+                    <a href="{{ route('fax.step1') }}#pricing" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Pricing</a>
                     <span class="text-gray-400">|</span>
                     <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 mx-3">Contact</a>
                 </div>
