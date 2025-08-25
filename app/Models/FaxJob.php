@@ -63,7 +63,39 @@ class FaxJob extends Model
 
     public function canRetry()
     {
-        return $this->retry_attempts < 2;
+        // Allow more retries for busy lines and temporary errors
+        $errorMessage = strtolower($this->error_message ?? '');
+        $isBusyError = str_contains($errorMessage, 'busy') || str_contains($errorMessage, 'user_busy');
+        $isTemporaryError = str_contains($errorMessage, 'timeout') || 
+                           str_contains($errorMessage, 'call_dropped') ||
+                           str_contains($errorMessage, 'network');
+        
+        if ($isBusyError || $isTemporaryError) {
+            return $this->retry_attempts < 20; // Allow up to 20 retries for these errors
+        }
+        
+        return $this->retry_attempts < 3; // Standard retry limit for other errors
+    }
+
+    /**
+     * Check if this fax failed due to busy line
+     */
+    public function isFailedDueToBusyLine()
+    {
+        $errorMessage = strtolower($this->error_message ?? '');
+        return str_contains($errorMessage, 'busy') || str_contains($errorMessage, 'user_busy');
+    }
+
+    /**
+     * Check if this is a retryable temporary error
+     */
+    public function hasTemporaryError()
+    {
+        $errorMessage = strtolower($this->error_message ?? '');
+        return str_contains($errorMessage, 'timeout') || 
+               str_contains($errorMessage, 'call_dropped') ||
+               str_contains($errorMessage, 'network') ||
+               str_contains($errorMessage, 'service_unavailable');
     }
 
     /**

@@ -20,14 +20,71 @@ class SendFaxJob implements ShouldQueue
 
     protected $faxJob;
     protected $originalLocalPath;
-    public $tries = 3; // Allow up to 3 attempts
-    public $backoff = [30, 60]; // Retry after 30s, then 60s
+    public $tries = 20; // Allow up to 20 attempts for busy lines
+    public $timeout = 300; // 5 minute timeout per attempt
 
     public function __construct(FaxJob $faxJob)
     {
         $this->faxJob = $faxJob;
         // Store the original local path for cleanup
         $this->originalLocalPath = $faxJob->file_path;
+    }
+
+    /**
+     * Calculate intelligent backoff timing based on error type and attempt number
+     */
+    public function backoff()
+    {
+        $attempt = $this->attempts();
+        $currentHour = now()->hour;
+        
+        // Get the last error message to determine retry strategy
+        $errorMessage = strtolower($this->faxJob->error_message ?? '');
+        $isBusyError = str_contains($errorMessage, 'busy') || str_contains($errorMessage, 'user_busy');
+        $isTemporaryError = str_contains($errorMessage, 'timeout') || 
+                           str_contains($errorMessage, 'call_dropped') ||
+                           str_contains($errorMessage, 'network');
+
+        // Base delays for different error types
+        if ($isBusyError) {
+            // For busy lines: Start with 5 min, increase to 15 min
+            $baseDelay = min(300 + ($attempt * 120), 900); // 5-15 minutes
+            
+            // Avoid retrying during likely off-business hours (10 PM - 7 AM)
+            if ($currentHour >= 22 || $currentHour <= 7) {
+                // Wait until 8 AM
+                $nextBusinessHour = now()->hour(8)->minute(0)->second(0);
+                if ($currentHour >= 22) {
+                    $nextBusinessHour = $nextBusinessHour->addDay();
+                }
+                $waitUntilBusiness = $nextBusinessHour->diffInSeconds(now());
+                $baseDelay = max($baseDelay, $waitUntilBusiness);
+            }
+            
+        } elseif ($isTemporaryError) {
+            // For temporary errors: Exponential backoff 30s, 60s, 2min, 4min, 8min
+            $baseDelay = min(30 * pow(2, $attempt - 1), 480); // Max 8 minutes
+            
+        } else {
+            // For unknown errors: Conservative exponential backoff
+            $baseDelay = min(60 * pow(2, $attempt - 1), 600); // Max 10 minutes
+        }
+
+        // Add some jitter to prevent thundering herd
+        $jitter = rand(-30, 30);
+        $delay = max(30, $baseDelay + $jitter); // Minimum 30 seconds
+
+        Log::info("Fax retry scheduled", [
+            'fax_job_id' => $this->faxJob->id,
+            'attempt' => $attempt,
+            'delay_seconds' => $delay,
+            'delay_minutes' => round($delay / 60, 1),
+            'error_type' => $isBusyError ? 'busy' : ($isTemporaryError ? 'temporary' : 'unknown'),
+            'current_hour' => $currentHour,
+            'error_message' => $this->faxJob->error_message
+        ]);
+
+        return $delay;
     }
 
     public function handle(): void
@@ -108,46 +165,82 @@ class SendFaxJob implements ShouldQueue
             // Note: Email will be sent via console job when delivery is confirmed
 
         } catch (\Exception $e) {
+            // Parse Telnyx error for specific failure reasons
+            $errorMessage = $e->getMessage();
+            $isUserBusy = str_contains(strtolower($errorMessage), 'busy') || 
+                         str_contains(strtolower($errorMessage), 'user_busy');
+            $isTemporaryError = str_contains(strtolower($errorMessage), 'timeout') || 
+                               str_contains(strtolower($errorMessage), 'call_dropped') ||
+                               str_contains(strtolower($errorMessage), 'network') ||
+                               str_contains(strtolower($errorMessage), 'service_unavailable');
+
             $this->faxJob->update([
                 'retry_attempts' => $this->attempts(),
                 'last_retry_at' => now(),
-                'error_message' => $e->getMessage(),
+                'error_message' => $errorMessage,
             ]);
 
             Log::error("Failed to send fax via Telnyx", [
                 'fax_job_id' => $this->faxJob->id,
                 'attempt' => $this->attempts(),
                 'max_attempts' => $this->tries,
-                'error_message' => $e->getMessage(),
+                'error_message' => $errorMessage,
+                'error_type' => $isUserBusy ? 'user_busy' : ($isTemporaryError ? 'temporary' : 'unknown'),
                 'error_code' => $e->getCode(),
-                'error_file' => $e->getFile(),
-                'error_line' => $e->getLine(),
                 'recipient' => $this->faxJob->recipient_number,
                 'from_number' => config('services.telnyx.from_number'),
                 'connection_id' => config('services.telnyx.connection_id'),
-                'file_path' => $this->faxJob->file_path,
-                'stack_trace' => $e->getTraceAsString()
+                'will_retry' => $this->attempts() < $this->tries,
+                'next_retry_in_minutes' => $this->attempts() < $this->tries ? round($this->backoff() / 60, 1) : 0
             ]);
 
             // If this was the last attempt, mark as failed
             if ($this->attempts() >= $this->tries) {
+                $finalStatus = $isUserBusy ? 'failed_busy_line' : 'failed_permanent';
+                
                 $this->faxJob->update([
                     'status' => FaxJob::STATUS_FAILED,
+                    'error_message' => $this->getFinalErrorMessage($errorMessage, $isUserBusy, $isTemporaryError)
                 ]);
                 
-                Log::error("Fax job failed permanently", [
+                Log::error("Fax job failed permanently after {$this->tries} attempts", [
                     'fax_job_id' => $this->faxJob->id,
-                    'final_error' => $e->getMessage(),
+                    'final_error' => $errorMessage,
+                    'error_type' => $isUserBusy ? 'user_busy' : ($isTemporaryError ? 'temporary' : 'unknown'),
+                    'total_attempts' => $this->tries,
+                    'recipient' => $this->faxJob->recipient_number,
+                    'suggestion' => $isUserBusy ? 'Try again during business hours or contact recipient' : 'Check recipient fax number and try again'
                 ]);
 
                 // Clean up local file
                 $this->cleanupLocalFile();
 
-                // TODO: Send failure notification email
+                // Send failure notification email
                 $this->sendFailureEmail();
             }
 
             throw $e; // Re-throw to trigger retry
+        }
+    }
+
+    /**
+     * Generate user-friendly final error message based on error type
+     */
+    protected function getFinalErrorMessage($originalError, $isUserBusy, $isTemporaryError)
+    {
+        if ($isUserBusy) {
+            return "Recipient's fax line was busy after 20 attempts over " . 
+                   round($this->tries * 10 / 60, 1) . " hours. The fax machine may be turned off, " .
+                   "on a long phone call, or experiencing technical issues. Please try again later " .
+                   "or contact the recipient to ensure their fax machine is available.";
+        } elseif ($isTemporaryError) {
+            return "Temporary network or connection issues prevented delivery after 20 attempts. " .
+                   "This could be due to network congestion, service outages, or connection problems. " .
+                   "Please verify the fax number and try again later.";
+        } else {
+            return "Fax delivery failed after 20 attempts. This could be due to an invalid fax number, " .
+                   "a disconnected line, or compatibility issues with the recipient's fax machine. " .
+                   "Please verify the fax number is correct and active. Original error: " . $originalError;
         }
     }
 

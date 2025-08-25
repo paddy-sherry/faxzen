@@ -22,7 +22,7 @@ class SendFaxReminders extends Command
      *
      * @var string
      */
-    protected $description = 'Send reminder emails to users who have not completed their fax submissions after 24 hours';
+    protected $description = 'Send reminder emails to users who have not completed their fax submissions after 12 hours';
 
     /**
      * Execute the console command.
