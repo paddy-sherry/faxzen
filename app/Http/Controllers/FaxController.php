@@ -162,7 +162,7 @@ class FaxController extends Controller
             $productDescription = "20 fax credits for your account\nFirst fax: {$faxJob->file_original_name} to {$faxJob->recipient_number}";
             $submitMessage = 'Your account will be created with 20 fax credits, and your first fax will be sent immediately.';
         } else {
-            $amount = $faxJob->amount * 100; // $3.00 in cents
+            $amount = $faxJob->amount * 100; // $5.00 in cents
             $productName = 'FaxZen.com - Single Fax Delivery';
             $productDescription = "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}";
             $submitMessage = 'Your fax will be sent immediately after payment confirmation.';
@@ -302,7 +302,7 @@ class FaxController extends Controller
                 Log::info('Payment processed successfully', [
                     'fax_job_id' => $faxJob->id,
                     'payment_type' => $paymentType,
-                    'amount' => $isCreditsPackage ? '$20.00 (20 credits)' : '$3.00 (one-time)'
+                    'amount' => $isCreditsPackage ? '$20.00 (20 credits)' : '$5.00 (one-time)'
                 ]);
 
                 // Redirect to status page instead of success page

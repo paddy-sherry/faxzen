@@ -2,7 +2,7 @@
 
 @section('title', '▷ Send Fax Online With Tracked Delivery. No Account Needed')
 
-@section('meta_description', 'Send fax online instantly for $3. Upload PDF documents, enter fax number, and send faxes online with tracked delivery. No fax machine required. Trusted worldwide')
+@section('meta_description', 'Send fax online instantly for $5. Upload PDF documents, enter fax number, and send faxes online with tracked delivery. No fax machine required. Trusted worldwide')
 
 @section('content')
 <div class="bg-white rounded-lg shadow-md p-8">
@@ -189,7 +189,7 @@
             Send A Fax Online With Ease
             </h2>
             <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
-            We've revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it's as simple as uploading your PDF document, paying just $3, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
+            We've revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it's as simple as uploading your PDF document, paying just $5, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
             </p>
         </div>
         
@@ -241,7 +241,7 @@
                     <p class="text-gray-600">Perfect for occasional use</p>
                 </div>
                 <div class="text-right">
-                    <div class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">$3.00</div>
+                    <div class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">$5.00</div>
                     <div class="text-sm text-gray-500">per fax</div>
                 </div>
             </div>
@@ -505,7 +505,7 @@
             </p>
 
             <p>
-                Cost-effectiveness is another major benefit when you send faxes digitally. Traditional fax machines require significant upfront investment, ongoing maintenance, dedicated phone lines, and supplies like paper and toner. When you <strong>send a fax online</strong>, you only pay for what you use – just $3 per fax with no hidden fees or monthly subscriptions.
+                Cost-effectiveness is another major benefit when you send faxes digitally. Traditional fax machines require significant upfront investment, ongoing maintenance, dedicated phone lines, and supplies like paper and toner. When you <strong>send a fax online</strong>, you only pay for what you use – just $5 per fax with no hidden fees or monthly subscriptions.
             </p>
 
             <p>
@@ -571,7 +571,7 @@
 
                 <div class="border border-gray-200 rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">How much does it cost to send a fax?</h3>
-                    <p class="text-gray-600">$3 per fax. Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Pay only for what you use with secure Stripe payment processing.</p>
+                    <p class="text-gray-600">$5 per fax. Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Pay only for what you use with secure Stripe payment processing.</p>
                 </div>
             </div>
         </div>
