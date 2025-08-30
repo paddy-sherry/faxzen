@@ -65,4 +65,43 @@
         <p class="text-green-700">We've made faxing simple, fast, and reliable.</p>
     </div>
 </div>
+
+<!-- Google Ads Conversion Tracking -->
+@if(config('services.google.ads_conversion_id') && !session('conversion_tracked_' . $faxJob->id))
+<script>
+    // Track Google Ads conversion for successful payment
+    gtag('event', 'conversion', {
+        'send_to': '{{ config('services.google.ads_conversion_id') }}/{{ config('services.google.ads_conversion_label') }}',
+        'value': {{ $faxJob->amount }},
+        'currency': 'USD',
+        'transaction_id': '{{ $faxJob->hash }}',
+        'custom_parameters': {
+            'payment_type': '{{ $faxJob->amount == 20 ? "bulk_package" : "single_fax" }}',
+            'recipient_country': '{{ substr($faxJob->recipient_number, 0, 2) == "+1" ? "US" : "International" }}',
+            'page': 'success'
+        }
+    });
+    
+    // Enhanced conversion data (if customer email available)
+    @if($faxJob->sender_email)
+    gtag('config', '{{ config('services.google.ads_id') }}', {
+        'customer_lifetime_value': {{ $faxJob->amount }},
+        'user_data': {
+            'email_address': '{{ hash('sha256', strtolower(trim($faxJob->sender_email))) }}',
+            'phone_number': '{{ hash('sha256', preg_replace("/[^0-9]/", "", $faxJob->recipient_number)) }}'
+        }
+    });
+    @endif
+    
+    console.log('Google Ads conversion tracked on success page:', {
+        value: {{ $faxJob->amount }},
+        transaction_id: '{{ $faxJob->hash }}',
+        payment_type: '{{ $faxJob->amount == 20 ? "bulk_package" : "single_fax" }}'
+    });
+</script>
+@php
+    // Mark conversion as tracked in session to prevent duplicate tracking
+    session(['conversion_tracked_' . $faxJob->id => true]);
+@endphp
+@endif
 @endsection 
