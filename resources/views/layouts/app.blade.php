@@ -26,9 +26,10 @@
         }
     </script>
     <script defer data-domain="faxzen.com" src="https://plausible.io/js/script.tagged-events.js"></script>
-    
+ 
     <!-- Google Ads Global Site Tag -->
     @if(config('services.google.ads_id'))
+
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google.ads_id') }}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];

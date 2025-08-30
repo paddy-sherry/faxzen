@@ -68,7 +68,7 @@ return [
 
     // Google Ads & Analytics Configuration
     'google' => [
-        'ads_id' => env('AW-937159538'),
+        'ads_id' => env('GOOGLE_ADS_ID'),
         'analytics_id' => env('GOOGLE_ANALYTICS_ID'),
         'ads_conversion_id' => env('GOOGLE_ADS_CONVERSION_ID'),
         'ads_conversion_label' => env('GOOGLE_ADS_CONVERSION_LABEL'),
