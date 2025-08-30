@@ -134,6 +134,33 @@ class FaxJob extends Model
     }
 
     /**
+     * Get recipient timezone information
+     */
+    public function getRecipientTimezoneInfo()
+    {
+        if (!class_exists('\App\Services\TimezoneService')) {
+            return null;
+        }
+        
+        return \App\Services\TimezoneService::getBusinessHoursInfo(
+            \App\Services\TimezoneService::detectTimezoneFromPhoneNumber($this->recipient_number)
+        );
+    }
+
+    /**
+     * Check if retry is likely delayed due to business hours
+     */
+    public function isRetryDelayedForBusinessHours()
+    {
+        if (!$this->isFailedDueToBusyLine() || !$this->canRetry()) {
+            return false;
+        }
+
+        $timezoneInfo = $this->getRecipientTimezoneInfo();
+        return $timezoneInfo && !$timezoneInfo['is_business_hours'];
+    }
+
+    /**
      * Boot the model
      */
     protected static function boot()

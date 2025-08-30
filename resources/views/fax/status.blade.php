@@ -257,6 +257,29 @@
                 <h3 class="font-semibold text-yellow-800 mb-2">📤 Sending Your Fax</h3>
                 <p class="text-yellow-700">Your fax is being sent to {{ $faxJob->recipient_number }}. Please allow up to 10 minutes. We keep trying until it's done!</p>
                 
+                @if($faxJob->isRetryDelayedForBusinessHours())
+                    @php
+                        $recipientInfo = $faxJob->getRecipientTimezoneInfo();
+                    @endphp
+                    <div class="mt-3 p-3 bg-blue-100 rounded-md border-l-4 border-blue-400">
+                        <div class="flex items-start">
+                            <svg class="w-4 h-4 text-blue-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div class="text-sm">
+                                <p class="text-blue-800 font-medium">Waiting for recipient's business hours</p>
+                                @if($recipientInfo)
+                                    <p class="text-blue-700 mt-1">
+                                        {{ $recipientInfo['is_weekend'] ? 'Weekend detected' : 'After hours' }} in {{ $recipientInfo['timezone'] }}
+                                        <br>Current time: {{ \Carbon\Carbon::parse($recipientInfo['current_time'])->format('g:i A T') }}
+                                        <br>Next retry: {{ \Carbon\Carbon::parse($recipientInfo['next_business_hour'])->format('D, M j \a\t g:i A T') }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                
                 <div class="mt-3 flex justify-center">
                     <div class="flex space-x-1">
                         <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>

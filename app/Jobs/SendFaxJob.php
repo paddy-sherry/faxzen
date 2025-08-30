@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Telnyx\Telnyx;
 use Telnyx\Fax;
+use App\Services\TimezoneService;
 
 class SendFaxJob implements ShouldQueue
 {
@@ -32,11 +33,15 @@ class SendFaxJob implements ShouldQueue
 
     /**
      * Calculate intelligent backoff timing based on error type and attempt number
+     * Now with geographic timezone awareness and weekend detection
      */
     public function backoff()
     {
         $attempt = $this->attempts();
-        $currentHour = now()->hour;
+        
+        // Detect recipient's timezone from phone number
+        $recipientTimezone = TimezoneService::detectTimezoneFromPhoneNumber($this->faxJob->recipient_number);
+        $businessHoursInfo = TimezoneService::getBusinessHoursInfo($recipientTimezone);
         
         // Get the last error message to determine retry strategy
         $errorMessage = strtolower($this->faxJob->error_message ?? '');
@@ -50,15 +55,20 @@ class SendFaxJob implements ShouldQueue
             // For busy lines: Start with 5 min, increase to 15 min
             $baseDelay = min(300 + ($attempt * 120), 900); // 5-15 minutes
             
-            // Avoid retrying during likely off-business hours (10 PM - 7 AM)
-            if ($currentHour >= 22 || $currentHour <= 7) {
-                // Wait until 8 AM
-                $nextBusinessHour = now()->hour(8)->minute(0)->second(0);
-                if ($currentHour >= 22) {
-                    $nextBusinessHour = $nextBusinessHour->addDay();
-                }
-                $waitUntilBusiness = $nextBusinessHour->diffInSeconds(now());
+            // Smart business hours logic using recipient's timezone
+            if (!$businessHoursInfo['is_business_hours']) {
+                // Wait until next business hour in recipient's timezone
+                $waitUntilBusiness = $businessHoursInfo['delay_until_business'];
                 $baseDelay = max($baseDelay, $waitUntilBusiness);
+                
+                Log::info("Busy line retry delayed until recipient business hours", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'recipient_timezone' => $recipientTimezone,
+                    'recipient_current_time' => $businessHoursInfo['current_time'],
+                    'is_weekend' => $businessHoursInfo['is_weekend'],
+                    'next_business_hour' => $businessHoursInfo['next_business_hour'],
+                    'delay_hours' => round($waitUntilBusiness / 3600, 1)
+                ]);
             }
             
         } elseif ($isTemporaryError) {
@@ -74,13 +84,16 @@ class SendFaxJob implements ShouldQueue
         $jitter = rand(-30, 30);
         $delay = max(30, $baseDelay + $jitter); // Minimum 30 seconds
 
-        Log::info("Fax retry scheduled", [
+        Log::info("Fax retry scheduled with geographic awareness", [
             'fax_job_id' => $this->faxJob->id,
             'attempt' => $attempt,
             'delay_seconds' => $delay,
             'delay_minutes' => round($delay / 60, 1),
+            'delay_hours' => round($delay / 3600, 1),
             'error_type' => $isBusyError ? 'busy' : ($isTemporaryError ? 'temporary' : 'unknown'),
-            'current_hour' => $currentHour,
+            'recipient_phone' => $this->faxJob->recipient_number,
+            'recipient_timezone' => $recipientTimezone,
+            'recipient_business_hours_info' => $businessHoursInfo,
             'error_message' => $this->faxJob->error_message
         ]);
 
