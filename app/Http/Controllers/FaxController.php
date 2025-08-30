@@ -93,6 +93,9 @@ class FaxController extends Controller
 
     public function processStep2(Request $request, FaxJob $faxJob)
     {
+        // Validate scheduling data first
+        $schedulingData = $this->validateAndProcessScheduling($request);
+        
         // Check if user is authenticated and has credits
         if (auth()->check() && auth()->user()->hasCredits()) {
             // User has credits - process fax immediately without payment
@@ -102,9 +105,10 @@ class FaxController extends Controller
                 return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
             }
 
-            // Update fax job with sender email (use authenticated user's email)
+            // Update fax job with sender email and scheduling (use authenticated user's email)
             $faxJob->update([
                 'sender_email' => auth()->user()->email,
+                'scheduled_time' => $schedulingData['scheduled_time'],
                 'status' => FaxJob::STATUS_PAID,
                 'prepared_at' => now(),
                 'amount' => 0, // Mark as credit usage
@@ -113,8 +117,8 @@ class FaxController extends Controller
             // Deduct one credit from user
             auth()->user()->deductCredit();
 
-            // Dispatch the fax job
-            \App\Jobs\SendFaxJob::dispatch($faxJob);
+            // Dispatch the fax job with scheduling
+            $this->dispatchFaxJob($faxJob, $schedulingData);
 
             Log::info('Fax sent using user credits', [
                 'fax_job_id' => $faxJob->id,
@@ -148,9 +152,10 @@ class FaxController extends Controller
         $paymentType = $request->payment_type;
         $isCreditsPackage = $paymentType === 'credits';
 
-        // Update the fax job with sender details and payment type
+        // Update the fax job with sender details, scheduling, and payment type
         $faxJob->update([
             'sender_email' => $senderEmail,
+            'scheduled_time' => $schedulingData['scheduled_time'],
             'status' => FaxJob::STATUS_PAYMENT_PENDING,
         ]);
 
@@ -335,6 +340,74 @@ class FaxController extends Controller
         }
 
         return view('fax.status', compact('faxJob'));
+    }
+
+    /**
+     * Validate and process scheduling data from the request
+     */
+    protected function validateAndProcessScheduling(Request $request)
+    {
+        $scheduleType = $request->input('schedule_type', 'now');
+        $scheduledTime = null;
+        
+        if ($scheduleType === 'later') {
+            // Validate scheduling fields
+            $request->validate([
+                'schedule_type' => 'required|in:now,later',
+                'scheduled_time_utc' => 'required|date|after:now',
+                'user_timezone' => 'required|string|max:255',
+            ], [
+                'scheduled_time_utc.required' => 'Please select a date and time for scheduling.',
+                'scheduled_time_utc.date' => 'Invalid date and time format.',
+                'scheduled_time_utc.after' => 'Scheduled time must be in the future.',
+            ]);
+            
+            $scheduledTime = \Carbon\Carbon::parse($request->scheduled_time_utc);
+            
+            // Additional validation: not more than 30 days in advance
+            if ($scheduledTime->isAfter(now()->addDays(30))) {
+                return redirect()->back()->withErrors([
+                    'schedule_time' => 'Cannot schedule more than 30 days in advance.'
+                ])->withInput();
+            }
+            
+            // Log scheduling info
+            Log::info('Fax scheduled for future delivery', [
+                'scheduled_time_utc' => $scheduledTime->toISOString(),
+                'user_timezone' => $request->user_timezone,
+                'local_time' => $scheduledTime->setTimezone($request->user_timezone)->format('Y-m-d H:i:s T')
+            ]);
+        }
+        
+        return [
+            'schedule_type' => $scheduleType,
+            'scheduled_time' => $scheduledTime,
+            'user_timezone' => $request->input('user_timezone'),
+        ];
+    }
+
+    /**
+     * Dispatch the fax job with proper scheduling
+     */
+    protected function dispatchFaxJob(FaxJob $faxJob, array $schedulingData)
+    {
+        if ($schedulingData['schedule_type'] === 'later' && $schedulingData['scheduled_time']) {
+            // Schedule the job for later execution
+            \App\Jobs\SendFaxJob::dispatch($faxJob)->delay($schedulingData['scheduled_time']);
+            
+            Log::info('Fax job scheduled for delayed execution', [
+                'fax_job_id' => $faxJob->id,
+                'scheduled_time' => $schedulingData['scheduled_time']->toISOString(),
+                'delay_seconds' => $schedulingData['scheduled_time']->diffInSeconds(now())
+            ]);
+        } else {
+            // Send immediately
+            \App\Jobs\SendFaxJob::dispatch($faxJob);
+            
+            Log::info('Fax job dispatched for immediate execution', [
+                'fax_job_id' => $faxJob->id
+            ]);
+        }
     }
 
 

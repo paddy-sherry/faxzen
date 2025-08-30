@@ -44,6 +44,10 @@
     </script>
     @endif
     
+    <!-- Moment.js for timezone handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+    
     @stack('styles')
 </head>
 <body class="bg-gray-50 min-h-screen">

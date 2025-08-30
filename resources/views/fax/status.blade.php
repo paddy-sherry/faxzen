@@ -227,10 +227,23 @@
 
     <!-- Current Status Message -->
     <div class="mb-8 text-center">
-        @if($faxJob->getCurrentStep() == 1)
+        @if($faxJob->isPendingScheduled())
+            <div class="bg-purple-50 rounded-lg p-4 status-card breathe-animation">
+                <h3 class="font-semibold text-purple-800 mb-2">🕒 Fax Scheduled</h3>
+                <p class="text-purple-700">Your fax is scheduled to be sent on:</p>
+                <p class="text-lg font-semibold text-purple-900 mt-2">{{ $faxJob->getScheduledTimeFormatted() }}</p>
+                <div class="mt-3">
+                    <div class="text-sm text-purple-600" id="countdown-timer"></div>
+                </div>
+            </div>
+        @elseif($faxJob->getCurrentStep() == 1)
             <div class="bg-blue-50 rounded-lg p-4 status-card breathe-animation">
                 <h3 class="font-semibold text-blue-800 mb-2">🔄 Preparing Your Fax</h3>
-                <p class="text-blue-700">Your fax is in our queue and will be processed shortly.</p>
+                @if($faxJob->isScheduled())
+                    <p class="text-blue-700">Your fax will be sent on {{ $faxJob->getScheduledTimeFormatted() }}</p>
+                @else
+                    <p class="text-blue-700">Your fax is in our queue and will be processed shortly.</p>
+                @endif
                 <div class="mt-3 flex justify-center">
                     <div class="flex space-x-1">
                         <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
@@ -291,8 +304,14 @@
                     <span class="text-gray-600">Amount Paid:</span>
                     <span class="font-medium text-green-600">${{ number_format($faxJob->amount, 2) }}</span>
                 </div>
+                @if($faxJob->scheduled_time)
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Scheduled For:</span>
+                        <span class="font-medium text-purple-600">{{ $faxJob->getScheduledTimeFormatted() }}</span>
+                    </div>
+                @endif
                 <div class="flex justify-between">
-                    <span class="text-gray-600">Started:</span>
+                    <span class="text-gray-600">{{ $faxJob->scheduled_time ? 'Created' : 'Started' }}:</span>
                     <span class="font-medium">{{ $faxJob->created_at->format('M j, Y g:i A') }}</span>
                 </div>
             </div>
@@ -353,9 +372,52 @@
 @endphp
 @endif
 
+<!-- Countdown Timer for Scheduled Faxes -->
+@if($faxJob->isPendingScheduled())
+<script>
+function updateCountdown() {
+    const scheduledTime = new Date('{{ $faxJob->scheduled_time->toISOString() }}');
+    const now = new Date();
+    const timeDiff = scheduledTime - now;
+    
+    if (timeDiff <= 0) {
+        document.getElementById('countdown-timer').innerHTML = 'Sending now...';
+        // Refresh page to show updated status
+        setTimeout(function() {
+            window.location.reload();
+        }, 2000);
+        return;
+    }
+    
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+    
+    let countdownText = 'Sending in: ';
+    if (days > 0) {
+        countdownText += `${days}d ${hours}h ${minutes}m`;
+    } else if (hours > 0) {
+        countdownText += `${hours}h ${minutes}m ${seconds}s`;
+    } else if (minutes > 0) {
+        countdownText += `${minutes}m ${seconds}s`;
+    } else {
+        countdownText += `${seconds}s`;
+    }
+    
+    document.getElementById('countdown-timer').innerHTML = countdownText;
+}
+
+// Update countdown immediately and then every second
+updateCountdown();
+setInterval(updateCountdown, 1000);
+</script>
+@endif
+
 @if($faxJob->getCurrentStep() < 4)
 <script>
-    // Auto-refresh every 5 seconds if not complete
+    // Auto-refresh every 5 seconds if not complete (but not for scheduled faxes that haven't started yet)
+    @if(!$faxJob->isPendingScheduled())
     setTimeout(function() {
         window.location.reload();
     }, 10000);
@@ -375,6 +437,7 @@
             countdownElement.innerHTML = 'Refreshing...';
         }
     }, 1000);
+    @endif
 </script>
 @endif
 @endsection 

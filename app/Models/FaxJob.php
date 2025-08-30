@@ -10,6 +10,7 @@ class FaxJob extends Model
         'hash',
         'recipient_number',
         'sender_email',
+        'scheduled_time',
         'file_path',
         'file_original_name',
         'amount',
@@ -37,6 +38,7 @@ class FaxJob extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'scheduled_time' => 'datetime',
         'last_retry_at' => 'datetime',
         'prepared_at' => 'datetime',
         'sending_started_at' => 'datetime',
@@ -96,6 +98,39 @@ class FaxJob extends Model
                str_contains($errorMessage, 'call_dropped') ||
                str_contains($errorMessage, 'network') ||
                str_contains($errorMessage, 'service_unavailable');
+    }
+
+    /**
+     * Check if this fax is scheduled for future delivery
+     */
+    public function isScheduled()
+    {
+        return $this->scheduled_time && $this->scheduled_time->isFuture();
+    }
+
+    /**
+     * Check if this is a scheduled fax that hasn't been sent yet
+     */
+    public function isPendingScheduled()
+    {
+        return $this->isScheduled() && $this->status === self::STATUS_PAID;
+    }
+
+    /**
+     * Get human-readable scheduled time
+     */
+    public function getScheduledTimeFormatted($timezone = null)
+    {
+        if (!$this->scheduled_time) {
+            return null;
+        }
+
+        $time = $this->scheduled_time;
+        if ($timezone) {
+            $time = $time->setTimezone($timezone);
+        }
+
+        return $time->format('M j, Y \a\t g:i A T');
     }
 
     /**
