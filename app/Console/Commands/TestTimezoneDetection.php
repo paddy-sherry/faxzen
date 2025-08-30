@@ -136,10 +136,15 @@ class TestTimezoneDetection extends Command
             }
         }
         
-        $this->info("💡 Tips:");
+        $this->info("💡 Smart Retry System:");
+        $this->line("• <fg=green>Stage 1:</> Quick retries (attempts 2-6) - 2, 4, 6, 8, 10 minutes");
+        $this->line("• <fg=yellow>Stage 2:</> Geographic awareness (attempts 7+) - waits for business hours");
+        $this->line("• <fg=blue>Business hours:</> 8 AM - 6 PM in recipient's local timezone");
+        $this->line("• <fg=magenta>Weekends:</> Wait until Monday 8 AM for persistent busy lines");
+        $this->newLine();
+        $this->line("💡 Tips:");
         $this->line("• Use 'php artisan fax:test-timezone +15551234567' to test a specific number");
-        $this->line("• Business hours are 8 AM - 6 PM in the recipient's local timezone");
-        $this->line("• Fax retries for busy lines wait until business hours");
-        $this->line("• Weekend faxes wait until Monday morning");
+        $this->line("• Most busy lines resolve during quick retry stage (first 30 minutes)");
+        $this->line("• Geographic awareness only applies to persistent busy lines");
     }
 }

@@ -18,6 +18,7 @@ class FaxJob extends Model
         'status',
         'telnyx_fax_id',
         'retry_attempts',
+        'retry_stage',
         'last_retry_at',
         'error_message',
 
@@ -152,12 +153,64 @@ class FaxJob extends Model
      */
     public function isRetryDelayedForBusinessHours()
     {
-        if (!$this->isFailedDueToBusyLine() || !$this->canRetry()) {
-            return false;
-        }
+        return $this->retry_stage === 'business_hours_wait';
+    }
 
-        $timezoneInfo = $this->getRecipientTimezoneInfo();
-        return $timezoneInfo && !$timezoneInfo['is_business_hours'];
+    /**
+     * Check if in quick retry stage
+     */
+    public function isInQuickRetryStage()
+    {
+        return $this->retry_stage === 'quick_retry';
+    }
+
+    /**
+     * Check if dealing with persistent busy line
+     */
+    public function isPersistentBusyLine()
+    {
+        return $this->retry_stage === 'persistent_busy';
+    }
+
+    /**
+     * Get user-friendly retry stage message
+     */
+    public function getRetryStageMessage()
+    {
+        switch ($this->retry_stage) {
+            case 'quick_retry':
+                return [
+                    'title' => '📞 Trying Again Soon',
+                    'message' => 'The line was busy, but we\'ll keep trying every few minutes. Most busy lines clear up quickly.',
+                    'color' => 'blue'
+                ];
+            case 'persistent_busy':
+                return [
+                    'title' => '🔄 Persistent Busy Line',
+                    'message' => 'Still busy after several attempts. We\'re continuing to retry during business hours.',
+                    'color' => 'yellow'
+                ];
+            case 'business_hours_wait':
+                $recipientInfo = $this->getRecipientTimezoneInfo();
+                if ($recipientInfo) {
+                    $reason = $recipientInfo['is_weekend'] ? 'It\'s currently weekend' : 'It\'s after business hours';
+                    $nextTime = \Carbon\Carbon::parse($recipientInfo['next_business_hour'])->format('D, M j \a\t g:i A T');
+                    return [
+                        'title' => '🕐 Waiting for Business Hours',
+                        'message' => "{$reason} at the recipient's location. We'll try again during business hours for better success rates.",
+                        'next_attempt' => $nextTime,
+                        'timezone_info' => $recipientInfo,
+                        'color' => 'purple'
+                    ];
+                }
+                return [
+                    'title' => '🕐 Waiting for Better Timing',
+                    'message' => 'We\'re timing our retries for when the recipient is most likely to be available.',
+                    'color' => 'purple'
+                ];
+            default:
+                return null;
+        }
     }
 
     /**

@@ -257,30 +257,52 @@
                 <h3 class="font-semibold text-yellow-800 mb-2">📤 Sending Your Fax</h3>
                 <p class="text-yellow-700">Your fax is being sent to {{ $faxJob->recipient_number }}. Please allow up to 10 minutes. We keep trying until it's done!</p>
                 
-                @if($faxJob->isRetryDelayedForBusinessHours())
-                    @php
-                        $recipientInfo = $faxJob->getRecipientTimezoneInfo();
-                    @endphp
-                    <div class="mt-3 p-3 bg-blue-100 rounded-md border-l-4 border-blue-400">
+                @php
+                    $retryStageMessage = $faxJob->getRetryStageMessage();
+                @endphp
+                
+                @if($retryStageMessage)
+                    <div class="mt-4 p-4 bg-{{ $retryStageMessage['color'] }}-50 rounded-md border-l-4 border-{{ $retryStageMessage['color'] }}-400">
                         <div class="flex items-start">
-                            <svg class="w-4 h-4 text-blue-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <svg class="w-5 h-5 text-{{ $retryStageMessage['color'] }}-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                @if($retryStageMessage['color'] === 'blue')
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                @elseif($retryStageMessage['color'] === 'yellow')
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                @else
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                @endif
                             </svg>
-                            <div class="text-sm">
-                                <p class="text-blue-800 font-medium">Waiting for recipient's business hours</p>
-                                @if($recipientInfo)
-                                    <p class="text-blue-700 mt-1">
-                                        {{ $recipientInfo['is_weekend'] ? 'Weekend detected' : 'After hours' }} in {{ $recipientInfo['timezone'] }}
-                                        <br>Current time: {{ \Carbon\Carbon::parse($recipientInfo['current_time'])->format('g:i A T') }}
-                                        <br>Next retry: {{ \Carbon\Carbon::parse($recipientInfo['next_business_hour'])->format('D, M j \a\t g:i A T') }}
-                                    </p>
+                            <div class="flex-1">
+                                <h4 class="text-{{ $retryStageMessage['color'] }}-900 font-semibold text-sm">{{ $retryStageMessage['title'] }}</h4>
+                                <p class="text-{{ $retryStageMessage['color'] }}-800 text-sm mt-1">{{ $retryStageMessage['message'] }}</p>
+                                
+                                @if(isset($retryStageMessage['next_attempt']))
+                                    <div class="mt-3 p-2 bg-{{ $retryStageMessage['color'] }}-100 rounded border">
+                                        <div class="text-{{ $retryStageMessage['color'] }}-800 text-xs space-y-1">
+                                            <div><strong>Recipient timezone:</strong> {{ $retryStageMessage['timezone_info']['timezone'] ?? 'Unknown' }}</div>
+                                            <div><strong>Current time there:</strong> {{ \Carbon\Carbon::parse($retryStageMessage['timezone_info']['current_time'] ?? '')->format('g:i A T') }}</div>
+                                            <div><strong>Next retry:</strong> {{ $retryStageMessage['next_attempt'] }}</div>
+                                            @if($retryStageMessage['timezone_info']['is_weekend'] ?? false)
+                                                <div class="text-{{ $retryStageMessage['color'] }}-700 font-medium">🏖️ Weekend - waiting for Monday</div>
+                                            @else
+                                                <div class="text-{{ $retryStageMessage['color'] }}-700 font-medium">🌙 After hours - waiting for business hours</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+                                
+                                @if($faxJob->retry_attempts > 0)
+                                    <div class="mt-2 text-{{ $retryStageMessage['color'] }}-700 text-xs">
+                                        Attempt {{ $faxJob->retry_attempts }} of {{ $faxJob->canRetry() ? '20' : $faxJob->retry_attempts }}
+                                    </div>
                                 @endif
                             </div>
                         </div>
                     </div>
                 @endif
                 
-                <div class="mt-3 flex justify-center">
+                <div class="mt-4 flex justify-center">
                     <div class="flex space-x-1">
                         <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
                         <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
