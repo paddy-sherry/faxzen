@@ -713,8 +713,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Form validation before submit
-        const form = document.querySelector('form');
+        // Form validation before submit - target the MAIN fax form, not the logout form!  
+        const form = document.querySelector('form.space-y-6') || document.querySelector('form[action*="step2"]');
         console.log('=== JAVASCRIPT DEBUG ===');
         console.log('Form element found:', form);
         console.log('Form action:', form ? form.action : 'NO FORM');
