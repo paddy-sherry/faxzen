@@ -797,6 +797,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Timezone offset:', scheduledDateTime.format('Z'));
                 console.log('=== END DEBUG ===');
                 
+                // TEMPORARY: Alert to pause and see debug output
+                alert('DEBUG PAUSE: Check console output now, then click OK to continue');
+                
                 // Add hidden input with UTC timestamp
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
