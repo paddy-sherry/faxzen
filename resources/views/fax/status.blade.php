@@ -431,14 +431,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Convert UTC time to user's local timezone for display
     if (typeof moment !== 'undefined') {
-        const localTime = moment.utc(scheduledTimeUTC).tz(userTimezone);
+        // Parse the server time as UTC and convert to user's timezone
+        const serverTime = moment.utc(scheduledTimeUTC);
+        const localTime = serverTime.tz(userTimezone);
+        
+        console.log('Server time parsed as UTC:', serverTime.format('YYYY-MM-DD HH:mm:ss [UTC]'));
+        console.log('Converted to user timezone:', localTime.format('YYYY-MM-DD HH:mm:ss z'));
+        
+        // Check if this looks like the expected local time or if we have a double conversion
+        const now = moment().tz(userTimezone);
+        const timeDiffHours = localTime.diff(now, 'hours', true);
+        
+        console.log('Time difference from now (hours):', timeDiffHours);
+        console.log('Current time in user timezone:', now.format('YYYY-MM-DD HH:mm:ss z'));
+        
         const displayElement = document.getElementById('scheduled-time-display');
         if (displayElement) {
             displayElement.innerHTML = localTime.format('MMM D, YYYY [at] h:mm A z');
         }
         
-        console.log('Converted to local time:', localTime.format('YYYY-MM-DD HH:mm:ss z'));
-        console.log('Display format:', localTime.format('MMM D, YYYY [at] h:mm A z'));
+        console.log('Final display format:', localTime.format('MMM D, YYYY [at] h:mm A z'));
     } else {
         console.log('Moment.js not available, showing UTC time');
     }
