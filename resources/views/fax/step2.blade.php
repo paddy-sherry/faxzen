@@ -567,13 +567,24 @@
 <!-- Fax Scheduling JavaScript -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== PAGE LOAD DEBUG ===');
+    console.log('DOM Content Loaded - JavaScript is running');
+    console.log('Current URL:', window.location.href);
+    console.log('Moment.js available:', typeof moment);
+    
     // Initialize scheduling functionality
     initializeScheduling();
     
     function initializeScheduling() {
+        console.log('=== INITIALIZE SCHEDULING DEBUG ===');
         const nowRadio = document.getElementById('schedule_type_now');
         const laterRadio = document.getElementById('schedule_type_later');
         const scheduleControls = document.getElementById('schedule-controls');
+        
+        console.log('Elements found:');
+        console.log('- nowRadio:', nowRadio);
+        console.log('- laterRadio:', laterRadio);
+        console.log('- scheduleControls:', scheduleControls);
         const dateInput = document.getElementById('schedule_date');
         const timeSelect = document.getElementById('schedule_time');
         const userTimezoneSpan = document.getElementById('user-timezone');
@@ -704,7 +715,20 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Form validation before submit
         const form = document.querySelector('form');
+        console.log('=== JAVASCRIPT DEBUG ===');
+        console.log('Form element found:', form);
+        console.log('Form action:', form ? form.action : 'NO FORM');
+        console.log('Later radio checked:', laterRadio ? laterRadio.checked : 'NO LATER RADIO');
+        
+        if (!form) {
+            console.error('ERROR: Form element not found! JavaScript will not work.');
+            return;
+        }
+        
         form.addEventListener('submit', function(e) {
+            console.log('=== FORM SUBMIT HANDLER TRIGGERED ===');
+            console.log('Event:', e);
+            console.log('Later radio checked:', laterRadio.checked);
             if (laterRadio.checked) {
                 if (!validateScheduleTime()) {
                     e.preventDefault();

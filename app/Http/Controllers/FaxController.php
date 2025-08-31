@@ -96,6 +96,11 @@ class FaxController extends Controller
         // Validate scheduling data first
         $schedulingData = $this->validateAndProcessScheduling($request);
         
+        // Check if validation returned a redirect response (error case)
+        if ($schedulingData instanceof \Illuminate\Http\RedirectResponse) {
+            return $schedulingData;
+        }
+        
         // Check if user is authenticated and has credits
         if (auth()->check() && auth()->user()->hasCredits()) {
             // User has credits - process fax immediately without payment
