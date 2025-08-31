@@ -772,39 +772,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Method 1 (explicit format):');
                 console.log('  - Valid:', method1.isValid());
                 console.log('  - Local:', method1.format('YYYY-MM-DD HH:mm:ss z'));
-                console.log('  - UTC:', method1.utc().format('YYYY-MM-DD HH:mm:ss'));
+                console.log('  - UTC:', method1.clone().utc().format('YYYY-MM-DD HH:mm:ss'));
                 
                 // Method 2: Let moment auto-parse then set timezone
                 const method2 = moment(`${selectedDate} ${selectedTime}`).tz(userTimezone);
                 console.log('Method 2 (auto-parse + tz):');
                 console.log('  - Valid:', method2.isValid());
                 console.log('  - Local:', method2.format('YYYY-MM-DD HH:mm:ss z'));
-                console.log('  - UTC:', method2.utc().format('YYYY-MM-DD HH:mm:ss'));
+                console.log('  - UTC:', method2.clone().utc().format('YYYY-MM-DD HH:mm:ss'));
                 
                 // Method 3: Parse as local time then convert
                 const method3 = moment.tz(`${selectedDate} ${selectedTime}`, "YYYY-MM-DD HH:mm", userTimezone);
                 console.log('Method 3 (same as method 1):');
                 console.log('  - Valid:', method3.isValid());
                 console.log('  - Local:', method3.format('YYYY-MM-DD HH:mm:ss z'));
-                console.log('  - UTC:', method3.utc().format('YYYY-MM-DD HH:mm:ss'));
+                console.log('  - UTC:', method3.clone().utc().format('YYYY-MM-DD HH:mm:ss'));
                 
                 // Use the most reliable method
                 const scheduledDateTime = method1.isValid() ? method1 : method2;
                 console.log('=== FINAL CONVERSION RESULT ===');
                 console.log('Using method:', method1.isValid() ? '1 (explicit)' : '2 (auto-parse)');
                 console.log('Final local time:', scheduledDateTime.format('YYYY-MM-DD HH:mm:ss z'));
-                console.log('Final UTC time:', scheduledDateTime.utc().format('YYYY-MM-DD HH:mm:ss'));
+                console.log('Final UTC time:', scheduledDateTime.clone().utc().format('YYYY-MM-DD HH:mm:ss'));
                 console.log('Timezone offset:', scheduledDateTime.format('Z'));
-                console.log('=== END DEBUG ===');
                 
-                // TEMPORARY: Alert to pause and see debug output
-                alert('DEBUG PAUSE: Check console output now, then click OK to continue');
+                // Create UTC timestamp for server
+                const utcTimestamp = scheduledDateTime.clone().utc().format('YYYY-MM-DD HH:mm:ss');
+                console.log('UTC timestamp being sent to server:', utcTimestamp);
+                console.log('=== END DEBUG ===');
                 
                 // Add hidden input with UTC timestamp
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
                 hiddenInput.name = 'scheduled_time_utc';
-                hiddenInput.value = scheduledDateTime.utc().format('YYYY-MM-DD HH:mm:ss');
+                hiddenInput.value = utcTimestamp; // Use the UTC timestamp we just calculated
                 form.appendChild(hiddenInput);
                 
                 // Add timezone for reference
