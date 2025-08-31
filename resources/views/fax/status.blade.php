@@ -431,26 +431,56 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Convert UTC time to user's local timezone for display
     if (typeof moment !== 'undefined') {
-        // Parse the server time as UTC and convert to user's timezone
-        const serverTime = moment.utc(scheduledTimeUTC);
-        const localTime = serverTime.tz(userTimezone);
+        console.log('Raw server time string:', scheduledTimeUTC);
         
-        console.log('Server time parsed as UTC:', serverTime.format('YYYY-MM-DD HH:mm:ss [UTC]'));
-        console.log('Converted to user timezone:', localTime.format('YYYY-MM-DD HH:mm:ss z'));
+        // Try different parsing methods to handle the timezone issue
+        const method1 = moment.utc(scheduledTimeUTC);
+        const method2 = moment(scheduledTimeUTC).utc();
+        const method3 = moment.parseZone(scheduledTimeUTC).utc();
         
-        // Check if this looks like the expected local time or if we have a double conversion
+        console.log('Method 1 (moment.utc):', method1.format('YYYY-MM-DD HH:mm:ss [UTC]'));
+        console.log('Method 2 (moment().utc):', method2.format('YYYY-MM-DD HH:mm:ss [UTC]'));
+        console.log('Method 3 (parseZone):', method3.format('YYYY-MM-DD HH:mm:ss [UTC]'));
+        
+        // Use the most reliable method - direct parsing of ISO string
+        const serverTime = moment(scheduledTimeUTC);
+        console.log('Server time (direct parse):', serverTime.format('YYYY-MM-DD HH:mm:ss z'));
+        
+        // WORKAROUND: If the database is storing local time instead of UTC,
+        // we need to treat it as such
         const now = moment().tz(userTimezone);
-        const timeDiffHours = localTime.diff(now, 'hours', true);
-        
-        console.log('Time difference from now (hours):', timeDiffHours);
         console.log('Current time in user timezone:', now.format('YYYY-MM-DD HH:mm:ss z'));
+        
+        // Parse the server time as if it's already in the user's timezone
+        // This handles the case where Step 2 didn't convert properly
+        const scheduledTimeInUserTz = moment.tz(scheduledTimeUTC.slice(0, -1), userTimezone);
+        console.log('Treating server time as local time:', scheduledTimeInUserTz.format('YYYY-MM-DD HH:mm:ss z'));
+        
+        const timeDiffFromLocal = scheduledTimeInUserTz.diff(now, 'minutes');
+        const timeDiffFromUTC = serverTime.tz(userTimezone).diff(now, 'minutes');
+        
+        console.log('Time diff if treated as local (minutes):', timeDiffFromLocal);
+        console.log('Time diff if treated as UTC (minutes):', timeDiffFromUTC);
+        
+        // Choose the interpretation that makes more sense (closer to a reasonable scheduling time)
+        let displayTime;
+        if (Math.abs(timeDiffFromLocal) < Math.abs(timeDiffFromUTC) && timeDiffFromLocal > -30) {
+            // Use local time interpretation if it's more reasonable and not in the past
+            displayTime = scheduledTimeInUserTz;
+            console.log('Using local time interpretation (database has local time)');
+        } else {
+            // Use UTC interpretation
+            displayTime = serverTime.tz(userTimezone);
+            console.log('Using UTC interpretation (database has UTC time)');
+        }
         
         const displayElement = document.getElementById('scheduled-time-display');
         if (displayElement) {
-            displayElement.innerHTML = localTime.format('MMM D, YYYY [at] h:mm A z');
+            displayElement.innerHTML = displayTime.format('MMM D, YYYY [at] h:mm A z');
         }
         
-        console.log('Final display format:', localTime.format('MMM D, YYYY [at] h:mm A z'));
+        console.log('Final display format:', displayTime.format('MMM D, YYYY [at] h:mm A z'));
+        console.log('Final display time chosen:', displayTime.format('YYYY-MM-DD HH:mm:ss z'));
     } else {
         console.log('Moment.js not available, showing UTC time');
     }
