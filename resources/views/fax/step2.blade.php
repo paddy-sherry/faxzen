@@ -714,7 +714,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Convert the selected time to UTC for server processing
                 const selectedDate = dateInput.value;
                 const selectedTime = timeSelect.value;
+                
+                // Debug logging
+                console.log('=== SCHEDULING DEBUG INFO ===');
+                console.log('Selected Date:', selectedDate);
+                console.log('Selected Time:', selectedTime);
+                console.log('User Timezone:', userTimezone);
+                console.log('Moment.js available:', typeof moment);
+                
+                // Check if moment.tz is available
+                if (typeof moment === 'undefined') {
+                    alert('ERROR: Moment.js is not loaded! Scheduling will fail.');
+                    e.preventDefault();
+                    return false;
+                }
+                
                 const scheduledDateTime = moment.tz(`${selectedDate} ${selectedTime}`, userTimezone);
+                console.log('Scheduled DateTime (local):', scheduledDateTime.format());
+                console.log('Scheduled DateTime (UTC):', scheduledDateTime.utc().format('YYYY-MM-DD HH:mm:ss'));
                 
                 // Add hidden input with UTC timestamp
                 const hiddenInput = document.createElement('input');
@@ -729,6 +746,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 timezoneInput.name = 'user_timezone';
                 timezoneInput.value = userTimezone;
                 form.appendChild(timezoneInput);
+                
+                console.log('Hidden fields added:', {
+                    scheduled_time_utc: hiddenInput.value,
+                    user_timezone: timezoneInput.value
+                });
             }
         });
     }

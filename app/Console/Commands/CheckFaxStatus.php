@@ -117,6 +117,7 @@ class CheckFaxStatus extends Command
                     // Send confirmation email if not already sent (regardless of when it was marked delivered)
                     if (!$faxJob->email_sent) {
                         Log::debug('checking fax jobs 12');
+                        Log::debug('sending email 12.1 '. $faxJob->id);
                         try {
                             \Mail::to($faxJob->sender_email)->bcc('faxzen.com+656498d49b@invite.trustpilot.com')->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
                             $faxJob->markEmailSent();

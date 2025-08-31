@@ -350,17 +350,34 @@ class FaxController extends Controller
         $scheduleType = $request->input('schedule_type', 'now');
         $scheduledTime = null;
         
+        // Debug logging - remove after fixing
+        Log::info('=== SCHEDULING DEBUG - SERVER SIDE ===', [
+            'all_inputs' => $request->all(),
+            'schedule_type' => $scheduleType,
+            'has_scheduled_time_utc' => $request->has('scheduled_time_utc'),
+            'scheduled_time_utc_value' => $request->input('scheduled_time_utc'),
+            'has_user_timezone' => $request->has('user_timezone'),
+            'user_timezone_value' => $request->input('user_timezone'),
+        ]);
+        
         if ($scheduleType === 'later') {
             // Validate scheduling fields
             $request->validate([
                 'schedule_type' => 'required|in:now,later',
-                'scheduled_time_utc' => 'required|date|after:now',
-                'user_timezone' => 'required|string|max:255',
+                'scheduled_time_utc' => 'nullable|date|after:now',
+                'user_timezone' => 'nullable|string|max:255',
             ], [
                 'scheduled_time_utc.required' => 'Please select a date and time for scheduling.',
                 'scheduled_time_utc.date' => 'Invalid date and time format.',
                 'scheduled_time_utc.after' => 'Scheduled time must be in the future.',
             ]);
+            
+            // Check if JavaScript failed to populate the fields
+            if (!$request->has('scheduled_time_utc') || !$request->input('scheduled_time_utc')) {
+                return redirect()->back()->withErrors([
+                    'schedule_time' => 'Scheduling failed - please ensure JavaScript is enabled and try again, or choose "Send Immediately".'
+                ])->withInput();
+            }
             
             $scheduledTime = \Carbon\Carbon::parse($request->scheduled_time_utc);
             
