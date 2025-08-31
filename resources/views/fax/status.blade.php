@@ -357,7 +357,7 @@
                 @endif
                 <div class="flex justify-between">
                     <span class="text-gray-600">{{ $faxJob->scheduled_time ? 'Created' : 'Started' }}:</span>
-                    <span class="font-medium">{{ $faxJob->created_at->format('M j, Y g:i A') }}</span>
+                    <span class="font-medium" id="created-time-display">{{ $faxJob->created_at->format('M j, Y g:i A') }}</span>
                 </div>
             </div>
         </div>
@@ -429,82 +429,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const scheduledTimeUTC = '{{ $faxJob->scheduled_time->toISOString() }}';
     userTimezone = moment.tz.guess();
     
-    console.log('=== STATUS PAGE TIMEZONE DEBUG ===');
-    console.log('UTC Time from server:', scheduledTimeUTC);
-    console.log('User Timezone:', userTimezone);
-    
     // Convert UTC time to user's local timezone for display
     if (typeof moment !== 'undefined') {
-        console.log('Raw server time string:', scheduledTimeUTC);
-        
-        // Try different parsing methods to handle the timezone issue
-        const method1 = moment.utc(scheduledTimeUTC);
-        const method2 = moment(scheduledTimeUTC).utc();
-        const method3 = moment.parseZone(scheduledTimeUTC).utc();
-        
-        console.log('Method 1 (moment.utc):', method1.format('YYYY-MM-DD HH:mm:ss [UTC]'));
-        console.log('Method 2 (moment().utc):', method2.format('YYYY-MM-DD HH:mm:ss [UTC]'));
-        console.log('Method 3 (parseZone):', method3.format('YYYY-MM-DD HH:mm:ss [UTC]'));
-        
-        // Use the most reliable method - direct parsing of ISO string
-        const serverTime = moment(scheduledTimeUTC);
-        console.log('Server time (direct parse):', serverTime.format('YYYY-MM-DD HH:mm:ss z'));
-        
-        // WORKAROUND: If the database is storing local time instead of UTC,
-        // we need to treat it as such
+        // Smart timezone correction: handle cases where database stores local time as UTC
         const now = moment().tz(userTimezone);
-        console.log('Current time in user timezone:', now.format('YYYY-MM-DD HH:mm:ss z'));
-        
-        // Parse the server time as if it's already in the user's timezone
-        // This handles the case where Step 2 didn't convert properly
+        const serverTime = moment(scheduledTimeUTC);
         const scheduledTimeInUserTz = moment.tz(scheduledTimeUTC.slice(0, -1), userTimezone);
-        console.log('Treating server time as local time:', scheduledTimeInUserTz.format('YYYY-MM-DD HH:mm:ss z'));
         
         const timeDiffFromLocal = scheduledTimeInUserTz.diff(now, 'minutes');
         const timeDiffFromUTC = serverTime.tz(userTimezone).diff(now, 'minutes');
         
-        console.log('Time diff if treated as local (minutes):', timeDiffFromLocal);
-        console.log('Time diff if treated as UTC (minutes):', timeDiffFromUTC);
-        
-        // Choose the interpretation that makes more sense (closer to a reasonable scheduling time)
+        // Choose the interpretation that makes more sense (closer to reasonable scheduling time)
         if (Math.abs(timeDiffFromLocal) < Math.abs(timeDiffFromUTC) && timeDiffFromLocal > -30) {
-            // Use local time interpretation if it's more reasonable and not in the past
-            correctedScheduledTime = scheduledTimeInUserTz;
-            console.log('Using local time interpretation (database has local time)');
+            correctedScheduledTime = scheduledTimeInUserTz; // Database has local time
         } else {
-            // Use UTC interpretation
-            correctedScheduledTime = serverTime.tz(userTimezone);
-            console.log('Using UTC interpretation (database has UTC time)');
+            correctedScheduledTime = serverTime.tz(userTimezone); // Database has UTC time
         }
         
-        const displayTime = correctedScheduledTime;
-        
+        // Update display element
         const displayElement = document.getElementById('scheduled-time-display');
-        const newDisplayText = displayTime.format('MMM D, YYYY [at] h:mm A z');
-        
-        console.log('Looking for element with ID: scheduled-time-display');
-        console.log('Element found:', displayElement);
-        console.log('Element current content:', displayElement ? displayElement.innerHTML : 'ELEMENT NOT FOUND');
-        
         if (displayElement) {
-            console.log('UPDATING DISPLAY ELEMENT');
-            console.log('Old content:', displayElement.innerHTML);
-            displayElement.innerHTML = newDisplayText;
-            console.log('New content:', displayElement.innerHTML);
-            
-            // Additional verification
-            setTimeout(() => {
-                console.log('VERIFICATION: Element content after 1 second:', displayElement.innerHTML);
-            }, 1000);
-        } else {
-            console.error('ERROR: scheduled-time-display element not found!');
-            console.log('Available elements with scheduled in ID:', document.querySelectorAll('[id*="scheduled"]'));
+            displayElement.innerHTML = correctedScheduledTime.format('MMM D, YYYY [at] h:mm A z');
         }
-        
-        console.log('Final display format:', newDisplayText);
-        console.log('Final display time chosen:', displayTime.format('YYYY-MM-DD HH:mm:ss z'));
-    } else {
-        console.log('Moment.js not available, showing UTC time');
     }
 });
 
@@ -557,6 +503,22 @@ updateCountdown();
 setInterval(updateCountdown, 1000);
 </script>
 @endif
+
+<!-- General timezone conversion for all status pages -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Convert "Created" time to user's local timezone on all status pages
+    if (typeof moment !== 'undefined') {
+        const userTimezone = moment.tz.guess();
+        const createdTimeUTC = '{{ $faxJob->created_at->toISOString() }}';
+        const createdTimeLocal = moment.utc(createdTimeUTC).tz(userTimezone);
+        const createdElement = document.getElementById('created-time-display');
+        if (createdElement) {
+            createdElement.innerHTML = createdTimeLocal.format('MMM D, YYYY h:mm A');
+        }
+    }
+});
+</script>
 
 @if($faxJob->getCurrentStep() < 4)
 <script>
