@@ -384,7 +384,21 @@ class FaxController extends Controller
                 ])->withInput();
             }
             
+            Log::info('=== SERVER TIMEZONE CONVERSION DEBUG ===', [
+                'scheduled_time_utc_raw' => $request->input('scheduled_time_utc'),
+                'user_timezone' => $request->input('user_timezone'),
+                'server_timezone' => config('app.timezone'),
+                'current_server_time' => now()->toISOString(),
+            ]);
+            
             $scheduledTime = \Carbon\Carbon::parse($request->scheduled_time_utc);
+            
+            Log::info('=== PARSED SCHEDULED TIME ===', [
+                'parsed_time_utc' => $scheduledTime->toISOString(),
+                'parsed_time_local' => $scheduledTime->format('Y-m-d H:i:s T'),
+                'timezone_offset' => $scheduledTime->format('P'),
+                'is_utc' => $scheduledTime->getTimezone()->getName() === 'UTC',
+            ]);
             
             // Additional validation: not more than 30 days in advance
             if ($scheduledTime->isAfter(now()->addDays(30))) {

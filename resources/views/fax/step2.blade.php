@@ -755,13 +755,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Parse the date and time with explicit format in user's timezone
                 const dateTimeString = `${selectedDate} ${selectedTime}`;
-                const scheduledDateTime = moment.tz(dateTimeString, "YYYY-MM-DD HH:mm", userTimezone);
                 
-                console.log('Date/Time String:', dateTimeString);
-                console.log('Parsed in timezone:', userTimezone);
-                console.log('Scheduled DateTime (local):', scheduledDateTime.format('YYYY-MM-DD HH:mm:ss z'));
-                console.log('Scheduled DateTime (UTC):', scheduledDateTime.utc().format('YYYY-MM-DD HH:mm:ss'));
+                console.log('=== DETAILED TIMEZONE CONVERSION DEBUG ===');
+                console.log('Raw inputs:');
+                console.log('  - selectedDate:', selectedDate);
+                console.log('  - selectedTime:', selectedTime);
+                console.log('  - dateTimeString:', dateTimeString);
+                console.log('  - userTimezone:', userTimezone);
+                console.log('  - moment.tz available:', typeof moment.tz);
+                
+                // Try different parsing approaches
+                console.log('=== TESTING DIFFERENT PARSING METHODS ===');
+                
+                // Method 1: Explicit format
+                const method1 = moment.tz(dateTimeString, "YYYY-MM-DD HH:mm", userTimezone);
+                console.log('Method 1 (explicit format):');
+                console.log('  - Valid:', method1.isValid());
+                console.log('  - Local:', method1.format('YYYY-MM-DD HH:mm:ss z'));
+                console.log('  - UTC:', method1.utc().format('YYYY-MM-DD HH:mm:ss'));
+                
+                // Method 2: Let moment auto-parse then set timezone
+                const method2 = moment(`${selectedDate} ${selectedTime}`).tz(userTimezone);
+                console.log('Method 2 (auto-parse + tz):');
+                console.log('  - Valid:', method2.isValid());
+                console.log('  - Local:', method2.format('YYYY-MM-DD HH:mm:ss z'));
+                console.log('  - UTC:', method2.utc().format('YYYY-MM-DD HH:mm:ss'));
+                
+                // Method 3: Parse as local time then convert
+                const method3 = moment.tz(`${selectedDate} ${selectedTime}`, "YYYY-MM-DD HH:mm", userTimezone);
+                console.log('Method 3 (same as method 1):');
+                console.log('  - Valid:', method3.isValid());
+                console.log('  - Local:', method3.format('YYYY-MM-DD HH:mm:ss z'));
+                console.log('  - UTC:', method3.utc().format('YYYY-MM-DD HH:mm:ss'));
+                
+                // Use the most reliable method
+                const scheduledDateTime = method1.isValid() ? method1 : method2;
+                console.log('=== FINAL CONVERSION RESULT ===');
+                console.log('Using method:', method1.isValid() ? '1 (explicit)' : '2 (auto-parse)');
+                console.log('Final local time:', scheduledDateTime.format('YYYY-MM-DD HH:mm:ss z'));
+                console.log('Final UTC time:', scheduledDateTime.utc().format('YYYY-MM-DD HH:mm:ss'));
                 console.log('Timezone offset:', scheduledDateTime.format('Z'));
+                console.log('=== END DEBUG ===');
                 
                 // Add hidden input with UTC timestamp
                 const hiddenInput = document.createElement('input');

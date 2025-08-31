@@ -423,7 +423,7 @@
 // Convert scheduled time to user's local timezone for display
 document.addEventListener('DOMContentLoaded', function() {
     const scheduledTimeUTC = '{{ $faxJob->scheduled_time->toISOString() }}';
-    const userTimezone = Intl.DateTimeFormatter().resolvedOptions().timeZone;
+    const userTimezone = moment.tz.guess();
     
     console.log('=== STATUS PAGE TIMEZONE DEBUG ===');
     console.log('UTC Time from server:', scheduledTimeUTC);
