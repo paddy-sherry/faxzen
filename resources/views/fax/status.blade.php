@@ -420,10 +420,14 @@
 <!-- Countdown Timer for Scheduled Faxes -->
 @if($faxJob->isPendingScheduled())
 <script>
+// Shared variables for timezone correction
+let correctedScheduledTime = null;
+let userTimezone = null;
+
 // Convert scheduled time to user's local timezone for display
 document.addEventListener('DOMContentLoaded', function() {
     const scheduledTimeUTC = '{{ $faxJob->scheduled_time->toISOString() }}';
-    const userTimezone = moment.tz.guess();
+    userTimezone = moment.tz.guess();
     
     console.log('=== STATUS PAGE TIMEZONE DEBUG ===');
     console.log('UTC Time from server:', scheduledTimeUTC);
@@ -463,23 +467,41 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Time diff if treated as UTC (minutes):', timeDiffFromUTC);
         
         // Choose the interpretation that makes more sense (closer to a reasonable scheduling time)
-        let displayTime;
         if (Math.abs(timeDiffFromLocal) < Math.abs(timeDiffFromUTC) && timeDiffFromLocal > -30) {
             // Use local time interpretation if it's more reasonable and not in the past
-            displayTime = scheduledTimeInUserTz;
+            correctedScheduledTime = scheduledTimeInUserTz;
             console.log('Using local time interpretation (database has local time)');
         } else {
             // Use UTC interpretation
-            displayTime = serverTime.tz(userTimezone);
+            correctedScheduledTime = serverTime.tz(userTimezone);
             console.log('Using UTC interpretation (database has UTC time)');
         }
         
+        const displayTime = correctedScheduledTime;
+        
         const displayElement = document.getElementById('scheduled-time-display');
+        const newDisplayText = displayTime.format('MMM D, YYYY [at] h:mm A z');
+        
+        console.log('Looking for element with ID: scheduled-time-display');
+        console.log('Element found:', displayElement);
+        console.log('Element current content:', displayElement ? displayElement.innerHTML : 'ELEMENT NOT FOUND');
+        
         if (displayElement) {
-            displayElement.innerHTML = displayTime.format('MMM D, YYYY [at] h:mm A z');
+            console.log('UPDATING DISPLAY ELEMENT');
+            console.log('Old content:', displayElement.innerHTML);
+            displayElement.innerHTML = newDisplayText;
+            console.log('New content:', displayElement.innerHTML);
+            
+            // Additional verification
+            setTimeout(() => {
+                console.log('VERIFICATION: Element content after 1 second:', displayElement.innerHTML);
+            }, 1000);
+        } else {
+            console.error('ERROR: scheduled-time-display element not found!');
+            console.log('Available elements with scheduled in ID:', document.querySelectorAll('[id*="scheduled"]'));
         }
         
-        console.log('Final display format:', displayTime.format('MMM D, YYYY [at] h:mm A z'));
+        console.log('Final display format:', newDisplayText);
         console.log('Final display time chosen:', displayTime.format('YYYY-MM-DD HH:mm:ss z'));
     } else {
         console.log('Moment.js not available, showing UTC time');
@@ -487,11 +509,22 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function updateCountdown() {
-    const scheduledTime = new Date('{{ $faxJob->scheduled_time->toISOString() }}');
-    const now = new Date();
-    const timeDiff = scheduledTime - now;
+    // Use the shared corrected scheduled time from the display function
+    if (!correctedScheduledTime) {
+        console.log('Waiting for corrected scheduled time to be calculated...');
+        return;
+    }
     
-    if (timeDiff <= 0) {
+    const now = moment().tz(userTimezone);
+    const timeDiffMs = correctedScheduledTime.diff(now);
+    
+    console.log('Countdown calculation:');
+    console.log('  Scheduled time:', correctedScheduledTime.format('YYYY-MM-DD HH:mm:ss z'));
+    console.log('  Current time:', now.format('YYYY-MM-DD HH:mm:ss z'));
+    console.log('  Time difference (ms):', timeDiffMs);
+    console.log('  Time difference (minutes):', Math.round(timeDiffMs / 1000 / 60));
+    
+    if (timeDiffMs <= 0) {
         document.getElementById('countdown-timer').innerHTML = 'Sending now...';
         // Refresh page to show updated status
         setTimeout(function() {
@@ -500,10 +533,10 @@ function updateCountdown() {
         return;
     }
     
-    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+    const days = Math.floor(timeDiffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDiffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiffMs % (1000 * 60)) / 1000);
     
     let countdownText = 'Sending in: ';
     if (days > 0) {
