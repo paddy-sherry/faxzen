@@ -753,9 +753,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     return false;
                 }
                 
-                const scheduledDateTime = moment.tz(`${selectedDate} ${selectedTime}`, userTimezone);
-                console.log('Scheduled DateTime (local):', scheduledDateTime.format());
+                // Parse the date and time with explicit format in user's timezone
+                const dateTimeString = `${selectedDate} ${selectedTime}`;
+                const scheduledDateTime = moment.tz(dateTimeString, "YYYY-MM-DD HH:mm", userTimezone);
+                
+                console.log('Date/Time String:', dateTimeString);
+                console.log('Parsed in timezone:', userTimezone);
+                console.log('Scheduled DateTime (local):', scheduledDateTime.format('YYYY-MM-DD HH:mm:ss z'));
                 console.log('Scheduled DateTime (UTC):', scheduledDateTime.utc().format('YYYY-MM-DD HH:mm:ss'));
+                console.log('Timezone offset:', scheduledDateTime.format('Z'));
                 
                 // Add hidden input with UTC timestamp
                 const hiddenInput = document.createElement('input');

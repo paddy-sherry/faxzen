@@ -231,7 +231,7 @@
             <div class="bg-purple-50 rounded-lg p-4 status-card breathe-animation">
                 <h3 class="font-semibold text-purple-800 mb-2">🕒 Fax Scheduled</h3>
                 <p class="text-purple-700">Your fax is scheduled to be sent on:</p>
-                <p class="text-lg font-semibold text-purple-900 mt-2">{{ $faxJob->getScheduledTimeFormatted() }}</p>
+                <p class="text-lg font-semibold text-purple-900 mt-2" id="scheduled-time-display">{{ $faxJob->getScheduledTimeFormatted() }}</p>
                 <div class="mt-3">
                     <div class="text-sm text-purple-600" id="countdown-timer"></div>
                 </div>
@@ -420,6 +420,30 @@
 <!-- Countdown Timer for Scheduled Faxes -->
 @if($faxJob->isPendingScheduled())
 <script>
+// Convert scheduled time to user's local timezone for display
+document.addEventListener('DOMContentLoaded', function() {
+    const scheduledTimeUTC = '{{ $faxJob->scheduled_time->toISOString() }}';
+    const userTimezone = Intl.DateTimeFormatter().resolvedOptions().timeZone;
+    
+    console.log('=== STATUS PAGE TIMEZONE DEBUG ===');
+    console.log('UTC Time from server:', scheduledTimeUTC);
+    console.log('User Timezone:', userTimezone);
+    
+    // Convert UTC time to user's local timezone for display
+    if (typeof moment !== 'undefined') {
+        const localTime = moment.utc(scheduledTimeUTC).tz(userTimezone);
+        const displayElement = document.getElementById('scheduled-time-display');
+        if (displayElement) {
+            displayElement.innerHTML = localTime.format('MMM D, YYYY [at] h:mm A z');
+        }
+        
+        console.log('Converted to local time:', localTime.format('YYYY-MM-DD HH:mm:ss z'));
+        console.log('Display format:', localTime.format('MMM D, YYYY [at] h:mm A z'));
+    } else {
+        console.log('Moment.js not available, showing UTC time');
+    }
+});
+
 function updateCountdown() {
     const scheduledTime = new Date('{{ $faxJob->scheduled_time->toISOString() }}');
     const now = new Date();
