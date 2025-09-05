@@ -247,40 +247,40 @@ class AdminController extends Controller
             ->whereDate('created_at', '<=', $dateTo);
 
         // Overall stats
-        $totalConversions = $baseQuery->count();
-        $totalRevenue = $baseQuery->sum('amount');
+        $totalConversions = (clone $baseQuery)->count();
+        $totalRevenue = (clone $baseQuery)->sum('amount');
 
         // Conversions by traffic source
-        $conversionsBySource = $baseQuery->select('traffic_source')
+        $conversionsBySource = (clone $baseQuery)->select('traffic_source')
             ->selectRaw('COUNT(*) as conversions')
             ->selectRaw('SUM(amount) as revenue')
             ->selectRaw('AVG(amount) as avg_order_value')
             ->groupBy('traffic_source')
-            ->orderBy('conversions', 'desc')
+            ->orderByRaw('COUNT(*) desc')
             ->get();
 
         // AdWords specific analytics
-        $adwordsConversions = $baseQuery->where('traffic_source', 'adwords')
+        $adwordsConversions = (clone $baseQuery)->where('traffic_source', 'adwords')
             ->select('utm_campaign', 'utm_term')
             ->selectRaw('COUNT(*) as conversions')
             ->selectRaw('SUM(amount) as revenue')
             ->groupBy('utm_campaign', 'utm_term')
-            ->orderBy('conversions', 'desc')
+            ->orderByRaw('COUNT(*) desc')
             ->get();
 
         // Organic vs Paid comparison
         $sourceComparison = [
-            'adwords' => $baseQuery->where('traffic_source', 'adwords')->count(),
-            'organic' => $baseQuery->where('traffic_source', 'organic')->count(),
-            'direct' => $baseQuery->where('traffic_source', 'direct')->count(),
-            'referral' => $baseQuery->where('traffic_source', 'referral')->count(),
-            'social' => $baseQuery->where('traffic_source', 'social')->count(),
-            'other' => $baseQuery->whereNotIn('traffic_source', ['adwords', 'organic', 'direct', 'referral', 'social'])
+            'adwords' => (clone $baseQuery)->where('traffic_source', 'adwords')->count(),
+            'organic' => (clone $baseQuery)->where('traffic_source', 'organic')->count(),
+            'direct' => (clone $baseQuery)->where('traffic_source', 'direct')->count(),
+            'referral' => (clone $baseQuery)->where('traffic_source', 'referral')->count(),
+            'social' => (clone $baseQuery)->where('traffic_source', 'social')->count(),
+            'other' => (clone $baseQuery)->whereNotIn('traffic_source', ['adwords', 'organic', 'direct', 'referral', 'social'])
                 ->orWhereNull('traffic_source')->count(),
         ];
 
         // Daily conversion trends
-        $dailyTrends = $baseQuery->select(
+        $dailyTrends = (clone $baseQuery)->select(
                 DB::raw('DATE(created_at) as date'),
                 'traffic_source'
             )
@@ -291,24 +291,24 @@ class AdminController extends Controller
             ->groupBy('date');
 
         // Top performing campaigns (AdWords)
-        $topCampaigns = $baseQuery->where('traffic_source', 'adwords')
+        $topCampaigns = (clone $baseQuery)->where('traffic_source', 'adwords')
             ->whereNotNull('utm_campaign')
             ->select('utm_campaign')
             ->selectRaw('COUNT(*) as conversions')
             ->selectRaw('SUM(amount) as revenue')
             ->groupBy('utm_campaign')
-            ->orderBy('conversions', 'desc')
+            ->orderByRaw('COUNT(*) desc')
             ->limit(10)
             ->get();
 
         // Top performing keywords (AdWords)
-        $topKeywords = $baseQuery->where('traffic_source', 'adwords')
+        $topKeywords = (clone $baseQuery)->where('traffic_source', 'adwords')
             ->whereNotNull('utm_term')
             ->select('utm_term')
             ->selectRaw('COUNT(*) as conversions')
             ->selectRaw('SUM(amount) as revenue')
             ->groupBy('utm_term')
-            ->orderBy('conversions', 'desc')
+            ->orderByRaw('COUNT(*) desc')
             ->limit(10)
             ->get();
 
