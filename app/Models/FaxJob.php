@@ -35,6 +35,16 @@ class FaxJob extends Model
         'reminder_email_sent_at',
         'delivery_details',
         'telnyx_status',
+
+        // Traffic source tracking
+        'traffic_source',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+        'utm_content',
+        'referrer_url',
+        'tracking_data',
     ];
 
     protected $casts = [
@@ -51,6 +61,7 @@ class FaxJob extends Model
         'is_delivered' => 'boolean',
         'email_sent' => 'boolean',
         'reminder_email_sent' => 'boolean',
+        'tracking_data' => 'array',
     ];
 
     const STATUS_PENDING = 'pending';
@@ -354,5 +365,55 @@ class FaxJob extends Model
 
         return "ECM (Error Correction Mode) compatibility issue with the receiving fax machine. " .
                "Ask the recipient to disable ECM on their fax machine and try again.";
+    }
+
+    /**
+     * Check if this conversion came from AdWords
+     */
+    public function isAdWordsConversion(): bool
+    {
+        return $this->traffic_source === 'adwords';
+    }
+
+    /**
+     * Check if this conversion came from organic search
+     */
+    public function isOrganicConversion(): bool
+    {
+        return $this->traffic_source === 'organic';
+    }
+
+    /**
+     * Get formatted traffic source display name
+     */
+    public function getTrafficSourceDisplayName(): string
+    {
+        return match($this->traffic_source) {
+            'adwords' => 'Google Ads',
+            'organic' => 'Organic Search',
+            'direct' => 'Direct Traffic',
+            'referral' => 'Referral',
+            'social' => 'Social Media',
+            'email' => 'Email Marketing',
+            'paid' => 'Paid Advertising',
+            'campaign' => 'Campaign Traffic',
+            default => $this->traffic_source ? ucfirst($this->traffic_source) : 'Unknown'
+        };
+    }
+
+    /**
+     * Get AdWords campaign name if available
+     */
+    public function getAdWordsCampaign(): ?string
+    {
+        return $this->isAdWordsConversion() ? $this->utm_campaign : null;
+    }
+
+    /**
+     * Get AdWords keyword if available
+     */
+    public function getAdWordsKeyword(): ?string
+    {
+        return $this->isAdWordsConversion() ? $this->utm_term : null;
     }
 }

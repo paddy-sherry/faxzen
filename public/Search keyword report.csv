@@ -1,0 +1,22 @@
+Search keyword report
+"August 25, 2025 - September 5, 2025"
+Keyword status,Keyword,Match type,Status,Status reasons,Conversions,Currency code,Cost / conv.,Final URL,Mobile final URL,Clicks,Impr.,CTR,Avg. CPC,Cost,Conv. rate
+Enabled,fax without a fax machine,Broad match,Eligible,,0.00,EUR,0.00,,,0,1,0.00%,0,0.00,0.00%
+Enabled,fax service,Broad match,Eligible,,0.00,EUR,0.00,,,7,102,6.86%,1.05,7.32,0.00%
+Enabled,send fax,Broad match,Eligible,,0.00,EUR,0.00,,,7,413,1.69%,0.65,4.58,0.00%
+Enabled,send fax without fax machine,Broad match,Eligible,,0.00,EUR,0.00,,,0,3,0.00%,0,0.00,0.00%
+Enabled,send fax online,Broad match,Eligible,,2.00,EUR,4.39,,,12,365,3.29%,0.73,8.77,16.67%
+Enabled,email fax,Broad match,Eligible,,0.00,EUR,0.00,,,0,3,0.00%,0,0.00,0.00%
+Enabled,fax machine online,Broad match,Eligible,,0.00,EUR,0.00,,,0,5,0.00%,0,0.00,0.00%
+Enabled,fax a document,Broad match,Eligible,,0.00,EUR,0.00,,,0,12,0.00%,0,0.00,0.00%
+Paused,fax number,Broad match,Paused,paused,0.00,EUR,0.00,,,0,0, --,0,0.00,0.00%
+Enabled,fax online,Broad match,Eligible,,12.00,EUR,11.60,,,179,"4,549",3.93%,0.78,139.25,6.70%
+Enabled,fax document,Broad match,Eligible,,0.00,EUR,0.00,,,0,0, --,0,0.00,0.00%
+Enabled,digital fax service,Broad match,Eligible,,0.00,EUR,0.00,,,2,12,16.67%,0.04,0.08,0.00%
+,,Total: Filtered keywords,,,14.00,EUR,11.43,,,207,"5,465",3.79%,0.77,160.00,6.76%
+,,Total: Keywords in your ad group,,,14.00,EUR,11.43,,,207,"5,465",3.79%,0.77,160.00,6.76%
+,,Total: Your keywords,,,14.00,EUR,11.43,,,207,"5,465",3.79%,0.77,160.00,6.76%
+,,Total: AI Max expanded matches,,,0.00,EUR,0.00,,,0,0, --,0,0.00,0.00%
+,,Total: AI Max landing page matches,,,0.00,EUR,0.00,,,0,0, --,0,0.00,0.00%
+,,Total: URL inclusions in your ad group,,,0.00,EUR,0.00,,,0,0, --,0,0.00,0.00%
+,,Total: Ad group,,,14.00,EUR,11.43,,,207,"5,465",3.79%,0.77,160.00,6.76%

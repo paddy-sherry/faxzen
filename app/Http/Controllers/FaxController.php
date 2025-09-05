@@ -67,17 +67,35 @@ class FaxController extends Controller
         // Get file size from local storage
         $originalSize = Storage::disk('local')->size($localPath);
 
+        // Get traffic source data from session (captured by middleware)
+        $trafficData = session('traffic_source_data', []);
+        
         // Create fax job record - file will be moved to R2 in SendFaxJob
-        $faxJob = FaxJob::create([
+        $faxJobData = [
             'recipient_number' => $fullPhoneNumber,
             'file_path' => $localPath, // Initially stored locally
             'file_original_name' => $file->getClientOriginalName(),
             'amount' => config('services.faxzen.price'),
             'status' => FaxJob::STATUS_PENDING,
             'sender_email' => '',
-
             'original_file_size' => $originalSize,
-        ]);
+        ];
+
+        // Add traffic source tracking data if available
+        if (!empty($trafficData)) {
+            $faxJobData = array_merge($faxJobData, [
+                'traffic_source' => $trafficData['traffic_source'] ?? null,
+                'utm_source' => $trafficData['utm_source'] ?? null,
+                'utm_medium' => $trafficData['utm_medium'] ?? null,
+                'utm_campaign' => $trafficData['utm_campaign'] ?? null,
+                'utm_term' => $trafficData['utm_term'] ?? null,
+                'utm_content' => $trafficData['utm_content'] ?? null,
+                'referrer_url' => $trafficData['referrer_url'] ?? null,
+                'tracking_data' => $trafficData,
+            ]);
+        }
+
+        $faxJob = FaxJob::create($faxJobData);
 
         return redirect()->route('fax.step2', $faxJob->hash);
     }

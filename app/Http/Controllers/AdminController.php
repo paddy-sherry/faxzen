@@ -6,6 +6,7 @@ use App\Models\FaxJob;
 use App\Jobs\SendFaxJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Telnyx\Telnyx;
 use Telnyx\Fax;
 
@@ -229,5 +230,99 @@ class AdminController extends Controller
                 'error' => "Failed to check status: " . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Show conversion analytics by traffic source
+     */
+    public function analytics(Request $request)
+    {
+        // Default to last 30 days
+        $dateFrom = $request->get('date_from', now()->subDays(30)->format('Y-m-d'));
+        $dateTo = $request->get('date_to', now()->format('Y-m-d'));
+
+        // Base query for paid conversions (completed fax jobs)
+        $baseQuery = FaxJob::whereIn('status', [FaxJob::STATUS_PAID, FaxJob::STATUS_SENT])
+            ->whereDate('created_at', '>=', $dateFrom)
+            ->whereDate('created_at', '<=', $dateTo);
+
+        // Overall stats
+        $totalConversions = $baseQuery->count();
+        $totalRevenue = $baseQuery->sum('amount');
+
+        // Conversions by traffic source
+        $conversionsBySource = $baseQuery->select('traffic_source')
+            ->selectRaw('COUNT(*) as conversions')
+            ->selectRaw('SUM(amount) as revenue')
+            ->selectRaw('AVG(amount) as avg_order_value')
+            ->groupBy('traffic_source')
+            ->orderBy('conversions', 'desc')
+            ->get();
+
+        // AdWords specific analytics
+        $adwordsConversions = $baseQuery->where('traffic_source', 'adwords')
+            ->select('utm_campaign', 'utm_term')
+            ->selectRaw('COUNT(*) as conversions')
+            ->selectRaw('SUM(amount) as revenue')
+            ->groupBy('utm_campaign', 'utm_term')
+            ->orderBy('conversions', 'desc')
+            ->get();
+
+        // Organic vs Paid comparison
+        $sourceComparison = [
+            'adwords' => $baseQuery->where('traffic_source', 'adwords')->count(),
+            'organic' => $baseQuery->where('traffic_source', 'organic')->count(),
+            'direct' => $baseQuery->where('traffic_source', 'direct')->count(),
+            'referral' => $baseQuery->where('traffic_source', 'referral')->count(),
+            'social' => $baseQuery->where('traffic_source', 'social')->count(),
+            'other' => $baseQuery->whereNotIn('traffic_source', ['adwords', 'organic', 'direct', 'referral', 'social'])
+                ->orWhereNull('traffic_source')->count(),
+        ];
+
+        // Daily conversion trends
+        $dailyTrends = $baseQuery->select(
+                DB::raw('DATE(created_at) as date'),
+                'traffic_source'
+            )
+            ->selectRaw('COUNT(*) as conversions')
+            ->groupBy('date', 'traffic_source')
+            ->orderBy('date')
+            ->get()
+            ->groupBy('date');
+
+        // Top performing campaigns (AdWords)
+        $topCampaigns = $baseQuery->where('traffic_source', 'adwords')
+            ->whereNotNull('utm_campaign')
+            ->select('utm_campaign')
+            ->selectRaw('COUNT(*) as conversions')
+            ->selectRaw('SUM(amount) as revenue')
+            ->groupBy('utm_campaign')
+            ->orderBy('conversions', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Top performing keywords (AdWords)
+        $topKeywords = $baseQuery->where('traffic_source', 'adwords')
+            ->whereNotNull('utm_term')
+            ->select('utm_term')
+            ->selectRaw('COUNT(*) as conversions')
+            ->selectRaw('SUM(amount) as revenue')
+            ->groupBy('utm_term')
+            ->orderBy('conversions', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('admin.analytics', compact(
+            'totalConversions',
+            'totalRevenue',
+            'conversionsBySource', 
+            'adwordsConversions',
+            'sourceComparison',
+            'dailyTrends',
+            'topCampaigns',
+            'topKeywords',
+            'dateFrom',
+            'dateTo'
+        ));
     }
 } 

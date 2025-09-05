@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.basic' => \App\Http\Middleware\HttpBasicAuth::class,
         ]);
+        
+        // Add traffic source tracking to all web requests
+        $middleware->web([
+            \App\Http\Middleware\TrackTrafficSource::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -78,6 +78,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/admin/fax-jobs', [App\Http\Controllers\AdminController::class, 'faxJobs'])->name('admin.fax-jobs');
 Route::match(['GET', 'POST'], '/admin/fax-jobs/{id}/retry', [App\Http\Controllers\AdminController::class, 'retryFaxJob'])->name('admin.fax-jobs.retry');
 Route::get('/admin/fax-jobs/{id}/check-status', [App\Http\Controllers\AdminController::class, 'checkStatus'])->name('admin.fax-jobs.check-status');
+Route::get('/admin/analytics', [App\Http\Controllers\AdminController::class, 'analytics'])->name('admin.analytics');
 
 // Blog management routes
 Route::prefix('admin/blog')->name('admin.blog.')->group(function () {
