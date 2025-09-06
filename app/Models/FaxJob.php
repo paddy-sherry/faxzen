@@ -46,6 +46,16 @@ class FaxJob extends Model
         'utm_content',
         'referrer_url',
         'tracking_data',
+
+        // Cover page fields
+        'include_cover_page',
+        'cover_sender_name',
+        'cover_sender_company',
+        'cover_sender_phone',
+        'cover_recipient_name',
+        'cover_recipient_company',
+        'cover_subject',
+        'cover_message',
     ];
 
     protected $casts = [
@@ -64,6 +74,7 @@ class FaxJob extends Model
         'failure_email_sent' => 'boolean',
         'reminder_email_sent' => 'boolean',
         'tracking_data' => 'array',
+        'include_cover_page' => 'boolean',
     ];
 
     const STATUS_PENDING = 'pending';

@@ -123,19 +123,46 @@ class FaxController extends Controller
         if (auth()->check() && auth()->user()->hasCredits()) {
             // User has credits - process fax immediately without payment
             // No need to validate sender_email as we use the authenticated user's email
+            
+            // Validate cover page fields for authenticated users with credits
+            $request->validate([
+                'include_cover_page' => 'nullable|boolean',
+                'cover_sender_name' => 'nullable|string|max:255',
+                'cover_sender_company' => 'nullable|string|max:255',
+                'cover_sender_phone' => 'nullable|string|max:255',
+                'cover_recipient_name' => 'nullable|string|max:255',
+                'cover_recipient_company' => 'nullable|string|max:255',
+                'cover_subject' => 'nullable|string|max:255',
+                'cover_message' => 'nullable|string|max:1000',
+            ]);
 
             if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
                 return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
             }
 
-            // Update fax job with sender email and scheduling (use authenticated user's email)
-            $faxJob->update([
+            // Prepare cover page data
+            $coverPageData = [];
+            if ($request->filled('include_cover_page')) {
+                $coverPageData = [
+                    'include_cover_page' => true,
+                    'cover_sender_name' => $request->cover_sender_name,
+                    'cover_sender_company' => $request->cover_sender_company,
+                    'cover_sender_phone' => $request->cover_sender_phone,
+                    'cover_recipient_name' => $request->cover_recipient_name,
+                    'cover_recipient_company' => $request->cover_recipient_company,
+                    'cover_subject' => $request->cover_subject,
+                    'cover_message' => $request->cover_message,
+                ];
+            }
+
+            // Update fax job with sender email, scheduling, and cover page data (use authenticated user's email)
+            $faxJob->update(array_merge([
                 'sender_email' => auth()->user()->email,
                 'scheduled_time' => $schedulingData['scheduled_time'],
                 'status' => FaxJob::STATUS_PAID,
                 'prepared_at' => now(),
                 'amount' => 0, // Mark as credit usage
-            ]);
+            ], $coverPageData));
 
             // Deduct one credit from user
             auth()->user()->deductCredit();
@@ -157,6 +184,14 @@ class FaxController extends Controller
             // Authenticated user without credits - no need to validate email
             $request->validate([
                 'payment_type' => 'required|in:onetime,credits',
+                'include_cover_page' => 'nullable|boolean',
+                'cover_sender_name' => 'nullable|string|max:255',
+                'cover_sender_company' => 'nullable|string|max:255',
+                'cover_sender_phone' => 'nullable|string|max:255',
+                'cover_recipient_name' => 'nullable|string|max:255',
+                'cover_recipient_company' => 'nullable|string|max:255',
+                'cover_subject' => 'nullable|string|max:255',
+                'cover_message' => 'nullable|string|max:1000',
             ]);
             $senderEmail = auth()->user()->email;
         } else {
@@ -164,6 +199,14 @@ class FaxController extends Controller
             $request->validate([
                 'sender_email' => 'required|email:rfc,dns|max:255',
                 'payment_type' => 'required|in:onetime,credits',
+                'include_cover_page' => 'nullable|boolean',
+                'cover_sender_name' => 'nullable|string|max:255',
+                'cover_sender_company' => 'nullable|string|max:255',
+                'cover_sender_phone' => 'nullable|string|max:255',
+                'cover_recipient_name' => 'nullable|string|max:255',
+                'cover_recipient_company' => 'nullable|string|max:255',
+                'cover_subject' => 'nullable|string|max:255',
+                'cover_message' => 'nullable|string|max:1000',
             ]);
             $senderEmail = $request->sender_email;
         }
@@ -175,12 +218,27 @@ class FaxController extends Controller
         $paymentType = $request->payment_type;
         $isCreditsPackage = $paymentType === 'credits';
 
-        // Update the fax job with sender details, scheduling, and payment type
-        $faxJob->update([
+        // Prepare cover page data
+        $coverPageData = [];
+        if ($request->filled('include_cover_page')) {
+            $coverPageData = [
+                'include_cover_page' => true,
+                'cover_sender_name' => $request->cover_sender_name,
+                'cover_sender_company' => $request->cover_sender_company,
+                'cover_sender_phone' => $request->cover_sender_phone,
+                'cover_recipient_name' => $request->cover_recipient_name,
+                'cover_recipient_company' => $request->cover_recipient_company,
+                'cover_subject' => $request->cover_subject,
+                'cover_message' => $request->cover_message,
+            ];
+        }
+
+        // Update the fax job with sender details, scheduling, payment type, and cover page data
+        $faxJob->update(array_merge([
             'sender_email' => $senderEmail,
             'scheduled_time' => $schedulingData['scheduled_time'],
             'status' => FaxJob::STATUS_PAYMENT_PENDING,
-        ]);
+        ], $coverPageData));
 
         // Determine pricing and product details
         if ($isCreditsPackage) {

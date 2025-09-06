@@ -380,6 +380,116 @@
             </div>
         @endguest
 
+        <!-- Cover Page Section -->
+        <div class="border-t border-gray-200 pt-6 mt-6">
+            <div class="flex items-center mb-4">
+                <input type="checkbox" 
+                       id="include_cover_page" 
+                       name="include_cover_page" 
+                       value="1"
+                       {{ old('include_cover_page') ? 'checked' : '' }}
+                       class="h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 rounded">
+                <label for="include_cover_page" class="ml-3 block text-lg font-medium text-gray-700 cursor-pointer">
+                    📄 Add Professional Cover Page
+                </label>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">Include a professional cover sheet with sender/recipient details, subject line, and message.</p>
+            
+            <div id="cover-page-fields" class="space-y-4 bg-gray-50 rounded-lg p-4" style="display: none;">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Sender Information -->
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-800 border-b border-gray-300 pb-1">From</h4>
+                        <div>
+                            <label for="cover_sender_name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                            <input type="text" 
+                                   id="cover_sender_name" 
+                                   name="cover_sender_name" 
+                                   value="{{ old('cover_sender_name') }}"
+                                   placeholder="John Smith"
+                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue text-sm">
+                        </div>
+                        <div>
+                            <label for="cover_sender_company" class="block text-sm font-medium text-gray-700 mb-1">Company (Optional)</label>
+                            <input type="text" 
+                                   id="cover_sender_company" 
+                                   name="cover_sender_company" 
+                                   value="{{ old('cover_sender_company') }}"
+                                   placeholder="Acme Corporation"
+                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue text-sm">
+                        </div>
+                        <div>
+                            <label for="cover_sender_phone" class="block text-sm font-medium text-gray-700 mb-1">Your Phone (Optional)</label>
+                            <input type="tel" 
+                                   id="cover_sender_phone" 
+                                   name="cover_sender_phone" 
+                                   value="{{ old('cover_sender_phone') }}"
+                                   placeholder="+1 (555) 123-4567"
+                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Recipient Information -->
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-800 border-b border-gray-300 pb-1">To</h4>
+                        <div>
+                            <label for="cover_recipient_name" class="block text-sm font-medium text-gray-700 mb-1">Recipient Name (Optional)</label>
+                            <input type="text" 
+                                   id="cover_recipient_name" 
+                                   name="cover_recipient_name" 
+                                   value="{{ old('cover_recipient_name') }}"
+                                   placeholder="Jane Doe"
+                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue text-sm">
+                        </div>
+                        <div>
+                            <label for="cover_recipient_company" class="block text-sm font-medium text-gray-700 mb-1">Recipient Company (Optional)</label>
+                            <input type="text" 
+                                   id="cover_recipient_company" 
+                                   name="cover_recipient_company" 
+                                   value="{{ old('cover_recipient_company') }}"
+                                   placeholder="Widget Inc."
+                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue text-sm">
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded border">
+                            <p class="text-sm text-blue-700">
+                                <strong>Fax Number:</strong> {{ $faxJob->recipient_number }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject and Message -->
+                <div class="space-y-3">
+                    <div>
+                        <label for="cover_subject" class="block text-sm font-medium text-gray-700 mb-1">Subject (Optional)</label>
+                        <input type="text" 
+                               id="cover_subject" 
+                               name="cover_subject" 
+                               value="{{ old('cover_subject') }}"
+                               placeholder="Invoice for services rendered"
+                               class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue">
+                    </div>
+                    <div>
+                        <label for="cover_message" class="block text-sm font-medium text-gray-700 mb-1">Message (Optional)</label>
+                        <textarea id="cover_message" 
+                                  name="cover_message" 
+                                  rows="3"
+                                  placeholder="Please find attached invoice. Contact me if you have any questions."
+                                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue">{{ old('cover_message') }}</textarea>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+                    <p class="text-sm text-blue-700">
+                        <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                        The cover page will be added as the first page of your fax transmission.
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="flex space-x-4 pt-4">
             <a href="{{ route('fax.step1') }}" 
                class="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors font-semibold text-center">
@@ -400,6 +510,27 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const coverPageCheckbox = document.getElementById('include_cover_page');
+    const coverPageFields = document.getElementById('cover-page-fields');
+    
+    function toggleCoverPageFields() {
+        if (coverPageCheckbox.checked) {
+            coverPageFields.style.display = 'block';
+        } else {
+            coverPageFields.style.display = 'none';
+        }
+    }
+    
+    // Initial state
+    toggleCoverPageFields();
+    
+    // Toggle on checkbox change
+    coverPageCheckbox.addEventListener('change', toggleCoverPageFields);
+});
+</script>
 
 <div class="mt-8 bg-green-50 rounded-lg p-6">
     <div class="flex items-center mb-4">

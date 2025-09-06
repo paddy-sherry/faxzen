@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\FaxJob;
 use App\Mail\FaxDeliveryFailed;
+use App\Services\CoverPageService;
+use App\Services\PdfMergeService;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -221,7 +223,7 @@ class SendFaxJob implements ShouldQueue
                 'note' => 'Console job will check delivery status every 2 minutes'
             ]);
 
-            // Clean up local file if it exists
+            // Clean up temporary files
             $this->cleanupLocalFile();
 
             // Note: Email will be sent via console job when delivery is confirmed
@@ -335,26 +337,89 @@ class SendFaxJob implements ShouldQueue
             }
         }
 
-        // File is local (starts with temp_fax_documents/), need to move to R2
+        // File is local (starts with temp_fax_documents/), need to process and move to R2
         $localPath = $this->faxJob->file_path;
         
         if (!Storage::disk('local')->exists($localPath)) {
             throw new \Exception("Local file not found: {$localPath}");
         }
 
-        Log::info("Moving file from local to R2", [
+        // Process cover page if enabled
+        $finalDocumentPath = $localPath;
+        $coverPagePath = null;
+        $mergedPath = null;
+        
+        if ($this->faxJob->include_cover_page) {
+            Log::info("Processing cover page for fax", [
+                'fax_job_id' => $this->faxJob->id,
+                'original_path' => $localPath
+            ]);
+            
+            $coverPageService = new CoverPageService();
+            $pdfMergeService = new PdfMergeService();
+            
+            try {
+                // Generate cover page
+                $coverPagePath = $coverPageService->generateCoverPage($this->faxJob);
+                
+                if ($coverPagePath) {
+                    // Merge cover page with original document
+                    $mergedPath = $pdfMergeService->mergePdfs($coverPagePath, $localPath);
+                    
+                    if ($mergedPath) {
+                        $finalDocumentPath = $mergedPath;
+                        Log::info('Cover page merged successfully', [
+                            'fax_job_id' => $this->faxJob->id,
+                            'cover_page_path' => $coverPagePath,
+                            'merged_path' => $mergedPath
+                        ]);
+                    } else {
+                        Log::warning('Cover page merge failed, using original document', [
+                            'fax_job_id' => $this->faxJob->id
+                        ]);
+                    }
+                } else {
+                    Log::warning('Cover page generation failed, using original document', [
+                        'fax_job_id' => $this->faxJob->id
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Cover page processing failed', [
+                    'fax_job_id' => $this->faxJob->id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+
+        Log::info("Moving final document from local to R2", [
             'fax_job_id' => $this->faxJob->id,
-            'local_path' => $localPath
+            'original_path' => $localPath,
+            'final_document_path' => $finalDocumentPath,
+            'has_cover_page' => $this->faxJob->include_cover_page
         ]);
 
-        // Create R2 path
-        $r2Path = 'fax_documents/' . basename($localPath);
+        // Create R2 path with cover page indicator in filename
+        $originalBasename = basename($localPath);
+        $r2Filename = $this->faxJob->include_cover_page 
+            ? str_replace('.', '_with_cover.', $originalBasename)
+            : $originalBasename;
+        $r2Path = 'fax_documents/' . $r2Filename;
         
-        // Get file content from local storage
-        $fileContent = Storage::disk('local')->get($localPath);
+        // Get file content from final document (could be merged with cover page)
+        $fileContent = Storage::disk('local')->get($finalDocumentPath);
         
         // Upload to R2
         Storage::disk('r2')->put($r2Path, $fileContent);
+        
+        // Clean up temporary cover page files
+        if ($coverPagePath) {
+            $coverPageService = new CoverPageService();
+            $coverPageService->cleanupCoverPage($coverPagePath);
+        }
+        if ($mergedPath && $mergedPath !== $localPath) {
+            $pdfMergeService = new PdfMergeService();
+            $pdfMergeService->cleanupMergedFile($mergedPath);
+        }
         
         // Update fax job with R2 path
         $this->faxJob->update(['file_path' => $r2Path]);
@@ -436,6 +501,7 @@ class SendFaxJob implements ShouldQueue
             ]);
         }
     }
+
 
     public function failed(\Throwable $exception): void
     {
