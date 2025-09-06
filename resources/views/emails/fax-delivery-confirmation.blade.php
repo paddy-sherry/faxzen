@@ -195,16 +195,6 @@
             </div>
             @endif
             
-            <div class="details-row">
-                <span class="details-label">Transaction Date:</span>
-                <span class="details-value">{{ date('M j, Y \a\t g:i A T', $paymentDetails['created']) }}</span>
-            </div>
-            
-            <div class="details-row">
-                <span class="details-label">Transaction ID:</span>
-                <span class="details-value" style="font-family: monospace; font-size: 12px;">{{ $paymentDetails['payment_intent_id'] }}</span>
-            </div>
-            
             @if($paymentDetails['receipt_url'])
             <div style="text-align: center; margin-top: 15px;">
                 <a href="{{ $paymentDetails['receipt_url'] }}" style="background-color: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">📄 View Official Stripe Receipt</a>
