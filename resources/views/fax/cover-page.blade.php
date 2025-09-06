@@ -81,7 +81,7 @@
 <body>
     <div class="header">
         <h1 class="cover-title">FAX TRANSMISSION COVER SHEET</h1>
-        <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Sent via FaxZen</p>
+        <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Sent via FaxZen.com</p>
     </div>
 
     <div class="section">
