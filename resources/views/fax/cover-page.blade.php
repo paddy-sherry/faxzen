@@ -6,19 +6,20 @@
     <style>
         body {
             font-family: DejaVu Sans, Arial, sans-serif;
-            line-height: 1.4;
+            line-height: 1.2;
             margin: 0;
-            padding: 40px;
+            padding: 20px;
             color: #333;
+            font-size: 12px;
         }
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid #8b5cf6;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #8b5cf6;
+            padding-bottom: 10px;
         }
         .cover-title {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             color: #333;
             margin: 0;
@@ -26,7 +27,7 @@
         .info-grid {
             display: table;
             width: 100%;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
         .info-row {
             display: table-row;
@@ -34,43 +35,43 @@
         .info-label {
             display: table-cell;
             font-weight: bold;
-            padding: 8px 20px 8px 0;
+            padding: 4px 15px 4px 0;
             width: 25%;
             border-bottom: 1px solid #eee;
+            font-size: 11px;
         }
         .info-value {
             display: table-cell;
-            padding: 8px 0;
+            padding: 4px 0;
             border-bottom: 1px solid #eee;
+            font-size: 11px;
         }
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
         .section-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #8b5cf6;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             border-bottom: 1px solid #8b5cf6;
-            padding-bottom: 5px;
+            padding-bottom: 2px;
         }
         .message-box {
             border: 1px solid #ddd;
-            padding: 20px;
+            padding: 10px;
             background-color: #f9f9f9;
-            margin-top: 10px;
-            min-height: 100px;
+            margin-top: 5px;
+            min-height: 60px;
+            font-size: 11px;
         }
         .footer {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            right: 40px;
+            margin-top: 20px;
             text-align: center;
-            font-size: 12px;
+            font-size: 10px;
             color: #666;
             border-top: 1px solid #eee;
-            padding-top: 20px;
+            padding-top: 10px;
         }
         .urgent {
             color: #dc2626;
@@ -81,7 +82,7 @@
 <body>
     <div class="header">
         <h1 class="cover-title">FAX TRANSMISSION COVER SHEET</h1>
-        <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Sent via FaxZen.com</p>
+        <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">Sent via FaxZen.com</p>
     </div>
 
     <div class="section">
@@ -159,7 +160,7 @@
     @if($faxJob->cover_subject)
     <div class="section">
         <div class="section-title">Subject</div>
-        <div style="font-size: 16px; font-weight: bold; padding: 10px 0;">
+        <div style="font-size: 13px; font-weight: bold; padding: 5px 0;">
             {{ $faxJob->cover_subject }}
         </div>
     </div>
