@@ -227,12 +227,24 @@
             <a href="{{ config('app.url') }}" class="cta-button">Send Another Fax</a>
         </div>
 
+        <div style="background-color: #f0f9ff; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #0ea5e9;">
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <div style="background-color: #0ea5e9; color: white; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 14px;">📎</div>
+                <h4 style="color: #0c4a6e; margin: 0;">Your Document Copy</h4>
+            </div>
+            <p style="color: #374151; margin: 0; line-height: 1.5;">
+                📄 <strong>{{ $faxJob->file_original_name }}</strong> is attached to this email for your records.
+                <br><span style="font-size: 14px; color: #6b7280;">This is the exact document that was successfully transmitted to {{ $faxJob->recipient_number }}.</span>
+            </p>
+        </div>
+
         <div style="background-color: #eff6ff; border-radius: 8px; padding: 20px; margin: 20px 0;">
             <h4 style="color: #1e40af; margin-top: 0;">What This Means</h4>
             <ul style="color: #374151; margin: 0; padding-left: 20px;">
                 <li>Your document was successfully transmitted to the recipient's fax machine</li>
                 <li>The receiving fax machine confirmed receipt of all pages</li>
                 <li>Your fax transmission is now complete</li>
+                <li>A copy of your original document is attached for your records</li>
             </ul>
         </div>
 
