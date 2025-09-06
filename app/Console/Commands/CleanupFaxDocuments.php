@@ -21,7 +21,7 @@ class CleanupFaxDocuments extends Command
      *
      * @var string
      */
-    protected $description = 'Clean up fax documents from local storage and R2 after specified hours (default: 48 hours)';
+    protected $description = 'Clean up fax documents from local storage and R2 after specified hours (default: 48 hours). Protects scheduled faxes that haven\'t been sent yet.';
 
     /**
      * Execute the console command.
@@ -33,10 +33,27 @@ class CleanupFaxDocuments extends Command
         
         $this->info("Looking for fax documents older than {$hours} hours to clean up...");
 
-        // Find fax jobs older than specified hours
+        // Find fax jobs older than specified hours that are safe to clean up
+        // Exclude scheduled faxes that haven't been sent yet
         $oldFaxJobs = FaxJob::where('created_at', '<=', now()->subHours($hours))
             ->whereNotNull('file_path')
             ->where('file_path', '!=', '')
+            ->where(function($query) {
+                $query->where(function($subQuery) {
+                    // Include faxes that are not scheduled (scheduled_time is null)
+                    $subQuery->whereNull('scheduled_time');
+                })->orWhere(function($subQuery) {
+                    // Include scheduled faxes that have already been sent or failed
+                    $subQuery->whereNotNull('scheduled_time')
+                        ->whereIn('status', [FaxJob::STATUS_SENT, FaxJob::STATUS_FAILED]);
+                })->orWhere(function($subQuery) {
+                    // Include scheduled faxes where the scheduled time has already passed
+                    // and they've been processed (not in pending states)
+                    $subQuery->whereNotNull('scheduled_time')
+                        ->where('scheduled_time', '<=', now())
+                        ->whereNotIn('status', [FaxJob::STATUS_PENDING, FaxJob::STATUS_PAYMENT_PENDING]);
+                });
+            })
             ->get();
 
         if ($oldFaxJobs->isEmpty()) {
@@ -46,10 +63,25 @@ class CleanupFaxDocuments extends Command
 
         $this->info("Found {$oldFaxJobs->count()} old fax jobs with documents to clean up.");
 
+        // Show information about scheduled faxes that are being protected
+        $protectedScheduledFaxes = FaxJob::where('created_at', '<=', now()->subHours($hours))
+            ->whereNotNull('file_path')
+            ->where('file_path', '!=', '')
+            ->whereNotNull('scheduled_time')
+            ->where(function($query) {
+                $query->where('scheduled_time', '>', now())
+                    ->orWhereIn('status', [FaxJob::STATUS_PENDING, FaxJob::STATUS_PAYMENT_PENDING, FaxJob::STATUS_PAID]);
+            })
+            ->count();
+
+        if ($protectedScheduledFaxes > 0) {
+            $this->info("Protected {$protectedScheduledFaxes} scheduled fax documents from cleanup.");
+        }
+
         if ($dryRun) {
             $this->warn('DRY RUN MODE - No files will be deleted');
             $this->table(
-                ['ID', 'File Path', 'Storage', 'Created', 'Hours Old', 'File Size'],
+                ['ID', 'File Path', 'Storage', 'Status', 'Scheduled', 'Created', 'Hours Old', 'File Size'],
                 $oldFaxJobs->map(function ($job) {
                     $isLocal = str_starts_with($job->file_path, 'temp_fax_documents/');
                     $isR2 = str_starts_with($job->file_path, 'fax_documents/');
@@ -71,11 +103,17 @@ class CleanupFaxDocuments extends Command
                         }
                     }
                     
+                    $scheduledInfo = $job->scheduled_time 
+                        ? ($job->scheduled_time->isPast() ? 'Past' : 'Future (' . $job->scheduled_time->diffForHumans() . ')')
+                        : 'No';
+                    
                     return [
                         $job->id,
-                        $job->file_path,
+                        strlen($job->file_path) > 30 ? '...' . substr($job->file_path, -30) : $job->file_path,
                         $storageType . ($fileExists ? ' ✓' : ' ✗'),
-                        $job->created_at->format('M j, Y g:i A'),
+                        ucfirst($job->status),
+                        $scheduledInfo,
+                        $job->created_at->format('M j g:i A'),
                         now()->diffInHours($job->created_at),
                         $fileSize
                     ];
@@ -92,6 +130,17 @@ class CleanupFaxDocuments extends Command
         foreach ($oldFaxJobs as $faxJob) {
             try {
                 $this->line("Processing fax job #{$faxJob->id} ({$faxJob->file_path})...");
+
+                // Final safety check - double-check that this isn't a pending scheduled fax
+                if ($faxJob->scheduled_time && $faxJob->scheduled_time->isFuture()) {
+                    $this->warn("  ⚠️ Skipping - this is a future scheduled fax ({$faxJob->scheduled_time->diffForHumans()})");
+                    continue;
+                }
+
+                if ($faxJob->scheduled_time && in_array($faxJob->status, [FaxJob::STATUS_PENDING, FaxJob::STATUS_PAYMENT_PENDING, FaxJob::STATUS_PAID])) {
+                    $this->warn("  ⚠️ Skipping - this is a scheduled fax in pending state");
+                    continue;
+                }
 
                 $fileDeleted = false;
 
@@ -151,7 +200,10 @@ class CleanupFaxDocuments extends Command
                     'fax_job_id' => $faxJob->id,
                     'file_path' => $faxJob->file_path,
                     'file_deleted' => $fileDeleted,
-                    'hours_old' => now()->diffInHours($faxJob->created_at)
+                    'hours_old' => now()->diffInHours($faxJob->created_at),
+                    'status' => $faxJob->status,
+                    'scheduled_time' => $faxJob->scheduled_time?->toISOString(),
+                    'is_scheduled' => !is_null($faxJob->scheduled_time),
                 ]);
 
                 // Small delay to avoid overwhelming storage APIs
@@ -183,7 +235,8 @@ class CleanupFaxDocuments extends Command
             'r2_files_deleted' => $deletedR2,
             'total_space_freed' => $totalSizeFreed,
             'error_count' => $errorCount,
-            'hours_threshold' => $hours
+            'hours_threshold' => $hours,
+            'protected_scheduled_faxes' => $protectedScheduledFaxes
         ]);
     }
 
