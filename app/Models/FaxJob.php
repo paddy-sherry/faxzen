@@ -27,6 +27,7 @@ class FaxJob extends Model
         'is_sending',
         'is_delivered',
         'email_sent',
+        'failure_email_sent',
         'reminder_email_sent',
         'prepared_at',
         'sending_started_at',
@@ -60,6 +61,7 @@ class FaxJob extends Model
         'is_sending' => 'boolean',
         'is_delivered' => 'boolean',
         'email_sent' => 'boolean',
+        'failure_email_sent' => 'boolean',
         'reminder_email_sent' => 'boolean',
         'tracking_data' => 'array',
     ];
@@ -326,6 +328,16 @@ class FaxJob extends Model
         $this->update([
             'reminder_email_sent' => true,
             'reminder_email_sent_at' => now()
+        ]);
+    }
+
+    /**
+     * Mark failure notification email as sent
+     */
+    public function markFailureEmailSent()
+    {
+        $this->update([
+            'failure_email_sent' => true,
         ]);
     }
 

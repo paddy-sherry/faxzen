@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FaxJob;
 use App\Jobs\SendFaxJob;
+use App\Mail\FaxDeliveryFailed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -182,6 +183,25 @@ class AdminController extends Controller
                         'status' => FaxJob::STATUS_FAILED,
                         'error_message' => $failureReason
                     ]);
+
+                    // Send failure notification email if not already sent
+                    if (!$faxJob->failure_email_sent) {
+                        try {
+                            \Mail::to($faxJob->sender_email)->send(new \App\Mail\FaxDeliveryFailed($faxJob));
+                            $faxJob->markFailureEmailSent();
+                            
+                            Log::info('Failure notification email sent via manual check', [
+                                'fax_job_id' => $faxJob->id,
+                                'recipient_email' => $faxJob->sender_email,
+                                'failure_reason' => $failureReason
+                            ]);
+                        } catch (\Exception $e) {
+                            Log::error("Failed to send failure notification email via manual check", [
+                                'fax_job_id' => $faxJob->id,
+                                'error' => $e->getMessage()
+                            ]);
+                        }
+                    }
                     break;
 
                 case 'sending':

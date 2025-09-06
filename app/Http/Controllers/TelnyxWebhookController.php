@@ -142,6 +142,8 @@ class TelnyxWebhookController extends Controller
         // Send failure notification email
         try {
             \Mail::to($faxJob->sender_email)->send(new \App\Mail\FaxDeliveryFailed($faxJob));
+            $faxJob->markFailureEmailSent();
+            
             Log::info('Failure notification email sent', [
                 'fax_job_id' => $faxJob->id,
                 'recipient_email' => $faxJob->sender_email

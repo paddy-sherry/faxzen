@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\FaxJob;
+use App\Mail\FaxDeliveryFailed;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -418,8 +419,22 @@ class SendFaxJob implements ShouldQueue
 
     protected function sendFailureEmail(): void
     {
-        // TODO: Implement failure notification email
-        Log::info("Should send failure email to: " . $this->faxJob->sender_email);
+        try {
+            if (!$this->faxJob->failure_email_sent) {
+                \Mail::to($this->faxJob->sender_email)->send(new \App\Mail\FaxDeliveryFailed($this->faxJob));
+                $this->faxJob->markFailureEmailSent();
+                
+                Log::info('Failure notification email sent from SendFaxJob', [
+                    'fax_job_id' => $this->faxJob->id,
+                    'recipient_email' => $this->faxJob->sender_email
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to send failure notification email from SendFaxJob', [
+                'fax_job_id' => $this->faxJob->id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function failed(\Throwable $exception): void
