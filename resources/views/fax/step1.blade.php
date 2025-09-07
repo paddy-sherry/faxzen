@@ -329,7 +329,7 @@
         <p class="text-gray-600">Choose the option that works best for you</p>
     </div>
     
-    <div class="grid gap-6 lg:grid-cols-2 max-w-4xl mx-auto">
+    <div class="grid gap-6 lg:grid-cols-3 max-w-6xl mx-auto">
         <!-- One-time Payment -->
         <div class="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200">
             <div class="flex justify-between items-start mb-4">
@@ -364,11 +364,56 @@
             </ul>
         </div>
 
+        <!-- 10-Fax Package -->
+        <div class="border border-orange-400 rounded-lg p-6 hover:shadow-lg transition-all duration-200 relative bg-gradient-to-br from-orange-50 to-orange-100">
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span class="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    SAVE 70%
+                </span>
+            </div>
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800">10-Fax Package</h3>
+                    <p class="text-gray-600">Great for small businesses</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">$15.00</div>
+                    <div class="text-sm text-gray-500">10 faxes ($1.50 each)</div>
+                </div>
+            </div>
+            <ul class="text-gray-600 space-y-2 mb-6">
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Send 10 faxes anytime
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Account dashboard to track usage
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Fax history and confirmations
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Credits never expire
+                </li>
+            </ul>
+        </div>
+
         <!-- 20-Fax Package -->
         <div class="border border-purple-500 rounded-lg p-6 hover:shadow-lg transition-all duration-200 relative bg-gradient-to-br from-purple-50 to-purple-100">
             <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    SAVE 67%
+                    SAVE 80%
                 </span>
             </div>
             <div class="flex justify-between items-start mb-4">
@@ -644,7 +689,7 @@
 
                 <div class="border border-gray-200 rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">How much does it cost to send a fax?</h3>
-                    <p class="text-gray-600">$5 per fax. Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Pay only for what you use with secure Stripe payment processing.</p>
+                    <p class="text-gray-600">Starting at $5 per fax, or save with our recommended 10-fax package at $15 ($1.50 each). Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Choose between one-time payments or credit packages with secure Stripe payment processing.</p>
                 </div>
             </div>
         </div>
