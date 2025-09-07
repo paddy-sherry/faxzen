@@ -88,16 +88,6 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-        .cta-button {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            margin: 20px 0;
-        }
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -214,7 +204,7 @@
 
         <div style="text-align: center; margin: 30px 0;">
             <p style="color: #6b7280; margin-bottom: 15px;">Need to send another fax?</p>
-            <a href="{{ config('app.url') }}" class="cta-button">Send Another Fax</a>
+            <a href="{{ config('app.url') }}" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white !important; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block; margin: 20px 0;">Send Another Fax</a>
         </div>
 
         <div style="background-color: #f0f9ff; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #0ea5e9;">
