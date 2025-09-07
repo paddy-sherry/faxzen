@@ -52,7 +52,7 @@
                             <span>Upload file</span>
                             <input id="pdf_file" name="pdf_file" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.svg,.webp" class="sr-only" required>
                         </label>
-                        <p class="text-gray-500">or drag and drop</p>
+                    
                     </div>
                     <p class="text-xs text-gray-500">PDF, JPG, PNG, GIF, SVG, WebP up to 20MB</p>
                     <p id="file-name" class="text-sm text-green-600 font-medium hidden"></p>
