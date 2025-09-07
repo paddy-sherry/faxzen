@@ -115,7 +115,7 @@
                     Processing your document
                 </p>
                 @if($faxJob->prepared_at)
-                    <p class="text-xs text-green-600 mt-1">
+                    <p class="text-xs text-green-600 mt-1" data-utc-time="{{ $faxJob->prepared_at->toISOString() }}">
                         {{ $faxJob->prepared_at->format('g:i A') }}
                     </p>
                 @endif
@@ -151,7 +151,7 @@
                     Transmitting to recipient
                 </p>
                 @if($faxJob->sending_started_at)
-                    <p class="text-xs text-green-600 mt-1">
+                    <p class="text-xs text-green-600 mt-1" data-utc-time="{{ $faxJob->sending_started_at->toISOString() }}">
                         {{ $faxJob->sending_started_at->format('g:i A') }}
                     </p>
                 @endif
@@ -187,7 +187,7 @@
                     Successfully received
                 </p>
                 @if($faxJob->delivered_at)
-                    <p class="text-xs text-green-600 mt-1">
+                    <p class="text-xs text-green-600 mt-1" data-utc-time="{{ $faxJob->delivered_at->toISOString() }}">
                         {{ $faxJob->delivered_at->format('g:i A') }}
                     </p>
                 @endif
@@ -218,7 +218,7 @@
                 </p>
                 @if($faxJob->email_sent_at)
                     <p class="text-xs text-green-600 mt-1">
-                        {{ $faxJob->email_sent_at->format('g:i A') }}
+                        <span data-utc-time="{{ $faxJob->email_sent_at->toISOString() }}">{{ $faxJob->email_sent_at->format('g:i A') }}</span>
                     </p>
                 @endif
             </div>
@@ -507,15 +507,26 @@ setInterval(updateCountdown, 1000);
 <!-- General timezone conversion for all status pages -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Convert "Created" time to user's local timezone on all status pages
     if (typeof moment !== 'undefined') {
         const userTimezone = moment.tz.guess();
+        
+        // Convert "Created" time to user's local timezone
         const createdTimeUTC = '{{ $faxJob->created_at->toISOString() }}';
         const createdTimeLocal = moment.utc(createdTimeUTC).tz(userTimezone);
         const createdElement = document.getElementById('created-time-display');
         if (createdElement) {
             createdElement.innerHTML = createdTimeLocal.format('MMM D, YYYY h:mm A');
         }
+        
+        // Convert all step times to user's local timezone
+        const timeElements = document.querySelectorAll('[data-utc-time]');
+        timeElements.forEach(function(element) {
+            const utcTime = element.getAttribute('data-utc-time');
+            if (utcTime) {
+                const localTime = moment.utc(utcTime).tz(userTimezone);
+                element.innerHTML = localTime.format('h:mm A');
+            }
+        });
     }
 });
 </script>
