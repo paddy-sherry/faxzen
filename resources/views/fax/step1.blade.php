@@ -8,7 +8,7 @@
 <div class="bg-white rounded-lg shadow-md p-8">
     <div class="mb-8">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online</h1>
-        <p class="text-center text-gray-600 mb-6"><strong>Send faxes online</strong> with tracked delivery. Trusted by thousands of people and businesses worldwide. </p>
+        <p class="text-center text-gray-600 mb-6"><strong>Send faxes online</strong> with professional cover pages, smart scheduling, and intelligent retries. Trusted by thousands of people and businesses worldwide. </p>
         <div class="text-center mb-6">
             <div class="flex items-center justify-center space-x-6 mb-4">
                 <div class="flex items-center space-x-2">
@@ -585,6 +585,123 @@
                 </svg>
                 Contact Support
             </a>
+        </div>
+    </div>
+</div>
+
+<!-- Professional Features Section -->
+<div class="mt-12 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg shadow-sm p-8">
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Why Choose FaxZen?</h2>
+        <p class="text-gray-600 text-lg">Professional online fax service with cutting-edge features</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Professional Cover Pages -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-purple-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Professional Cover Pages</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Add branded cover sheets with sender/recipient details, subject lines, and custom messages. Automatically merged and optimized for single-page delivery.</p>
+        </div>
+
+        <!-- Smart Scheduling -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-blue-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Smart Scheduling</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Schedule faxes up to 30 days ahead with timezone intelligence. Automatically detects recipient time zones and suggests optimal delivery times.</p>
+        </div>
+
+        <!-- Intelligent Retries -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-green-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Intelligent Retries</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Advanced two-stage retry system with geographic awareness. Quick retries for busy lines, then business hours intelligence for persistent issues.</p>
+        </div>
+
+        <!-- User Accounts & Credits -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-indigo-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">User Accounts & Credits</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Create an account for bulk purchasing (67% savings), fax history dashboard, instant processing, and credits that never expire.</p>
+        </div>
+
+        <!-- Email Attachments -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-orange-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Document Confirmations</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Receive delivery confirmations with your original document attached. Provides instant proof of what was sent with size optimization and security checks.</p>
+        </div>
+
+        <!-- Real-Time Status Tracking -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-emerald-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Real-Time Status Tracking</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Track your fax in real-time from preparation to delivery. Live status updates with local timezone conversion, detailed progress tracking, and instant notifications.</p>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-8">
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Ready to Experience Professional Faxing?</h3>
+            <p class="text-gray-600 mb-4">Join thousands of businesses who trust FaxZen for their document transmissions</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Start at $5 per fax</span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Save 67% with credits</span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>No account required</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
