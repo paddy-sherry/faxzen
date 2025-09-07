@@ -10,26 +10,7 @@
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online</h1>
         <p class="text-center text-gray-600 mb-6"><strong>Send faxes online</strong> with professional cover pages, smart scheduling, and intelligent retries. Trusted by thousands of people and businesses worldwide. </p>
         <div class="text-center mb-2">
-            <div class="flex items-center justify-center space-x-6 mb-4">
-                <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-sm text-gray-600 font-medium">SSL Encrypted</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m-3-6h6" />
-                    </svg>
-                    <span class="text-sm text-gray-600 font-medium">No Hidden Fees</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <span class="text-sm text-gray-600 font-medium">Tracked Delivery</span>
-                </div>
-            </div>
+            
        
         
         <div class="flex items-center justify-center mb-4">
@@ -171,6 +152,27 @@
                     data-nosnippet>
                 Continue to Step 2
             </button>
+        </div>
+
+        <div class="flex items-center justify-center space-x-6 mb-4">
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-sm text-gray-600 font-medium">SSL Encrypted</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m-3-6h6" />
+                </svg>
+                <span class="text-sm text-gray-600 font-medium">No Hidden Fees</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span class="text-sm text-gray-600 font-medium">Tracked Delivery</span>
+            </div>
         </div>
 
          <!-- Trust Badges -->
