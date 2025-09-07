@@ -183,7 +183,7 @@ class FaxController extends Controller
         if (auth()->check()) {
             // Authenticated user without credits - no need to validate email
             $request->validate([
-                'payment_type' => 'required|in:onetime,credits',
+                'payment_type' => 'required|in:onetime,credits,credits_10',
                 'include_cover_page' => 'nullable|boolean',
                 'cover_sender_name' => 'nullable|string|max:255',
                 'cover_sender_company' => 'nullable|string|max:255',
@@ -198,7 +198,7 @@ class FaxController extends Controller
             // Guest user - validate email
             $request->validate([
                 'sender_email' => 'required|email:rfc,dns|max:255',
-                'payment_type' => 'required|in:onetime,credits',
+                'payment_type' => 'required|in:onetime,credits,credits_10',
                 'include_cover_page' => 'nullable|boolean',
                 'cover_sender_name' => 'nullable|string|max:255',
                 'cover_sender_company' => 'nullable|string|max:255',
@@ -216,7 +216,7 @@ class FaxController extends Controller
         }
 
         $paymentType = $request->payment_type;
-        $isCreditsPackage = $paymentType === 'credits';
+        $isCreditsPackage = in_array($paymentType, ['credits', 'credits_10']);
 
         // Prepare cover page data
         $coverPageData = [];
@@ -241,14 +241,21 @@ class FaxController extends Controller
         ], $coverPageData));
 
         // Determine pricing and product details
-        if ($isCreditsPackage) {
+        if ($paymentType === 'credits') {
             $amount = 2000; // $20.00 in cents
-            //$amount = 500; // $20.00 in cents
+            $credits = 20;
             $productName = 'FaxZen.com - 20 Fax Credits Package';
             $productDescription = "20 fax credits for your account\nFirst fax: {$faxJob->file_original_name} to {$faxJob->recipient_number}";
             $submitMessage = 'Your account will be created with 20 fax credits, and your first fax will be sent immediately.';
+        } elseif ($paymentType === 'credits_10') {
+            $amount = 1500; // $15.00 in cents
+            $credits = 10;
+            $productName = 'FaxZen.com - 10 Fax Credits Package';
+            $productDescription = "10 fax credits for your account\nFirst fax: {$faxJob->file_original_name} to {$faxJob->recipient_number}";
+            $submitMessage = 'Your account will be created with 10 fax credits, and your first fax will be sent immediately.';
         } else {
             $amount = $faxJob->amount * 100; // $5.00 in cents
+            $credits = 0; // No credits for one-time payment
             $productName = 'FaxZen.com - Single Fax Delivery';
             $productDescription = "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}";
             $submitMessage = 'Your fax will be sent immediately after payment confirmation.';
@@ -317,6 +324,7 @@ class FaxController extends Controller
                 'document_name' => $faxJob->file_original_name,
                 'service' => 'fax_transmission',
                 'payment_type' => $paymentType,
+                'credits' => $credits,
             ],
         ]);
 
@@ -344,7 +352,8 @@ class FaxController extends Controller
             
             if ($session->payment_status === 'paid' && (string)$session->metadata->fax_job_id === (string)$faxJob->id) {
                 $paymentType = $session->metadata->payment_type ?? 'onetime';
-                $isCreditsPackage = $paymentType === 'credits';
+                $credits = (int)($session->metadata->credits ?? 0);
+                $isCreditsPackage = in_array($paymentType, ['credits', 'credits_10']);
                 
 
                 
@@ -357,7 +366,7 @@ class FaxController extends Controller
                         $user = \App\Models\User::create([
                             'name' => explode('@', $faxJob->sender_email)[0], // Use email prefix as default name
                             'email' => $faxJob->sender_email,
-                            'fax_credits' => 20,
+                            'fax_credits' => $credits,
                             'credits_purchased_at' => now(),
                             'stripe_customer_id' => $session->customer,
                         ]);
@@ -365,11 +374,11 @@ class FaxController extends Controller
                     } else {
                         // Add credits to existing account
                         $beforeCredits = $user->fax_credits;
-                        $user->addCredits(20);
+                        $user->addCredits($credits);
                         if ($user->stripe_customer_id === null) {
                             $user->update(['stripe_customer_id' => $session->customer]);
                         }
-                        Log::info('Added credits to existing user', ['user_id' => $user->id, 'credits_added' => 20, 'total_credits' => $user->fresh()->fax_credits]);
+                        Log::info('Added credits to existing user', ['user_id' => $user->id, 'credits_added' => $credits, 'total_credits' => $user->fresh()->fax_credits]);
                     }
                     
                     // Deduct one credit for this fax
@@ -388,7 +397,8 @@ class FaxController extends Controller
                 Log::info('Payment processed successfully', [
                     'fax_job_id' => $faxJob->id,
                     'payment_type' => $paymentType,
-                    'amount' => $isCreditsPackage ? '$20.00 (20 credits)' : '$5.00 (one-time)'
+                    'amount' => $isCreditsPackage ? '$' . number_format($session->amount_total / 100, 2) . ' (' . $credits . ' credits)' : '$5.00 (one-time)',
+                    'credits' => $credits
                 ]);
 
                 // Redirect to status page instead of success page

@@ -120,7 +120,6 @@
                                    id="payment_type_onetime" 
                                    name="payment_type" 
                                    value="onetime"
-                                   checked
                                    class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
                             <div class="ml-3 flex-1">
                                 <label for="payment_type_onetime" class="cursor-pointer">
@@ -145,6 +144,46 @@
                             </div>
                         </div>
 
+                        <!-- 10-Fax Package Option -->
+                        <div class="flex items-start">
+                            <input type="radio" 
+                                   id="payment_type_credits_10" 
+                                   name="payment_type" 
+                                   value="credits_10"
+                                   checked
+                                   class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
+                            <div class="ml-3 flex-1">
+                                <label for="payment_type_credits_10" class="cursor-pointer">
+                                    <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors relative">
+                                        <div class="absolute -top-2 left-4">
+                                            <span class="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                                RECOMMENDED
+                                            </span>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <h3 class="text-lg font-semibold text-gray-900">10-Fax Package</h3>
+                                                <p class="text-sm text-gray-600">Great for small businesses</p>
+                                                <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                                    SAVE 70%
+                                                </span>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-2xl font-bold text-faxzen-blue">$15.00</div>
+                                                <div class="text-sm text-gray-500">10 faxes ($1.50 each)</div>
+                                            </div>
+                                        </div>
+                                        <ul class="mt-3 text-sm text-gray-600 space-y-1">
+                                            <li>• Send 10 faxes anytime</li>
+                                            <li>• Account dashboard to track usage</li>
+                                            <li>• Fax history and confirmations</li>
+                                            <li>• Credits never expire</li>
+                                        </ul>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
                         <!-- Account with Credits Option -->
                         <div class="flex items-start">
                             <input type="radio" 
@@ -160,7 +199,7 @@
                                                 <h3 class="text-lg font-semibold text-gray-900">20-Fax Package</h3>
                                                 <p class="text-sm text-gray-600">Best value for regular users</p>
                                                 <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                                                    SAVE 67%
+                                                    SAVE 80%
                                                 </span>
                                             </div>
                                             <div class="text-right">
@@ -194,7 +233,6 @@
                                id="payment_type_onetime_guest" 
                                name="payment_type" 
                                value="onetime"
-                               checked
                                class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
                         <div class="ml-3 flex-1">
                             <label for="payment_type_onetime_guest" class="cursor-pointer">
@@ -219,6 +257,46 @@
                         </div>
                     </div>
 
+                    <!-- 10-Fax Package Option -->
+                    <div class="flex items-start">
+                        <input type="radio" 
+                               id="payment_type_credits_10_guest" 
+                               name="payment_type" 
+                               value="credits_10"
+                               checked
+                               class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
+                        <div class="ml-3 flex-1">
+                            <label for="payment_type_credits_10_guest" class="cursor-pointer">
+                                <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors relative">
+                                    <div class="absolute -top-2 left-4">
+                                        <span class="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                            RECOMMENDED
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-gray-900">10-Fax Package</h3>
+                                            <p class="text-sm text-gray-600">Great for small businesses</p>
+                                            <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                                SAVE 70%
+                                            </span>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-faxzen-blue">$15.00</div>
+                                            <div class="text-sm text-gray-500">10 faxes ($1.50 each)</div>
+                                        </div>
+                                    </div>
+                                    <ul class="mt-3 text-sm text-gray-600 space-y-1">
+                                        <li>• Send 10 faxes anytime</li>
+                                        <li>• Account dashboard to track usage</li>
+                                        <li>• Fax history and confirmations</li>
+                                        <li>• Credits never expire</li>
+                                    </ul>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     <!-- Account with Credits Option -->
                     <div class="flex items-start">
                         <input type="radio" 
@@ -234,7 +312,7 @@
                                             <h3 class="text-lg font-semibold text-gray-900">20-Fax Package</h3>
                                             <p class="text-sm text-gray-600">Best value for regular users</p>
                                             <span class="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                                                SAVE 67%
+                                                SAVE 80%
                                             </span>
                                         </div>
                                         <div class="text-right">
@@ -496,7 +574,7 @@
                 ← Back
             </a>
             <button type="submit" 
-                    class="flex-1 bg-faxzen-blue text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-faxzen-blue transition-colors font-semibold">
+                    class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 font-semibold">
                 @auth
                     @if(Auth::user()->hasCredits())
                         Send Fax (Use 1 Credit) →
@@ -532,18 +610,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<div class="mt-8 bg-green-50 rounded-lg p-6">
+<div class="mt-8 bg-blue-50 rounded-lg p-6">
     <div class="flex items-center mb-4">
-        <svg class="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <h3 class="text-lg font-semibold text-green-800">What happens next?</h3>
+        <h3 class="text-lg font-semibold text-blue-800">What happens next?</h3>
     </div>
     
     @auth
         @if(Auth::user()->hasCredits())
             <!-- User has credits flow -->
-            <ul class="text-sm text-green-700 space-y-2">
+            <ul class="text-sm text-blue-700 space-y-2">
                 <li class="flex items-start">
                     <span class="mr-2">•</span>
                     <span>1 credit will be deducted from your account</span>
@@ -565,7 +643,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <!-- User logged in but no credits - show payment flows -->
             <!-- One-time payment flow -->
             <div id="onetime-flow" class="payment-flow">
-                <ul class="text-sm text-green-700 space-y-2">
+                <ul class="text-sm text-blue-700 space-y-2">
                     <li class="flex items-start">
                         <span class="mr-2">•</span>
                         <span>Complete payment securely with Stripe</span>
@@ -583,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             <!-- Credits flow -->
             <div id="credits-flow" class="payment-flow hidden">
-                <ul class="text-sm text-green-700 space-y-2">
+                <ul class="text-sm text-blue-700 space-y-2">
                     <li class="flex items-start">
                         <span class="mr-2">•</span>
                         <span>Complete payment securely with Stripe</span>
@@ -607,7 +685,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- User not logged in - show payment flows -->
         <!-- One-time payment flow -->
         <div id="onetime-flow" class="payment-flow">
-            <ul class="text-sm text-green-700 space-y-2">
+            <ul class="text-sm text-blue-700 space-y-2">
                 <li class="flex items-start">
                     <span class="mr-2">•</span>
                     <span>Complete payment securely with Stripe</span>
@@ -625,7 +703,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         <!-- Credits flow -->
         <div id="credits-flow" class="payment-flow hidden">
-            <ul class="text-sm text-green-700 space-y-2">
+            <ul class="text-sm text-blue-700 space-y-2">
                 <li class="flex items-start">
                     <span class="mr-2">•</span>
                     <span>Complete payment securely with Stripe</span>
@@ -652,6 +730,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             const onetimeRadio = document.getElementById('payment_type_onetime');
+            const credits10Radio = document.getElementById('payment_type_credits_10');
             const creditsRadio = document.getElementById('payment_type_credits');
             const onetimeFlow = document.getElementById('onetime-flow');
             const creditsFlow = document.getElementById('credits-flow');
@@ -660,14 +739,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (onetimeRadio && onetimeRadio.checked) {
                     onetimeFlow.classList.remove('hidden');
                     creditsFlow.classList.add('hidden');
-                } else if (creditsRadio && creditsRadio.checked) {
+                } else if ((credits10Radio && credits10Radio.checked) || (creditsRadio && creditsRadio.checked)) {
                     onetimeFlow.classList.add('hidden');
                     creditsFlow.classList.remove('hidden');
                 }
             }
 
             if (onetimeRadio) onetimeRadio.addEventListener('change', updateFlow);
+            if (credits10Radio) credits10Radio.addEventListener('change', updateFlow);
             if (creditsRadio) creditsRadio.addEventListener('change', updateFlow);
+            
+            // Trigger initial update based on default selection
+            updateFlow();
         });
         </script>
     @endif
@@ -675,6 +758,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const onetimeRadio = document.getElementById('payment_type_onetime_guest');
+        const credits10Radio = document.getElementById('payment_type_credits_10_guest');
         const creditsRadio = document.getElementById('payment_type_credits_guest');
         const onetimeFlow = document.getElementById('onetime-flow');
         const creditsFlow = document.getElementById('credits-flow');
@@ -683,14 +767,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (onetimeRadio && onetimeRadio.checked) {
                 onetimeFlow.classList.remove('hidden');
                 creditsFlow.classList.add('hidden');
-            } else if (creditsRadio && creditsRadio.checked) {
+            } else if ((credits10Radio && credits10Radio.checked) || (creditsRadio && creditsRadio.checked)) {
                 onetimeFlow.classList.add('hidden');
                 creditsFlow.classList.remove('hidden');
             }
         }
 
         if (onetimeRadio) onetimeRadio.addEventListener('change', updateFlow);
+        if (credits10Radio) credits10Radio.addEventListener('change', updateFlow);
         if (creditsRadio) creditsRadio.addEventListener('change', updateFlow);
+        
+        // Trigger initial update based on default selection
+        updateFlow();
     });
     </script>
 @endauth
