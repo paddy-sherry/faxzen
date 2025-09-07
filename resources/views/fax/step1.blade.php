@@ -9,7 +9,7 @@
     <div class="mb-8">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online</h1>
         <p class="text-center text-gray-600 mb-6"><strong>Send faxes online</strong> with professional cover pages, smart scheduling, and intelligent retries. Trusted by thousands of people and businesses worldwide. </p>
-        <div class="text-center mb-6">
+        <div class="text-center mb-2">
             <div class="flex items-center justify-center space-x-6 mb-4">
                 <div class="flex items-center space-x-2">
                     <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -41,8 +41,7 @@
                 <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">3</div>
             </div>
         </div>
-        <h2 class="text-xl font-bold text-center text-gray-800">Upload Document</h2>
-        <p class="text-center text-gray-600 mt-2">Upload your PDF and enter the destination fax number</p>
+        
     </div>
 
     @if ($errors->any())
@@ -74,7 +73,7 @@
                         </label>
                         <p class="text-gray-500">or drag and drop</p>
                     </div>
-                    <p class="text-xs text-gray-500">PDF, JPG, PNG, GIF, SVG, WebP up to 50MB</p>
+                    <p class="text-xs text-gray-500">PDF, JPG, PNG, GIF, SVG, WebP up to 20MB</p>
                     <p id="file-name" class="text-sm text-green-600 font-medium hidden"></p>
                 </div>
             </div>
@@ -180,29 +179,6 @@
     </form>
 </div>
 
-<!-- Hero Section with Image -->
-<div class="mt-12 bg-white rounded-lg shadow-md overflow-hidden">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-        <!-- Text Content -->
-        <div class="p-8 lg:p-12 text-center">
-            <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
-            Send A Fax Online With Ease
-            </h2>
-            <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
-            We've revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it's as simple as uploading your PDF document, paying just $5, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
-            </p>
-        </div>
-        
-        <!-- Image -->
-        <div class="h-[400px] bg-gray-100">
-            <img 
-                src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/307e046b-9566-4a97-1495-12bf4e94f000/public" 
-                alt="Send Fax Online"
-                class="w-full object-contain"
-            >
-        </div>
-    </div>
-</div>
 
 <div class="mt-8 bg-white border border-purple-500 rounded-lg p-6">
     <h3 class="text-lg font-semibold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent mb-4">How it works</h3>
@@ -224,6 +200,125 @@
         </div>
     </div>
 </div>
+
+<!-- Professional Features Section -->
+<div class="mt-12 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg shadow-sm p-8">
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Why Choose FaxZen?</h2>
+        <p class="text-gray-600 text-lg">Professional online fax service with cutting-edge features</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Professional Cover Pages -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-purple-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Professional Cover Pages</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Add branded cover sheets with sender/recipient details, subject lines, and custom messages. Automatically merged and optimized for single-page delivery.</p>
+        </div>
+
+        <!-- Smart Scheduling -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-blue-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Smart Scheduling</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Schedule faxes up to 30 days ahead with timezone intelligence. Automatically detects recipient time zones and suggests optimal delivery times.</p>
+        </div>
+
+        <!-- Intelligent Retries -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-green-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Intelligent Retries</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Advanced two-stage retry system with geographic awareness. Quick retries for busy lines, then business hours intelligence for persistent issues.</p>
+        </div>
+
+        <!-- User Accounts & Credits -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-indigo-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">User Accounts & Credits</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Create an account for bulk purchasing (67% savings), fax history dashboard, instant processing, and credits that never expire.</p>
+        </div>
+
+        <!-- Email Attachments -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-orange-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Document Confirmations</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Receive delivery confirmations with your original document attached. Provides instant proof of what was sent with size optimization and security checks.</p>
+        </div>
+
+        <!-- Real-Time Status Tracking -->
+        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center mb-4">
+                <div class="bg-emerald-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 ml-3">Real-Time Status Tracking</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Track your fax in real-time from preparation to delivery. Live status updates with local timezone conversion, detailed progress tracking, and instant notifications.</p>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-8">
+        <div class="bg-white rounded-lg p-6 shadow-sm">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Ready to Experience Professional Faxing?</h3>
+            <p class="text-gray-600 mb-4">Join thousands of businesses who trust FaxZen for their document transmissions</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Start at $5 per fax</span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Save 67% with credits</span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>No account required</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- Pricing Section -->
 <div id="pricing" class="mt-8 bg-white rounded-lg shadow-md p-8">
@@ -323,6 +418,30 @@
             </svg>
             Upload Your Document
         </a>
+    </div>
+</div>
+
+<!-- Hero Section with Image -->
+<div class="mt-12 bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        <!-- Text Content -->
+        <div class="p-8 lg:p-12 text-center">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
+            Send A Fax Online With Ease
+            </h2>
+            <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
+            We've revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it's as simple as uploading your PDF document, paying just $5, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
+            </p>
+        </div>
+        
+        <!-- Image -->
+        <div class="h-[400px] bg-gray-100">
+            <img 
+                src="https://imagedelivery.net/k0P4EcPiouU_XzyGSmgmUw/307e046b-9566-4a97-1495-12bf4e94f000/public" 
+                alt="Send Fax Online"
+                class="w-full object-contain"
+            >
+        </div>
     </div>
 </div>
 
@@ -480,55 +599,7 @@
     </div>
 </div>
 
-<!-- SEO Content Section -->
-<div class="mt-12 bg-white rounded-lg shadow-md p-8">
-    <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">Why Choose to Send Fax Online?</h2>
-        
-        <div class="prose prose-lg max-w-none text-gray-700 space-y-6">
-            <p>
-                In today's digital world, the ability to <strong>send fax online</strong> has revolutionized how businesses and individuals handle document transmission. Gone are the days of searching for a physical fax machine, dealing with busy signals, or worrying about paper jams. When you send a fax online, you gain access to a reliable, efficient, and cost-effective solution that works 24/7 from anywhere in the world.
-            </p>
 
-            <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">The Modern Way to Send Fax Online</h3>
-            <p>
-                Our online fax service makes it incredibly simple to <strong>send a fax online</strong> in just three easy steps. Upload your PDF document, enter the recipient's fax number, and complete your payment – it's that straightforward. Unlike traditional fax machines that require physical presence and maintenance, our platform allows you to transmit faxes online from your computer, tablet, or smartphone at any time of day.
-            </p>
-
-            <p>
-                When you choose to send faxes online with FaxZen, you're choosing a service that's trusted by thousands of businesses worldwide. Our platform processes over 50,000 faxes monthly, ensuring your documents reach their destination quickly and securely. Whether you need to send contracts, medical records, legal documents, or tax forms, our service provides the reliability you need.
-            </p>
-
-            <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Benefits of Choosing to Send Fax Online</h3>
-            <p>
-                The advantages of deciding to use online fax services are numerous and compelling. First, there's the convenience factor – you can send documents via fax from anywhere with an internet connection, eliminating the need to visit an office or find a physical fax machine. This is particularly valuable for remote workers, travelers, or anyone who needs to send urgent documents outside of business hours.
-            </p>
-
-            <p>
-                Cost-effectiveness is another major benefit when you send faxes digitally. Traditional fax machines require significant upfront investment, ongoing maintenance, dedicated phone lines, and supplies like paper and toner. When you <strong>send a fax online</strong>, you only pay for what you use – just $5 per fax with no hidden fees or monthly subscriptions.
-            </p>
-
-            <p>
-                Security is paramount when sending faxes through our online platform. We employ 256-bit SSL encryption to protect your documents during transmission, ensuring that sensitive information remains confidential. Additionally, all documents are automatically deleted from our servers after 24 hours, providing an extra layer of privacy protection that traditional fax machines cannot offer.
-            </p>
-
-
-
-            <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">The Future of Document Transmission</h3>
-            <p>
-                As more organizations recognize the benefits of digital transformation, the trend toward <strong>sending faxes online</strong> continues to grow. Our service represents the evolution of faxing technology, combining the legal validity and widespread acceptance of traditional fax with the convenience and efficiency of modern internet technology.
-            </p>
-
-            <p>
-                When you choose FaxZen for your document transmission needs, you're not just sending a document – you're participating in a more sustainable, efficient, and reliable method of business communication. Our instant delivery confirmation gives you peace of mind, knowing your important documents have reached their destination successfully.
-            </p>
-
-            <p>
-                Ready to experience the convenience of modern faxing? Join thousands of satisfied customers who have made the smart choice to use our online fax service. Upload your document today and discover why our platform is the preferred solution for fast, secure, and affordable digital fax transmission.
-            </p>
-        </div>
-    </div>
-</div>
 
 <!-- FAQ Section -->
 <div class="mt-12 bg-white rounded-lg shadow-md p-8">
@@ -589,122 +660,57 @@
     </div>
 </div>
 
-<!-- Professional Features Section -->
-<div class="mt-12 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg shadow-sm p-8">
-    <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold text-gray-800 mb-4">Why Choose FaxZen?</h2>
-        <p class="text-gray-600 text-lg">Professional online fax service with cutting-edge features</p>
-    </div>
-    
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Professional Cover Pages -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center mb-4">
-                <div class="bg-purple-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-800 ml-3">Professional Cover Pages</h3>
-            </div>
-            <p class="text-gray-600 text-sm leading-relaxed">Add branded cover sheets with sender/recipient details, subject lines, and custom messages. Automatically merged and optimized for single-page delivery.</p>
-        </div>
+<!-- SEO Content Section -->
+<div class="mt-12 bg-white rounded-lg shadow-md p-8">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Why Choose to Send Fax Online?</h2>
+        
+        <div class="prose prose-lg max-w-none text-gray-700 space-y-6">
+            <p>
+                In today's digital world, the ability to <strong>send fax online</strong> has revolutionized how businesses and individuals handle document transmission. Gone are the days of searching for a physical fax machine, dealing with busy signals, or worrying about paper jams. When you send a fax online, you gain access to a reliable, efficient, and cost-effective solution that works 24/7 from anywhere in the world.
+            </p>
 
-        <!-- Smart Scheduling -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center mb-4">
-                <div class="bg-blue-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-800 ml-3">Smart Scheduling</h3>
-            </div>
-            <p class="text-gray-600 text-sm leading-relaxed">Schedule faxes up to 30 days ahead with timezone intelligence. Automatically detects recipient time zones and suggests optimal delivery times.</p>
-        </div>
+            <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">The Modern Way to Send Fax Online</h3>
+            <p>
+                Our online fax service makes it incredibly simple to <strong>send a fax online</strong> in just three easy steps. Upload your PDF document, enter the recipient's fax number, and complete your payment – it's that straightforward. Unlike traditional fax machines that require physical presence and maintenance, our platform allows you to transmit faxes online from your computer, tablet, or smartphone at any time of day.
+            </p>
 
-        <!-- Intelligent Retries -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center mb-4">
-                <div class="bg-green-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-800 ml-3">Intelligent Retries</h3>
-            </div>
-            <p class="text-gray-600 text-sm leading-relaxed">Advanced two-stage retry system with geographic awareness. Quick retries for busy lines, then business hours intelligence for persistent issues.</p>
-        </div>
+            <p>
+                When you choose to send faxes online with FaxZen, you're choosing a service that's trusted by thousands of businesses worldwide. Our platform processes over 50,000 faxes monthly, ensuring your documents reach their destination quickly and securely. Whether you need to send contracts, medical records, legal documents, or tax forms, our service provides the reliability you need.
+            </p>
 
-        <!-- User Accounts & Credits -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center mb-4">
-                <div class="bg-indigo-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-800 ml-3">User Accounts & Credits</h3>
-            </div>
-            <p class="text-gray-600 text-sm leading-relaxed">Create an account for bulk purchasing (67% savings), fax history dashboard, instant processing, and credits that never expire.</p>
-        </div>
+            <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">Benefits of Choosing to Send Fax Online</h3>
+            <p>
+                The advantages of deciding to use online fax services are numerous and compelling. First, there's the convenience factor – you can send documents via fax from anywhere with an internet connection, eliminating the need to visit an office or find a physical fax machine. This is particularly valuable for remote workers, travelers, or anyone who needs to send urgent documents outside of business hours.
+            </p>
 
-        <!-- Email Attachments -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center mb-4">
-                <div class="bg-orange-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-800 ml-3">Document Confirmations</h3>
-            </div>
-            <p class="text-gray-600 text-sm leading-relaxed">Receive delivery confirmations with your original document attached. Provides instant proof of what was sent with size optimization and security checks.</p>
-        </div>
+            <p>
+                Cost-effectiveness is another major benefit when you send faxes digitally. Traditional fax machines require significant upfront investment, ongoing maintenance, dedicated phone lines, and supplies like paper and toner. When you <strong>send a fax online</strong>, you only pay for what you use – just $5 per fax with no hidden fees or monthly subscriptions.
+            </p>
 
-        <!-- Real-Time Status Tracking -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-center mb-4">
-                <div class="bg-emerald-100 rounded-lg p-3">
-                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-800 ml-3">Real-Time Status Tracking</h3>
-            </div>
-            <p class="text-gray-600 text-sm leading-relaxed">Track your fax in real-time from preparation to delivery. Live status updates with local timezone conversion, detailed progress tracking, and instant notifications.</p>
-        </div>
-    </div>
+            <p>
+                Security is paramount when sending faxes through our online platform. We employ 256-bit SSL encryption to protect your documents during transmission, ensuring that sensitive information remains confidential. Additionally, all documents are automatically deleted from our servers after 24 hours, providing an extra layer of privacy protection that traditional fax machines cannot offer.
+            </p>
 
-    <!-- Call to Action -->
-    <div class="text-center mt-8">
-        <div class="bg-white rounded-lg p-6 shadow-sm">
-            <h3 class="text-xl font-semibold text-gray-800 mb-2">Ready to Experience Professional Faxing?</h3>
-            <p class="text-gray-600 mb-4">Join thousands of businesses who trust FaxZen for their document transmissions</p>
-            <div class="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-                <div class="flex items-center space-x-2 text-sm text-gray-600">
-                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Start at $5 per fax</span>
-                </div>
-                <div class="flex items-center space-x-2 text-sm text-gray-600">
-                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Save 67% with credits</span>
-                </div>
-                <div class="flex items-center space-x-2 text-sm text-gray-600">
-                    <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                    <span>No account required</span>
-                </div>
-            </div>
+
+
+            <h3 class="text-2xl font-semibold text-gray-800 mt-8 mb-4">The Future of Document Transmission</h3>
+            <p>
+                As more organizations recognize the benefits of digital transformation, the trend toward <strong>sending faxes online</strong> continues to grow. Our service represents the evolution of faxing technology, combining the legal validity and widespread acceptance of traditional fax with the convenience and efficiency of modern internet technology.
+            </p>
+
+            <p>
+                When you choose FaxZen for your document transmission needs, you're not just sending a document – you're participating in a more sustainable, efficient, and reliable method of business communication. Our instant delivery confirmation gives you peace of mind, knowing your important documents have reached their destination successfully.
+            </p>
+
+            <p>
+                Ready to experience the convenience of modern faxing? Join thousands of satisfied customers who have made the smart choice to use our online fax service. Upload your document today and discover why our platform is the preferred solution for fast, secure, and affordable digital fax transmission.
+            </p>
         </div>
     </div>
 </div>
+
+
 
 <!-- Latest Blog Articles Section -->
 @if($latestPosts->count() > 0)
