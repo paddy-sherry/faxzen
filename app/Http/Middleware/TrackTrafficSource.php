@@ -27,8 +27,9 @@ class TrackTrafficSource
     protected function captureTrafficSource(Request $request): void
     {
         $utmParams = $this->getUtmParameters($request);
+        $googleAdsParams = $this->getGoogleAdsParameters($request);
         $referrer = $request->headers->get('referer');
-        $trafficSource = $this->determineTrafficSource($utmParams, $referrer);
+        $trafficSource = $this->determineTrafficSource($utmParams, $googleAdsParams, $referrer);
 
         $trackingData = [
             'traffic_source' => $trafficSource,
@@ -37,6 +38,10 @@ class TrackTrafficSource
             'utm_campaign' => $utmParams['utm_campaign'] ?? null,
             'utm_term' => $utmParams['utm_term'] ?? null,
             'utm_content' => $utmParams['utm_content'] ?? null,
+            'gclid' => $googleAdsParams['gclid'] ?? null,
+            'gad_campaignid' => $googleAdsParams['gad_campaignid'] ?? null,
+            'gad_source' => $googleAdsParams['gad_source'] ?? null,
+            'gbraid' => $googleAdsParams['gbraid'] ?? null,
             'referrer_url' => $referrer,
             'landing_page' => $request->fullUrl(),
             'user_agent' => $request->headers->get('user-agent'),
@@ -69,11 +74,33 @@ class TrackTrafficSource
     }
 
     /**
-     * Determine traffic source based on UTM parameters and referrer
+     * Extract Google Ads parameters from request
      */
-    protected function determineTrafficSource(array $utmParams, ?string $referrer): string
+    protected function getGoogleAdsParameters(Request $request): array
     {
-        // AdWords/Google Ads detection
+        return [
+            'gclid' => $request->query('gclid'),
+            'gad_campaignid' => $request->query('gad_campaignid'),
+            'gad_source' => $request->query('gad_source'),
+            'gbraid' => $request->query('gbraid'),
+            'wbraid' => $request->query('wbraid'), // Google Ads enhanced conversions
+        ];
+    }
+
+    /**
+     * Determine traffic source based on UTM parameters, Google Ads parameters, and referrer
+     */
+    protected function determineTrafficSource(array $utmParams, array $googleAdsParams, ?string $referrer): string
+    {
+        // Priority 1: Google Ads detection via gclid or other Google Ads parameters
+        if (!empty($googleAdsParams['gclid']) || 
+            !empty($googleAdsParams['gad_campaignid']) || 
+            !empty($googleAdsParams['gbraid']) || 
+            !empty($googleAdsParams['wbraid'])) {
+            return 'adwords';
+        }
+
+        // Priority 2: UTM-based detection
         if (isset($utmParams['utm_source'])) {
             $utmSource = strtolower($utmParams['utm_source']);
             $utmMedium = strtolower($utmParams['utm_medium'] ?? '');
