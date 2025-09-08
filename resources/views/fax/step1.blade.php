@@ -8,7 +8,7 @@
 <div class="bg-white rounded-lg shadow-md p-8">
     <div class="mb-8">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online</h1>
-        <p class="text-center text-gray-600 mb-6"><strong>Send faxes online</strong> with professional cover pages, smart scheduling, and intelligent retries. Trusted by thousands of people and businesses worldwide. </p>
+        <p class="text-center text-gray-600 mb-6"><strong>Send faxes online</strong> with professional cover pages, smart scheduling and real time delivery status. Trusted by thousands of people and businesses worldwide. </p>
         <div class="text-center mb-2">
             
        
