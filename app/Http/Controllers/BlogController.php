@@ -24,7 +24,7 @@ class BlogController extends Controller
             });
         }
         
-        $posts = $query->paginate(12);
+        $posts = $query->get();
         
         return view('blog.index', compact('posts'));
     }

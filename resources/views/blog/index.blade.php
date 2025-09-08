@@ -98,11 +98,6 @@
                     </article>
                 @endforeach
             </div>
-
-            <!-- Pagination -->
-            <div class="flex justify-center">
-                {{ $posts->appends(request()->query())->links() }}
-            </div>
         @elseif(!request('search'))
             <!-- No Posts Yet -->
             <div class="text-center py-16">
