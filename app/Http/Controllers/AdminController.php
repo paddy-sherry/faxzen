@@ -332,6 +332,19 @@ class AdminController extends Controller
             ->limit(10)
             ->get();
 
+        // Daily status breakdown for chart (all fax jobs, not just conversions)
+        $dailyStatusData = FaxJob::whereDate('created_at', '>=', $dateFrom)
+            ->whereDate('created_at', '<=', $dateTo)
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                'status'
+            )
+            ->selectRaw('COUNT(*) as count')
+            ->groupBy('date', 'status')
+            ->orderBy('date')
+            ->get()
+            ->groupBy('date');
+
         return view('admin.analytics', compact(
             'totalConversions',
             'totalRevenue',
@@ -341,6 +354,7 @@ class AdminController extends Controller
             'dailyTrends',
             'topCampaigns',
             'topKeywords',
+            'dailyStatusData',
             'dateFrom',
             'dateTo'
         ));

@@ -61,6 +61,14 @@
             </div>
         </div>
 
+        <!-- Daily Status Chart -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Daily Fax Status Breakdown</h3>
+            <div class="relative" style="height: 400px;">
+                <canvas id="dailyStatusChart"></canvas>
+            </div>
+        </div>
+
         <!-- Detailed Breakdown -->
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Detailed Source Analysis</h3>
@@ -212,3 +220,141 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Process PHP data for Chart.js
+    const dailyStatusData = @json($dailyStatusData);
+    
+    // Get all unique dates in the range
+    const startDate = new Date('{{ $dateFrom }}');
+    const endDate = new Date('{{ $dateTo }}');
+    const dates = [];
+    const currentDate = new Date(startDate);
+    
+    while (currentDate <= endDate) {
+        dates.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    // Status color mapping
+    const statusColors = {
+        'sent': '#10b981',      // green - delivered
+        'paid': '#10b981',      // green - delivered (treating paid as delivered)
+        'pending': '#f59e0b',   // yellow - pending
+        'payment_pending': '#f97316', // orange - payment pending
+        'failed': '#ef4444'     // red - failed
+    };
+    
+    // Status label mapping
+    const statusLabels = {
+        'sent': 'Delivered',
+        'paid': 'Delivered',
+        'pending': 'Pending',
+        'payment_pending': 'Payment Pending',
+        'failed': 'Failed'
+    };
+    
+    // Prepare data for each status
+    const statuses = ['sent', 'paid', 'pending', 'payment_pending', 'failed'];
+    const datasets = [];
+    
+    // Group sent and paid together as "delivered"
+    const combinedStatuses = ['delivered', 'pending', 'payment_pending', 'failed'];
+    
+    combinedStatuses.forEach(status => {
+        const data = dates.map(date => {
+            const dayData = dailyStatusData[date] || [];
+            let count = 0;
+            
+            if (status === 'delivered') {
+                // Combine sent and paid counts
+                count = dayData.filter(item => item.status === 'sent' || item.status === 'paid')
+                              .reduce((sum, item) => sum + item.count, 0);
+            } else {
+                const statusItem = dayData.find(item => item.status === status);
+                count = statusItem ? statusItem.count : 0;
+            }
+            
+            return count;
+        });
+        
+        datasets.push({
+            label: status === 'delivered' ? 'Delivered' : statusLabels[status],
+            data: data,
+            backgroundColor: status === 'delivered' ? statusColors['sent'] : statusColors[status],
+            borderColor: status === 'delivered' ? statusColors['sent'] : statusColors[status],
+            borderWidth: 1
+        });
+    });
+    
+    // Create the chart
+    const ctx = document.getElementById('dailyStatusChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: dates.map(date => {
+                return new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }),
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Faxes'
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Daily Fax Jobs by Status ({{ $dateFrom }} to {{ $dateTo }})'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        footer: function(tooltipItems) {
+                            let total = 0;
+                            tooltipItems.forEach(function(tooltipItem) {
+                                total += tooltipItem.parsed.y;
+                            });
+                            return 'Total: ' + total + ' faxes';
+                        }
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+});
+</script>
+@endpush
