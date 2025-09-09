@@ -63,7 +63,12 @@
 
         <!-- Daily Status Chart -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Daily Fax Status Breakdown</h3>
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">📊 Daily Fax Status Breakdown</h3>
+                <div class="text-sm text-gray-500 text-right">
+                    💡 <strong>Tip:</strong> Click legend items to show/hide status types
+                </div>
+            </div>
             <div class="relative" style="height: 400px;">
                 <canvas id="dailyStatusChart"></canvas>
             </div>
@@ -329,6 +334,36 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: {
                 legend: {
                     position: 'top',
+                    onClick: (e, legendItem, legend) => {
+                        const index = legendItem.datasetIndex;
+                        const chart = legend.chart;
+                        const meta = chart.getDatasetMeta(index);
+
+                        // Toggle visibility
+                        meta.hidden = meta.hidden === null ? !chart.data.datasets[index].hidden : null;
+                        chart.update();
+                    },
+                    onHover: (event, legendItem) => {
+                        event.native.target.style.cursor = 'pointer';
+                    },
+                    onLeave: (event, legendItem) => {
+                        event.native.target.style.cursor = 'default';
+                    },
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        generateLabels: (chart) => {
+                            const datasets = chart.data.datasets;
+                            return datasets.map((dataset, i) => ({
+                                text: dataset.label,
+                                fillStyle: dataset.backgroundColor,
+                                strokeStyle: dataset.borderColor,
+                                lineWidth: dataset.borderWidth,
+                                hidden: !chart.isDatasetVisible(i),
+                                datasetIndex: i
+                            }));
+                        }
+                    }
                 },
                 title: {
                     display: true,
@@ -338,12 +373,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     mode: 'index',
                     intersect: false,
                     callbacks: {
+                        title: function(context) {
+                            return context[0].label;
+                        },
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y + ' faxes';
+                        },
                         footer: function(tooltipItems) {
-                            let total = 0;
+                            let visibleTotal = 0;
+                            let allTotal = 0;
+                            
                             tooltipItems.forEach(function(tooltipItem) {
-                                total += tooltipItem.parsed.y;
+                                visibleTotal += tooltipItem.parsed.y;
                             });
-                            return 'Total: ' + total + ' faxes';
+                            
+                            // Calculate total including hidden datasets
+                            const chart = tooltipItems[0].chart;
+                            const dataIndex = tooltipItems[0].dataIndex;
+                            chart.data.datasets.forEach(function(dataset, index) {
+                                if (chart.isDatasetVisible(index)) {
+                                    allTotal += dataset.data[dataIndex];
+                                }
+                            });
+                            
+                            return visibleTotal === allTotal 
+                                ? 'Total: ' + visibleTotal + ' faxes'
+                                : 'Shown: ' + visibleTotal + ' faxes (filtered view)';
                         }
                     }
                 }

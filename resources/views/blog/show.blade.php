@@ -78,6 +78,37 @@ html {
 .blog-content a[href^="#"]:hover {
     text-decoration: underline;
 }
+
+/* Content link styling for blog articles */
+.content-link a {
+    color: #7c3aed;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease-in-out;
+    background: linear-gradient(to bottom, transparent 50%, rgba(124, 58, 237, 0.1) 50%);
+    background-size: 100% 200%;
+    background-position: 0 0;
+}
+
+.content-link a:hover {
+    color: #5b21b6;
+    border-bottom-color: #7c3aed;
+    background-position: 0 100%;
+    transform: translateY(-1px);
+}
+
+.content-link a:active {
+    transform: translateY(0);
+}
+
+/* Special styling for external links */
+.content-link a[href^="http"]:not([href*="faxzen.com"])::after {
+    content: "↗";
+    font-size: 0.75em;
+    margin-left: 0.25em;
+    opacity: 0.7;
+}
 </style>
 @endpush
 
@@ -153,7 +184,7 @@ html {
                 </div>
 
                 @if($post->excerpt)
-                    <div class="text-xl text-gray-700 leading-relaxed mb-8 p-6 bg-gray-50 rounded-lg border-l-4 border-purple-500">
+                    <div class="text-xl text-gray-700 leading-relaxed mb-8 p-6 bg-gray-50 rounded-lg border-l-4 border-purple-500 content-link">
                         {{ $post->excerpt }}
                     </div>
                 @endif
@@ -169,7 +200,7 @@ html {
             @endif
 
             <!-- Article Content -->
-            <div class="prose prose-lg max-w-none mb-12 blog-content">
+            <div class="prose prose-lg max-w-none mb-12 blog-content content-link">
                 {!! $post->content_with_cta !!}
             </div>
 
@@ -252,7 +283,7 @@ html {
                                         <a href="{{ $relatedPost->url }}">{{ $relatedPost->title }}</a>
                                     </h3>
                                     
-                                    <p class="text-gray-600 mb-4 leading-relaxed">{{ Str::limit($relatedPost->excerpt, 100) }}</p>
+                                    <p class="text-gray-600 mb-4 leading-relaxed content-link">{{ Str::limit($relatedPost->excerpt, 100) }}</p>
                                     
                                     <a href="{{ $relatedPost->url }}" 
                                        class="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium transition-colors">

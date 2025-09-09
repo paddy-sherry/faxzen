@@ -9,6 +9,38 @@
 @endpush
 
 @push('styles')
+<style>
+/* Content link styling for blog articles */
+.content-link a {
+    color: #7c3aed;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease-in-out;
+    background: linear-gradient(to bottom, transparent 50%, rgba(124, 58, 237, 0.1) 50%);
+    background-size: 100% 200%;
+    background-position: 0 0;
+}
+
+.content-link a:hover {
+    color: #5b21b6;
+    border-bottom-color: #7c3aed;
+    background-position: 0 100%;
+    transform: translateY(-1px);
+}
+
+.content-link a:active {
+    transform: translateY(0);
+}
+
+/* Special styling for external links */
+.content-link a[href^="http"]:not([href*="faxzen.com"])::after {
+    content: "↗";
+    font-size: 0.75em;
+    margin-left: 0.25em;
+    opacity: 0.7;
+}
+</style>
 @endpush
 
 @section('content')
@@ -85,7 +117,7 @@
                                 <a href="{{ $post->url }}">{{ $post->title }}</a>
                             </h3>
                             
-                            <p class="text-gray-600 mb-4 leading-relaxed">{{ Str::limit($post->excerpt, 120) }}</p>
+                            <p class="text-gray-600 mb-4 leading-relaxed content-link">{{ Str::limit($post->excerpt, 120) }}</p>
                             
                             <a href="{{ $post->url }}" 
                                class="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium transition-colors">
