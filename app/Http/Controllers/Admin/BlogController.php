@@ -102,9 +102,9 @@ class BlogController extends Controller
         $wordCount = str_word_count(strip_tags($validated['content'] . ' ' . $validated['excerpt']));
         $validated['read_time_minutes'] = max(1, ceil($wordCount / 200));
 
-        Post::create($validated);
+        $post = Post::create($validated);
 
-        return redirect()->route('admin.blog.index')
+        return redirect()->route('admin.blog.edit', $post->id)
             ->with('success', 'Blog post created successfully!');
     }
 
@@ -192,7 +192,7 @@ class BlogController extends Controller
             return response()->json(['success' => true, 'message' => 'Blog post updated successfully!']);
         }
 
-        return redirect()->route('admin.blog.index')
+        return redirect()->route('admin.blog.edit', $post->id)
             ->with('success', 'Blog post updated successfully!');
     }
 
