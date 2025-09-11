@@ -24,7 +24,7 @@
 .blog-content h3 {
     margin-top: 2rem;
     margin-bottom: 1rem;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 600;
     color: #374151;
 }
