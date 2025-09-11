@@ -141,16 +141,16 @@ class Post extends Model
     }
 
     /**
-     * Get content with CTA button inserted, H3 converted to H2, and table of contents added
+     * Get content with CTA button inserted and table of contents added from existing H2 tags
      */
     public function getContentWithCtaAttribute()
     {
         $content = $this->content;
         
-        // First, convert H3 tags to H2 and add IDs
-        $content = $this->convertH3ToH2WithIds($content);
+        // Add IDs to existing H2 tags if they don't have them
+        $content = $this->addIdsToH2Tags($content);
         
-        // Generate table of contents
+        // Generate table of contents from H2 tags
         $tableOfContents = $this->generateTableOfContents($content);
         
         // Add table of contents at the beginning if headings exist
@@ -167,7 +167,7 @@ class Post extends Model
             $content = $tocHtml . $content;
         }
         
-        // Find the first </p> tag and the first <h2> tag (now that we converted h3 to h2)
+        // Find the first </p> tag and the first <h2> tag
         $firstParagraphEnd = strpos($content, '</p>');
         $firstH2Start = strpos($content, '<h2');
         
@@ -188,22 +188,21 @@ class Post extends Model
     }
 
     /**
-     * Convert H3 tags to H2 tags with IDs for jump links
+     * Add IDs to existing H2 tags if they don't have them
      */
-    private function convertH3ToH2WithIds($content)
+    private function addIdsToH2Tags($content)
     {
-        // Pattern to match H3 tags and capture the content
-        $pattern = '/<h3([^>]*)>(.*?)<\/h3>/i';
+        // Pattern to match H2 tags and capture the content
+        $pattern = '/<h2([^>]*)>(.*?)<\/h2>/i';
         
         return preg_replace_callback($pattern, function($matches) {
             $attributes = $matches[1];
             $headingText = $matches[2];
             
-            // Generate ID from heading text
-            $id = $this->generateHeadingId($headingText);
-            
             // Check if ID already exists in attributes
             if (strpos($attributes, 'id=') === false) {
+                // Generate ID from heading text
+                $id = $this->generateHeadingId($headingText);
                 $attributes .= ' id="' . $id . '"';
             }
             
