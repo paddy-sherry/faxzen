@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="@yield('meta_description', 'Send fax online for $5 with FaxZen. Fast, secure online fax service. Upload PDF documents and send faxes instantly without a fax machine. Trusted by thousands.')">
+    <meta name="description" content="@yield('meta_description', 'Send fax online for $8 with FaxZen. Fast, secure online fax service. Upload PDF documents and send faxes instantly without a fax machine. Trusted by thousands.')">
     @stack('head')
     @if(!trim($__env->yieldPushContent('head')))
         <link rel="canonical" href="{{ url()->current() }}">

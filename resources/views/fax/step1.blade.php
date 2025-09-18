@@ -2,7 +2,7 @@
 
 @section('title', '▷ Send Fax Online With Tracked Delivery. No Account Needed')
 
-@section('meta_description', 'Send fax online instantly for $5. Upload PDF documents, enter fax number, and send faxes online with tracked delivery. No fax machine required. Trusted worldwide')
+@section('meta_description', 'Send fax online instantly for $8. Upload PDF documents, enter fax number, and send faxes online with tracked delivery. No fax machine required. Trusted worldwide')
 
 @section('content')
 <div class="bg-white rounded-lg shadow-md p-8">
