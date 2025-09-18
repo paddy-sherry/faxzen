@@ -54,7 +54,7 @@
                         </label>
                     
                     </div>
-                    <p class="text-xs text-gray-500">PDF, Docs and Images up to 20MB</p>
+                    <p class="text-xs text-gray-500">PDF, docs and images up to 20MB</p>
                     <p id="file-name" class="text-sm text-green-600 font-medium hidden"></p>
                 </div>
             </div>
