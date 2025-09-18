@@ -301,13 +301,13 @@
                     <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                     </svg>
-                    <span>Start at $5 per fax</span>
+                    <span>Start at $8 per fax</span>
                 </div>
                 <div class="flex items-center space-x-2 text-sm text-gray-600">
                     <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                     </svg>
-                    <span>Save 67% with credits</span>
+                    <span>Save 81% with credits</span>
                 </div>
                 <div class="flex items-center space-x-2 text-sm text-gray-600">
                     <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -338,7 +338,7 @@
                     <p class="text-gray-600">Perfect for occasional use</p>
                 </div>
                 <div class="text-right">
-                    <div class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">$5.00</div>
+                    <div class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">$8.00</div>
                     <div class="text-sm text-gray-500">per fax</div>
                 </div>
             </div>
@@ -368,7 +368,7 @@
         <div class="border border-orange-400 rounded-lg p-6 hover:shadow-lg transition-all duration-200 relative bg-gradient-to-br from-orange-50 to-orange-100">
             <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span class="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    SAVE 70%
+                    SAVE 81%
                 </span>
             </div>
             <div class="flex justify-between items-start mb-4">
@@ -413,7 +413,7 @@
         <div class="border border-purple-500 rounded-lg p-6 hover:shadow-lg transition-all duration-200 relative bg-gradient-to-br from-purple-50 to-purple-100">
             <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    SAVE 80%
+                    SAVE 87%
                 </span>
             </div>
             <div class="flex justify-between items-start mb-4">
@@ -477,7 +477,7 @@
             Send A Fax Online With Ease
             </h2>
             <p class="text-lg text-gray-600 leading-relaxed max-w-4xl mx-auto">
-            We've revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it's as simple as uploading your PDF document, paying just $5, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
+            We've revolutionized the way you send faxes online. No more searching for outdated fax machines or dealing with the hassles of traditional faxing. With FaxZen, it's as simple as uploading your PDF document, paying just $8, and watching your fax go on its way – no machine required. Join thousands of satisfied users who have embraced the future of faxing with FaxZen, where sending faxes is fast, easy, and hassle-free.
             </p>
         </div>
         
@@ -689,7 +689,7 @@
 
                 <div class="border border-gray-200 rounded-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">How much does it cost to send a fax?</h3>
-                    <p class="text-gray-600">Starting at $5 per fax, or save with our recommended 10-fax package at $15 ($1.50 each). Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Choose between one-time payments or credit packages with secure Stripe payment processing.</p>
+                    <p class="text-gray-600">Starting at $8 per fax, or save with our recommended 10-fax package at $15 ($1.50 each). Our transparent pricing is displayed on the website with no hidden fees or monthly subscriptions. Choose between one-time payments or credit packages with secure Stripe payment processing.</p>
                 </div>
             </div>
         </div>
@@ -732,7 +732,7 @@
             </p>
 
             <p>
-                Cost-effectiveness is another major benefit when you send faxes digitally. Traditional fax machines require significant upfront investment, ongoing maintenance, dedicated phone lines, and supplies like paper and toner. When you <strong>send a fax online</strong>, you only pay for what you use – just $5 per fax with no hidden fees or monthly subscriptions.
+                Cost-effectiveness is another major benefit when you send faxes digitally. Traditional fax machines require significant upfront investment, ongoing maintenance, dedicated phone lines, and supplies like paper and toner. When you <strong>send a fax online</strong>, you only pay for what you use – just $8 per fax with no hidden fees or monthly subscriptions.
             </p>
 
             <p>

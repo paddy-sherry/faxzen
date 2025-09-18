@@ -130,7 +130,7 @@
                                                 <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
                                             </div>
                                             <div class="text-right">
-                                                <div class="text-2xl font-bold text-faxzen-blue">$5.00</div>
+                                                <div class="text-2xl font-bold text-faxzen-blue">$8.00</div>
                                                 <div class="text-sm text-gray-500">per fax</div>
                                             </div>
                                         </div>
@@ -243,7 +243,7 @@
                                             <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
                                         </div>
                                         <div class="text-right">
-                                            <div class="text-2xl font-bold text-faxzen-blue">$5.00</div>
+                                            <div class="text-2xl font-bold text-faxzen-blue">$8.00</div>
                                             <div class="text-sm text-gray-500">per fax</div>
                                         </div>
                                     </div>
