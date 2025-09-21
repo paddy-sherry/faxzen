@@ -67,9 +67,9 @@
 </div>
 
 <!-- Google Ads Conversion Tracking -->
-@if(config('services.google.ads_conversion_id') && !session('conversion_tracked_' . $faxJob->id))
+@if(config('services.google.ads_conversion_id') && !session('conversion_tracked_' . $faxJob->id) && $faxJob->amount > 0)
 <script>
-    // Track Google Ads conversion for successful payment
+    // Track Google Ads conversion for successful payment (only for actual payments, not credit usage)
     gtag('event', 'conversion', {
         'send_to': '{{ config('services.google.ads_conversion_id') }}/{{ config('services.google.ads_conversion_label') }}',
         'value': {{ $faxJob->amount }},
