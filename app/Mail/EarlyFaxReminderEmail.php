@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class FaxReminderEmail extends Mailable
+class EarlyFaxReminderEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -30,7 +30,7 @@ class FaxReminderEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '📠 Complete Your Fax - ' . $this->faxJob->file_original_name,
+            subject: '⏰ Quick Reminder: Finish Your Fax - ' . $this->faxJob->file_original_name,
             from: config('mail.from.address', 'noreply@faxzen.com'),
         );
     }
@@ -40,19 +40,11 @@ class FaxReminderEmail extends Mailable
      */
     public function content(): Content
     {
-        $discountCode = 'SAVE50_' . strtoupper(substr($this->faxJob->hash, 0, 8));
-        $discountUrl = route('fax.step2', [
-            'faxJob' => $this->faxJob->hash,
-            'discount' => $discountCode
-        ]);
-
         return new Content(
-            view: 'emails.fax-reminder',
+            view: 'emails.early-fax-reminder',
             with: [
                 'faxJob' => $this->faxJob,
                 'continueUrl' => route('fax.step2', $this->faxJob->hash),
-                'discountUrl' => $discountUrl,
-                'discountCode' => $discountCode,
                 'hoursAgo' => round(now()->diffInHours($this->faxJob->created_at)),
                 'fileName' => $this->faxJob->file_original_name,
                 'recipientNumber' => $this->faxJob->recipient_number,

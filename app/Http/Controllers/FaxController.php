@@ -100,10 +100,24 @@ class FaxController extends Controller
         return redirect()->route('fax.step2', $faxJob->hash);
     }
 
-    public function step2(FaxJob $faxJob)
+    public function step2(FaxJob $faxJob, Request $request)
     {
         if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
             return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
+        }
+
+        // Check for discount code
+        $discountCode = $request->get('discount');
+        if ($discountCode && $this->isValidDiscountCode($discountCode, $faxJob) && !$faxJob->hasDiscount()) {
+            // Apply 50% discount
+            $discountAmount = $faxJob->amount * 0.5;
+            $faxJob->applyDiscount($discountCode, $discountAmount);
+            
+            session()->flash('discount_applied', [
+                'code' => $discountCode,
+                'amount' => $discountAmount,
+                'new_total' => $faxJob->getFinalAmount()
+            ]);
         }
 
         return view('fax.step2', compact('faxJob'));
@@ -254,10 +268,20 @@ class FaxController extends Controller
             $productDescription = "10 fax credits for your account\nFirst fax: {$faxJob->file_original_name} to {$faxJob->recipient_number}";
             $submitMessage = 'Your account will be created with 10 fax credits, and your first fax will be sent immediately.';
         } else {
-            $amount = $faxJob->amount * 100; // $5.00 in cents
+            $finalAmount = $faxJob->getFinalAmount(); // Use discounted amount if available
+            $amount = $finalAmount * 100; // Convert to cents
             $credits = 0; // No credits for one-time payment
             $productName = 'FaxZen.com - Single Fax Delivery';
-            $productDescription = "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}";
+            
+            // Update description to show discount if applied
+            if ($faxJob->hasDiscount()) {
+                $originalPrice = number_format($faxJob->original_amount ?? $faxJob->amount, 2);
+                $discountedPrice = number_format($finalAmount, 2);
+                $productDescription = "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}\nSpecial Offer: \${$originalPrice} → \${$discountedPrice} (50% OFF!)";
+            } else {
+                $productDescription = "Fax delivery to {$faxJob->recipient_number}\nDocument: {$faxJob->file_original_name}";
+            }
+            
             $submitMessage = 'Your fax will be sent immediately after payment confirmation.';
         }
 
@@ -532,5 +556,20 @@ class FaxController extends Controller
         }
     }
 
-
+    /**
+     * Validate discount code for a specific fax job
+     */
+    private function isValidDiscountCode($discountCode, FaxJob $faxJob)
+    {
+        // Check if it's the correct format: SAVE50_XXXXXXXX
+        if (!str_starts_with($discountCode, 'SAVE50_')) {
+            return false;
+        }
+        
+        // Extract the hash portion and verify it matches the fax job
+        $hashPortion = substr($discountCode, 7); // Remove 'SAVE50_' prefix
+        $expectedHash = strtoupper(substr($faxJob->hash, 0, 8));
+        
+        return $hashPortion === $expectedHash;
+    }
 }

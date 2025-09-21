@@ -29,11 +29,16 @@ class FaxJob extends Model
         'email_sent',
         'failure_email_sent',
         'reminder_email_sent',
+        'early_reminder_sent',
         'prepared_at',
         'sending_started_at',
         'delivered_at',
         'email_sent_at',
         'reminder_email_sent_at',
+        'early_reminder_sent_at',
+        'discount_code',
+        'discount_amount',
+        'original_amount',
         'delivery_details',
         'telnyx_status',
 
@@ -67,12 +72,16 @@ class FaxJob extends Model
         'delivered_at' => 'datetime',
         'email_sent_at' => 'datetime',
         'reminder_email_sent_at' => 'datetime',
+        'early_reminder_sent_at' => 'datetime',
+        'discount_amount' => 'decimal:2',
+        'original_amount' => 'decimal:2',
         'is_preparing' => 'boolean',
         'is_sending' => 'boolean',
         'is_delivered' => 'boolean',
         'email_sent' => 'boolean',
         'failure_email_sent' => 'boolean',
         'reminder_email_sent' => 'boolean',
+        'early_reminder_sent' => 'boolean',
         'tracking_data' => 'array',
         'include_cover_page' => 'boolean',
     ];
@@ -343,6 +352,46 @@ class FaxJob extends Model
     }
 
     /**
+     * Mark early reminder email as sent
+     */
+    public function markEarlyReminderEmailSent()
+    {
+        $this->update([
+            'early_reminder_sent' => true,
+            'early_reminder_sent_at' => now()
+        ]);
+    }
+
+    /**
+     * Apply discount to this fax job
+     */
+    public function applyDiscount($discountCode, $discountAmount)
+    {
+        $this->update([
+            'original_amount' => $this->amount,
+            'discount_code' => $discountCode,
+            'discount_amount' => $discountAmount,
+            'amount' => max(0, $this->amount - $discountAmount)
+        ]);
+    }
+
+    /**
+     * Check if this fax job has a discount applied
+     */
+    public function hasDiscount(): bool
+    {
+        return !empty($this->discount_code) && $this->discount_amount > 0;
+    }
+
+    /**
+     * Get the final amount after discount
+     */
+    public function getFinalAmount(): float
+    {
+        return $this->hasDiscount() ? max(0, ($this->original_amount ?? $this->amount) - $this->discount_amount) : $this->amount;
+    }
+
+    /**
      * Mark failure notification email as sent
      */
     public function markFailureEmailSent()
@@ -361,6 +410,17 @@ class FaxJob extends Model
             && $this->created_at <= now()->subHours($hoursThreshold)
             && !empty($this->sender_email)
             && !$this->reminder_email_sent;
+    }
+
+    /**
+     * Check if this fax job should receive an early reminder email
+     */
+    public function shouldReceiveEarlyReminder($hoursThreshold = 2): bool
+    {
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_PAYMENT_PENDING])
+            && $this->created_at <= now()->subHours($hoursThreshold)
+            && !empty($this->sender_email)
+            && !$this->early_reminder_sent;
     }
 
     /**
