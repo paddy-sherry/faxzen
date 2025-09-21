@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\FaxJob;
+use App\Http\Controllers\EmailTrackingController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -40,11 +41,14 @@ class EarlyFaxReminderEmail extends Mailable
      */
     public function content(): Content
     {
+        // Generate tracking URL with UTM parameters
+        $continueUrl = EmailTrackingController::generateTrackingUrl($this->faxJob, 'early_reminder');
+
         return new Content(
             view: 'emails.early-fax-reminder',
             with: [
                 'faxJob' => $this->faxJob,
-                'continueUrl' => route('fax.step2', $this->faxJob->hash),
+                'continueUrl' => $continueUrl,
                 'hoursAgo' => round(now()->diffInHours($this->faxJob->created_at)),
                 'fileName' => $this->faxJob->file_original_name,
                 'recipientNumber' => $this->faxJob->recipient_number,

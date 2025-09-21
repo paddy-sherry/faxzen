@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\FaxJob;
+use App\Http\Controllers\EmailTrackingController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -41,8 +42,10 @@ class FaxReminderEmail extends Mailable
     public function content(): Content
     {
         $discountCode = 'SAVE50_' . strtoupper(substr($this->faxJob->hash, 0, 8));
-        $discountUrl = route('fax.step2', [
-            'faxJob' => $this->faxJob->hash,
+        
+        // Generate tracking URLs with UTM parameters
+        $continueUrl = EmailTrackingController::generateTrackingUrl($this->faxJob, 'reminder');
+        $discountUrl = EmailTrackingController::generateTrackingUrl($this->faxJob, 'reminder', [
             'discount' => $discountCode
         ]);
 
@@ -50,7 +53,7 @@ class FaxReminderEmail extends Mailable
             view: 'emails.fax-reminder',
             with: [
                 'faxJob' => $this->faxJob,
-                'continueUrl' => route('fax.step2', $this->faxJob->hash),
+                'continueUrl' => $continueUrl,
                 'discountUrl' => $discountUrl,
                 'discountCode' => $discountCode,
                 'hoursAgo' => round(now()->diffInHours($this->faxJob->created_at)),

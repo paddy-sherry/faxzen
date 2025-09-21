@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FaxController;
+use App\Http\Controllers\EmailTrackingController;
 use App\Http\Controllers\TelnyxWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,12 @@ Route::prefix('fax')->name('fax.')->group(function () {
         ]);
     })->name('document');
 });
+
+// Email tracking route
+Route::get('/email/track/{faxJob:hash}', [EmailTrackingController::class, 'trackClick'])->name('email.track');
+
+// Email analytics for admin (add proper auth middleware in production)
+Route::get('/admin/email-analytics', [EmailTrackingController::class, 'getEmailAnalytics'])->name('admin.email-analytics');
 
 // Webhook endpoint removed - using console job polling instead
 

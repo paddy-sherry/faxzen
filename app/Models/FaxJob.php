@@ -36,6 +36,13 @@ class FaxJob extends Model
         'email_sent_at',
         'reminder_email_sent_at',
         'early_reminder_sent_at',
+        'early_reminder_clicked_at',
+        'reminder_clicked_at',
+        'email_click_count',
+        'email_clicks',
+        'last_utm_source',
+        'last_utm_medium',
+        'last_utm_campaign',
         'discount_code',
         'discount_amount',
         'original_amount',
@@ -73,6 +80,9 @@ class FaxJob extends Model
         'email_sent_at' => 'datetime',
         'reminder_email_sent_at' => 'datetime',
         'early_reminder_sent_at' => 'datetime',
+        'early_reminder_clicked_at' => 'datetime',
+        'reminder_clicked_at' => 'datetime',
+        'email_clicks' => 'array',
         'discount_amount' => 'decimal:2',
         'original_amount' => 'decimal:2',
         'is_preparing' => 'boolean',
@@ -389,6 +399,72 @@ class FaxJob extends Model
     public function getFinalAmount(): float
     {
         return $this->hasDiscount() ? max(0, ($this->original_amount ?? $this->amount) - $this->discount_amount) : $this->amount;
+    }
+
+    /**
+     * Track email click with type and UTM parameters
+     */
+    public function trackEmailClick($emailType, $utmParams = [])
+    {
+        $clickData = [
+            'type' => $emailType,
+            'clicked_at' => now()->toISOString(),
+            'utm_source' => $utmParams['utm_source'] ?? null,
+            'utm_medium' => $utmParams['utm_medium'] ?? null,
+            'utm_campaign' => $utmParams['utm_campaign'] ?? null,
+        ];
+
+        $existingClicks = $this->email_clicks ?? [];
+        $existingClicks[] = $clickData;
+
+        $updateData = [
+            'email_click_count' => $this->email_click_count + 1,
+            'email_clicks' => $existingClicks,
+            'last_utm_source' => $utmParams['utm_source'] ?? null,
+            'last_utm_medium' => $utmParams['utm_medium'] ?? null,
+            'last_utm_campaign' => $utmParams['utm_campaign'] ?? null,
+        ];
+
+        // Update specific timestamp field based on email type
+        if ($emailType === 'early_reminder') {
+            $updateData['early_reminder_clicked_at'] = now();
+        } elseif ($emailType === 'reminder') {
+            $updateData['reminder_clicked_at'] = now();
+        }
+
+        $this->update($updateData);
+    }
+
+    /**
+     * Get email click statistics
+     */
+    public function getEmailClickStats()
+    {
+        $clicks = $this->email_clicks ?? [];
+        $stats = [
+            'total_clicks' => $this->email_click_count,
+            'early_reminder_clicks' => 0,
+            'reminder_clicks' => 0,
+            'first_click_at' => null,
+            'last_click_at' => null,
+        ];
+
+        foreach ($clicks as $click) {
+            if ($click['type'] === 'early_reminder') {
+                $stats['early_reminder_clicks']++;
+            } elseif ($click['type'] === 'reminder') {
+                $stats['reminder_clicks']++;
+            }
+
+            if ($stats['first_click_at'] === null || $click['clicked_at'] < $stats['first_click_at']) {
+                $stats['first_click_at'] = $click['clicked_at'];
+            }
+            if ($stats['last_click_at'] === null || $click['clicked_at'] > $stats['last_click_at']) {
+                $stats['last_click_at'] = $click['clicked_at'];
+            }
+        }
+
+        return $stats;
     }
 
     /**
