@@ -87,6 +87,9 @@ Route::match(['GET', 'POST'], '/admin/fax-jobs/{id}/retry', [App\Http\Controller
 Route::get('/admin/fax-jobs/{id}/check-status', [App\Http\Controllers\AdminController::class, 'checkStatus'])->name('admin.fax-jobs.check-status');
 Route::get('/admin/analytics', [App\Http\Controllers\AdminController::class, 'analytics'])->name('admin.analytics');
 
+// Admin file serving route (handles both local and R2 storage)
+Route::get('/admin/fax-jobs/{id}/file', [App\Http\Controllers\AdminController::class, 'serveFile'])->name('admin.fax-jobs.file');
+
 // Blog management routes
 Route::prefix('admin/blog')->name('admin.blog.')->group(function () {
     Route::get('/', [App\Http\Controllers\Admin\BlogController::class, 'index'])->name('index');
