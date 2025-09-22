@@ -225,7 +225,6 @@
                 <h4>⭐ Why finish now?</h4>
                 <ul>
                     <li><strong>Instant delivery:</strong> Your fax will be sent immediately</li>
-                    <li><strong>Secure transmission:</strong> Bank-level encryption for your documents</li>
                     <li><strong>Delivery confirmation:</strong> You'll know exactly when it arrives</li>
                     <li><strong>Professional quality:</strong> Crystal clear high-resolution faxes</li>
                 </ul>
