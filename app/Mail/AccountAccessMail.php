@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
 class AccountAccessMail extends Mailable
@@ -34,7 +35,7 @@ class AccountAccessMail extends Mailable
     {
         return new Envelope(
             subject: '🔐 Secure Access Link - FaxZen Account',
-            from: config('mail.from.address', 'noreply@faxzen.com'),
+            from: new Address(config('mail.from.address'), config('mail.from.name')),
         );
     }
 

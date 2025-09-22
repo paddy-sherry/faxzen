@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Attachment;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -34,7 +35,7 @@ class FaxDeliveryConfirmation extends Mailable
     {
         return new Envelope(
             subject: 'FaxZen Delivery Confirmation. #'.$this->faxJob->id,
-            from: config('mail.from.address', 'noreply@faxzen.com'),
+            from: new Address(config('mail.from.address'), config('mail.from.name')),
         );
     }
 

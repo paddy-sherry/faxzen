@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
 class EarlyFaxReminderEmail extends Mailable
@@ -32,7 +33,7 @@ class EarlyFaxReminderEmail extends Mailable
     {
         return new Envelope(
             subject: '⏰ Quick Reminder: Finish Your Fax - ' . $this->faxJob->file_original_name,
-            from: config('mail.from.address', 'noreply@faxzen.com'),
+            from: new Address(config('mail.from.address'), config('mail.from.name')),
         );
     }
 
