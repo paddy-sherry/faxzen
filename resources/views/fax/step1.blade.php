@@ -60,89 +60,106 @@
             </div>
         </div>
 
-        <div>
-            <label for="recipient_number" class="block text-sm font-medium text-gray-700 mb-2">
-                Recipient Fax Number <span class="text-red-500">*</span>
-            </label>
-            <div class="flex">
-                <select id="country_code" name="country_code" class="flex-shrink-0 bg-white border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple">
-                    <option value="+1" data-flag="🇺🇸">🇺🇸 +1</option>
-                    <option value="+1" data-flag="🇨🇦">🇨🇦 +1</option>
-                    <option value="+44" data-flag="🇬🇧">🇬🇧 +44</option>
-                    <option value="+353" data-flag="🇮🇪">🇮🇪 +353</option>
-                    <option value="+33" data-flag="🇫🇷">🇫🇷 +33</option>
-                    <option value="+49" data-flag="🇩🇪">🇩🇪 +49</option>
-                    <option value="+39" data-flag="🇮🇹">🇮🇹 +39</option>
-                    <option value="+34" data-flag="🇪🇸">🇪🇸 +34</option>
-                    <option value="+351" data-flag="🇵🇹">🇵🇹 +351</option>
-                    <option value="+31" data-flag="🇳🇱">🇳🇱 +31</option>
-                    <option value="+41" data-flag="🇨🇭">🇨🇭 +41</option>
-                    <option value="+43" data-flag="🇦🇹">🇦🇹 +43</option>
-                    <option value="+32" data-flag="🇧🇪">🇧🇪 +32</option>
-                    <option value="+352" data-flag="🇱🇺">🇱🇺 +352</option>
-                    <option value="+45" data-flag="🇩🇰">🇩🇰 +45</option>
-                    <option value="+46" data-flag="🇸🇪">🇸🇪 +46</option>
-                    <option value="+47" data-flag="🇳🇴">🇳🇴 +47</option>
-                    <option value="+358" data-flag="🇫🇮">🇫🇮 +358</option>
-                    <option value="+354" data-flag="🇮🇸">🇮🇸 +354</option>
-                    <option value="+48" data-flag="🇵🇱">🇵🇱 +48</option>
-                    <option value="+420" data-flag="🇨🇿">🇨🇿 +420</option>
-                    <option value="+421" data-flag="🇸🇰">🇸🇰 +421</option>
-                    <option value="+36" data-flag="🇭🇺">🇭🇺 +36</option>
-                    <option value="+40" data-flag="🇷🇴">🇷🇴 +40</option>
-                    <option value="+359" data-flag="🇧🇬">🇧🇬 +359</option>
-                    <option value="+385" data-flag="🇭🇷">🇭🇷 +385</option>
-                    <option value="+386" data-flag="🇸🇮">🇸🇮 +386</option>
-                    <option value="+372" data-flag="🇪🇪">🇪🇪 +372</option>
-                    <option value="+371" data-flag="🇱🇻">🇱🇻 +371</option>
-                    <option value="+370" data-flag="🇱🇹">🇱🇹 +370</option>
-                    <option value="+30" data-flag="🇬🇷">🇬🇷 +30</option>
-                    <option value="+90" data-flag="🇹🇷">🇹🇷 +90</option>
-                    <option value="+7" data-flag="🇷🇺">🇷🇺 +7</option>
-                    <option value="+380" data-flag="🇺🇦">🇺🇦 +380</option>
-                    <option value="+61" data-flag="🇦🇺">🇦🇺 +61</option>
-                    <option value="+64" data-flag="🇳🇿">🇳🇿 +64</option>
-                    <option value="+65" data-flag="🇸🇬">🇸🇬 +65</option>
-                    <option value="+60" data-flag="🇲🇾">🇲🇾 +60</option>
-                    <option value="+66" data-flag="🇹🇭">🇹🇭 +66</option>
-                    <option value="+84" data-flag="🇻🇳">🇻🇳 +84</option>
-                    <option value="+62" data-flag="🇮🇩">🇮🇩 +62</option>
-                    <option value="+63" data-flag="🇵🇭">🇵🇭 +63</option>
-                    <option value="+852" data-flag="🇭🇰">🇭🇰 +852</option>
-                    <option value="+886" data-flag="🇹🇼">🇹🇼 +886</option>
-                    <option value="+81" data-flag="🇯🇵">🇯🇵 +81</option>
-                    <option value="+82" data-flag="🇰🇷">🇰🇷 +82</option>
-                    <option value="+86" data-flag="🇨🇳">🇨🇳 +86</option>
-                    <option value="+91" data-flag="🇮🇳">🇮🇳 +91</option>
-                    <option value="+92" data-flag="🇵🇰">🇵🇰 +92</option>
-                    <option value="+880" data-flag="🇧🇩">🇧🇩 +880</option>
-                    <option value="+94" data-flag="🇱🇰">🇱🇰 +94</option>
-                    <option value="+98" data-flag="🇮🇷">🇮🇷 +98</option>
-                    <option value="+964" data-flag="🇮🇶">🇮🇶 +964</option>
-                    <option value="+966" data-flag="🇸🇦">🇸🇦 +966</option>
-                    <option value="+971" data-flag="🇦🇪">🇦🇪 +971</option>
-                    <option value="+972" data-flag="🇮🇱">🇮🇱 +972</option>
-                    <option value="+20" data-flag="🇪🇬">🇪🇬 +20</option>
-                    <option value="+27" data-flag="🇿🇦">🇿🇦 +27</option>
-                    <option value="+234" data-flag="🇳🇬">🇳🇬 +234</option>
-                    <option value="+254" data-flag="🇰🇪">🇰🇪 +254</option>
-                    <option value="+55" data-flag="🇧🇷">🇧🇷 +55</option>
-                    <option value="+54" data-flag="🇦🇷">🇦🇷 +54</option>
-                    <option value="+56" data-flag="🇨🇱">🇨🇱 +56</option>
-                    <option value="+57" data-flag="🇨🇴">🇨🇴 +57</option>
-                    <option value="+51" data-flag="🇵🇪">🇵🇪 +51</option>
-                    <option value="+58" data-flag="🇻🇪">🇻🇪 +58</option>
-                    <option value="+52" data-flag="🇲🇽">🇲🇽 +52</option>
-                </select>
-                <input type="tel" 
-                       id="recipient_number" 
-                       name="recipient_number" 
-                       value="{{ old('recipient_number') }}"
-                       placeholder="5551234567"
-                       class="flex-1 px-3 py-2 border border-l-0 border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple"
-                       required>
+        <!-- Responsive grid: stacked on mobile, side by side on desktop -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="recipient_number" class="block text-sm font-medium text-gray-700 mb-2">
+                    Recipient Fax Number <span class="text-red-500">*</span>
+                </label>
+                <div class="flex">
+                    <select id="country_code" name="country_code" class="flex-shrink-0 bg-white border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple">
+                        <option value="+1" data-flag="🇺🇸">🇺🇸 +1</option>
+                        <option value="+1" data-flag="🇨🇦">🇨🇦 +1</option>
+                        <option value="+44" data-flag="🇬🇧">🇬🇧 +44</option>
+                        <option value="+353" data-flag="🇮🇪">🇮🇪 +353</option>
+                        <option value="+33" data-flag="🇫🇷">🇫🇷 +33</option>
+                        <option value="+49" data-flag="🇩🇪">🇩🇪 +49</option>
+                        <option value="+39" data-flag="🇮🇹">🇮🇹 +39</option>
+                        <option value="+34" data-flag="🇪🇸">🇪🇸 +34</option>
+                        <option value="+351" data-flag="🇵🇹">🇵🇹 +351</option>
+                        <option value="+31" data-flag="🇳🇱">🇳🇱 +31</option>
+                        <option value="+41" data-flag="🇨🇭">🇨🇭 +41</option>
+                        <option value="+43" data-flag="🇦🇹">🇦🇹 +43</option>
+                        <option value="+32" data-flag="🇧🇪">🇧🇪 +32</option>
+                        <option value="+352" data-flag="🇱🇺">🇱🇺 +352</option>
+                        <option value="+45" data-flag="🇩🇰">🇩🇰 +45</option>
+                        <option value="+46" data-flag="🇸🇪">🇸🇪 +46</option>
+                        <option value="+47" data-flag="🇳🇴">🇳🇴 +47</option>
+                        <option value="+358" data-flag="🇫🇮">🇫🇮 +358</option>
+                        <option value="+354" data-flag="🇮🇸">🇮🇸 +354</option>
+                        <option value="+48" data-flag="🇵🇱">🇵🇱 +48</option>
+                        <option value="+420" data-flag="🇨🇿">🇨🇿 +420</option>
+                        <option value="+421" data-flag="🇸🇰">🇸🇰 +421</option>
+                        <option value="+36" data-flag="🇭🇺">🇭🇺 +36</option>
+                        <option value="+40" data-flag="🇷🇴">🇷🇴 +40</option>
+                        <option value="+359" data-flag="🇧🇬">🇧🇬 +359</option>
+                        <option value="+385" data-flag="🇭🇷">🇭🇷 +385</option>
+                        <option value="+386" data-flag="🇸🇮">🇸🇮 +386</option>
+                        <option value="+372" data-flag="🇪🇪">🇪🇪 +372</option>
+                        <option value="+371" data-flag="🇱🇻">🇱🇻 +371</option>
+                        <option value="+370" data-flag="🇱🇹">🇱🇹 +370</option>
+                        <option value="+30" data-flag="🇬🇷">🇬🇷 +30</option>
+                        <option value="+90" data-flag="🇹🇷">🇹🇷 +90</option>
+                        <option value="+7" data-flag="🇷🇺">🇷🇺 +7</option>
+                        <option value="+380" data-flag="🇺🇦">🇺🇦 +380</option>
+                        <option value="+61" data-flag="🇦🇺">🇦🇺 +61</option>
+                        <option value="+64" data-flag="🇳🇿">🇳🇿 +64</option>
+                        <option value="+65" data-flag="🇸🇬">🇸🇬 +65</option>
+                        <option value="+60" data-flag="🇲🇾">🇲🇾 +60</option>
+                        <option value="+66" data-flag="🇹🇭">🇹🇭 +66</option>
+                        <option value="+84" data-flag="🇻🇳">🇻🇳 +84</option>
+                        <option value="+62" data-flag="🇮🇩">🇮🇩 +62</option>
+                        <option value="+63" data-flag="🇵🇭">🇵🇭 +63</option>
+                        <option value="+852" data-flag="🇭🇰">🇭🇰 +852</option>
+                        <option value="+886" data-flag="🇹🇼">🇹🇼 +886</option>
+                        <option value="+81" data-flag="🇯🇵">🇯🇵 +81</option>
+                        <option value="+82" data-flag="🇰🇷">🇰🇷 +82</option>
+                        <option value="+86" data-flag="🇨🇳">🇨🇳 +86</option>
+                        <option value="+91" data-flag="🇮🇳">🇮🇳 +91</option>
+                        <option value="+92" data-flag="🇵🇰">🇵🇰 +92</option>
+                        <option value="+880" data-flag="🇧🇩">🇧🇩 +880</option>
+                        <option value="+94" data-flag="🇱🇰">🇱🇰 +94</option>
+                        <option value="+98" data-flag="🇮🇷">🇮🇷 +98</option>
+                        <option value="+964" data-flag="🇮🇶">🇮🇶 +964</option>
+                        <option value="+966" data-flag="🇸🇦">🇸🇦 +966</option>
+                        <option value="+971" data-flag="🇦🇪">🇦🇪 +971</option>
+                        <option value="+972" data-flag="🇮🇱">🇮🇱 +972</option>
+                        <option value="+20" data-flag="🇪🇬">🇪🇬 +20</option>
+                        <option value="+27" data-flag="🇿🇦">🇿🇦 +27</option>
+                        <option value="+234" data-flag="🇳🇬">🇳🇬 +234</option>
+                        <option value="+254" data-flag="🇰🇪">🇰🇪 +254</option>
+                        <option value="+55" data-flag="🇧🇷">🇧🇷 +55</option>
+                        <option value="+54" data-flag="🇦🇷">🇦🇷 +54</option>
+                        <option value="+56" data-flag="🇨🇱">🇨🇱 +56</option>
+                        <option value="+57" data-flag="🇨🇴">🇨🇴 +57</option>
+                        <option value="+51" data-flag="🇵🇪">🇵🇪 +51</option>
+                        <option value="+58" data-flag="🇻🇪">🇻🇪 +58</option>
+                        <option value="+52" data-flag="🇲🇽">🇲🇽 +52</option>
+                    </select>
+                    <input type="tel" 
+                           id="recipient_number" 
+                           name="recipient_number" 
+                           value="{{ old('recipient_number') }}"
+                           placeholder="5551234567"
+                           class="flex-1 px-3 py-2 border border-l-0 border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple"
+                           required>
+                </div>
+                <p class="mt-1 text-sm text-gray-500">Select your country and enter the fax number without the country code</p>
             </div>
-            <p class="mt-1 text-sm text-gray-500">Select your country and enter the fax number without the country code</p>
+
+            <div>
+                <label for="sender_email" class="block text-sm font-medium text-gray-700 mb-2">
+                    Your Email Address <span class="text-red-500">*</span>
+                </label>
+                <input type="email" 
+                       id="sender_email" 
+                       name="sender_email" 
+                       value="{{ old('sender_email') }}"
+                       placeholder="your.email@example.com"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple"
+                       required>
+                <p class="mt-1 text-sm text-gray-500">We'll send your delivery confirmation and status updates to this email</p>
+            </div>
         </div>
 
         <div class="pt-4">

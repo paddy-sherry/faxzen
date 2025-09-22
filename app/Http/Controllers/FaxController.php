@@ -41,6 +41,7 @@ class FaxController extends Controller
                 'string',
                 new ValidFaxNumber($request->country_code)
             ],
+            'sender_email' => 'required|email',
             'pdf_file' => [
                 'required',
                 File::types(['pdf', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'])
@@ -77,7 +78,7 @@ class FaxController extends Controller
             'file_original_name' => $file->getClientOriginalName(),
             'amount' => config('services.faxzen.price'),
             'status' => FaxJob::STATUS_PENDING,
-            'sender_email' => '',
+            'sender_email' => $request->sender_email,
             'original_file_size' => $originalSize,
         ];
 
@@ -169,9 +170,8 @@ class FaxController extends Controller
                 ];
             }
 
-            // Update fax job with sender email, scheduling, and cover page data (use authenticated user's email)
+            // Update fax job with scheduling and cover page data (email already set in step 1)
             $faxJob->update(array_merge([
-                'sender_email' => auth()->user()->email,
                 'scheduled_time' => $schedulingData['scheduled_time'],
                 'status' => FaxJob::STATUS_PAID,
                 'prepared_at' => now(),
@@ -194,36 +194,18 @@ class FaxController extends Controller
         }
 
         // User not authenticated or no credits - proceed with payment flow
-        if (auth()->check()) {
-            // Authenticated user without credits - no need to validate email
-            $request->validate([
-                'payment_type' => 'required|in:onetime,credits,credits_10',
-                'include_cover_page' => 'nullable|boolean',
-                'cover_sender_name' => 'nullable|string|max:255',
-                'cover_sender_company' => 'nullable|string|max:255',
-                'cover_sender_phone' => 'nullable|string|max:255',
-                'cover_recipient_name' => 'nullable|string|max:255',
-                'cover_recipient_company' => 'nullable|string|max:255',
-                'cover_subject' => 'nullable|string|max:255',
-                'cover_message' => 'nullable|string|max:1000',
-            ]);
-            $senderEmail = auth()->user()->email;
-        } else {
-            // Guest user - validate email
-            $request->validate([
-                'sender_email' => 'required|email:rfc,dns|max:255',
-                'payment_type' => 'required|in:onetime,credits,credits_10',
-                'include_cover_page' => 'nullable|boolean',
-                'cover_sender_name' => 'nullable|string|max:255',
-                'cover_sender_company' => 'nullable|string|max:255',
-                'cover_sender_phone' => 'nullable|string|max:255',
-                'cover_recipient_name' => 'nullable|string|max:255',
-                'cover_recipient_company' => 'nullable|string|max:255',
-                'cover_subject' => 'nullable|string|max:255',
-                'cover_message' => 'nullable|string|max:1000',
-            ]);
-            $senderEmail = $request->sender_email;
-        }
+        // Email already collected in step 1, just validate other fields
+        $request->validate([
+            'payment_type' => 'required|in:onetime,credits,credits_10',
+            'include_cover_page' => 'nullable|boolean',
+            'cover_sender_name' => 'nullable|string|max:255',
+            'cover_sender_company' => 'nullable|string|max:255',
+            'cover_sender_phone' => 'nullable|string|max:255',
+            'cover_recipient_name' => 'nullable|string|max:255',
+            'cover_recipient_company' => 'nullable|string|max:255',
+            'cover_subject' => 'nullable|string|max:255',
+            'cover_message' => 'nullable|string|max:1000',
+        ]);
 
         if ($faxJob->status !== FaxJob::STATUS_PENDING && $faxJob->status !== FaxJob::STATUS_PAYMENT_PENDING) {
             return redirect()->route('fax.step1')->with('error', 'Invalid fax job status.');
@@ -247,9 +229,8 @@ class FaxController extends Controller
             ];
         }
 
-        // Update the fax job with sender details, scheduling, payment type, and cover page data
+        // Update the fax job with scheduling, payment type, and cover page data (email already set in step 1)
         $faxJob->update(array_merge([
-            'sender_email' => $senderEmail,
             'scheduled_time' => $schedulingData['scheduled_time'],
             'status' => FaxJob::STATUS_PAYMENT_PENDING,
         ], $coverPageData));
@@ -289,7 +270,7 @@ class FaxController extends Controller
         $checkoutSession = Session::create([
             'payment_method_types' => ['card'],
             'mode' => 'payment',
-            'customer_email' => $senderEmail,
+            'customer_email' => $faxJob->sender_email,
             'billing_address_collection' => 'required',            
             'automatic_tax' => [
                 'enabled' => true,
@@ -344,7 +325,7 @@ class FaxController extends Controller
             'metadata' => [
                 'fax_job_id' => $faxJob->id,
                 'recipient_number' => $faxJob->recipient_number,
-                'sender_email' => $senderEmail,
+                'sender_email' => $faxJob->sender_email,
                 'document_name' => $faxJob->file_original_name,
                 'service' => 'fax_transmission',
                 'payment_type' => $paymentType,
