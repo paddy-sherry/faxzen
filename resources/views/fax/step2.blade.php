@@ -1,30 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Your Details - Step 2 of 3')
+@section('title', 'Complete Your Fax Details')
 
 @section('content')
 <div class="max-w-2xl mx-auto">
-    <!-- Progress Bar -->
-    <div class="flex justify-center mb-8">
-        <div class="flex items-center">
-            <div class="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded-full">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="w-16 h-1 bg-green-500 mx-2"></div>
-            <div class="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full font-semibold">
-                2
-            </div>
-            <div class="w-16 h-1 bg-gray-300 mx-2"></div>
-            <div class="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-600 rounded-full font-semibold">
-                3
-            </div>
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-center mb-2">Almost Ready to Send!</h1>
+        <p class="text-gray-600 text-center">Just a few details and your fax will be on its way</p>
+        <div class="mt-4 inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full border border-blue-200">
+            <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-medium text-blue-800">Document uploaded successfully</span>
         </div>
     </div>
-
-    <h1 class="text-3xl font-bold text-center mb-2">Your Details</h1>
-    <p class="text-gray-600 text-center mb-8">Enter your contact information</p>
 
     @if ($errors->any())
         <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
