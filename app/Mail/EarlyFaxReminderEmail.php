@@ -2,28 +2,23 @@
 
 namespace App\Mail;
 
-use App\Models\FaxJob;
-use App\Http\Controllers\EmailTrackingController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
 
 class EarlyFaxReminderEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $faxJob;
-
     /**
      * Create a new message instance.
      */
-    public function __construct(FaxJob $faxJob)
+    public function __construct()
     {
-        $this->faxJob = $faxJob;
+        //
     }
 
     /**
@@ -32,8 +27,7 @@ class EarlyFaxReminderEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '⏰ Quick Reminder: Finish Your Fax - ' . $this->faxJob->file_original_name,
-            from: new Address(config('mail.from.address'), config('mail.from.name')),
+            subject: 'Early Fax Reminder Email',
         );
     }
 
@@ -42,18 +36,8 @@ class EarlyFaxReminderEmail extends Mailable
      */
     public function content(): Content
     {
-        // Generate tracking URL with UTM parameters
-        $continueUrl = EmailTrackingController::generateTrackingUrl($this->faxJob, 'early_reminder');
-
         return new Content(
-            view: 'emails.early-fax-reminder',
-            with: [
-                'faxJob' => $this->faxJob,
-                'continueUrl' => $continueUrl,
-                'hoursAgo' => round(now()->diffInHours($this->faxJob->created_at)),
-                'fileName' => $this->faxJob->file_original_name,
-                'recipientNumber' => $this->faxJob->recipient_number,
-            ]
+            view: 'view.name',
         );
     }
 

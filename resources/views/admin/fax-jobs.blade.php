@@ -126,22 +126,13 @@
                                         @if($job->file_path)
                                             @php
                                                 $filename = basename($job->file_path);
-                                                try {
-                                                    $fileUrl = \Storage::disk('r2')->temporaryUrl($job->file_path, now()->addMinutes(10));
-                                                } catch (\Exception $e) {
-                                                    $fileUrl = null;
-                                                }
                                             @endphp
-                                            @if($fileUrl)
-                                                <a href="{{ $fileUrl }}" 
-                                                   target="_blank" 
-                                                   class="text-blue-600 hover:text-blue-800 underline"
-                                                   title="Preview file">
-                                                    {{ $filename }}
-                                                </a>
-                                            @else
-                                                <span class="text-gray-500" title="File not accessible">{{ $filename }}</span>
-                                            @endif
+                                            <a href="{{ route('admin.fax-jobs.file', $job->id) }}" 
+                                               target="_blank" 
+                                               class="text-blue-600 hover:text-blue-800 underline"
+                                               title="Preview file">
+                                                {{ $filename }}
+                                            </a>
                                         @else
                                             <span class="text-gray-400">No file</span>
                                         @endif

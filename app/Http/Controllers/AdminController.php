@@ -8,6 +8,7 @@ use App\Mail\FaxDeliveryFailed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Telnyx\Telnyx;
 use Telnyx\Fax;
 
@@ -358,5 +359,60 @@ class AdminController extends Controller
             'dateFrom',
             'dateTo'
         ));
+    }
+
+    /**
+     * Serve file for a fax job from appropriate storage (local or R2)
+     */
+    public function serveFile($id)
+    {
+        $faxJob = FaxJob::find($id);
+        
+        if (!$faxJob) {
+            abort(404, 'Fax job not found');
+        }
+
+        if (!$faxJob->file_path) {
+            abort(404, 'File not found');
+        }
+
+        // Determine storage location based on file path
+        if (str_starts_with($faxJob->file_path, 'temp_fax_documents/')) {
+            // File is in local storage (pending jobs)
+            if (!Storage::disk('local')->exists($faxJob->file_path)) {
+                abort(404, 'File not found in local storage');
+            }
+
+            $filePath = Storage::disk('local')->path($faxJob->file_path);
+            $filename = basename($faxJob->file_path);
+            
+            return response()->file($filePath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"'
+            ]);
+            
+        } elseif (str_starts_with($faxJob->file_path, 'fax_documents/')) {
+            // File is in R2 storage (processed jobs)
+            try {
+                // Generate a temporary URL that redirects to R2
+                $temporaryUrl = Storage::disk('r2')->temporaryUrl($faxJob->file_path, now()->addMinutes(10));
+                return redirect($temporaryUrl);
+                
+            } catch (\Exception $e) {
+                Log::error('Failed to generate R2 temporary URL for admin file access', [
+                    'fax_job_id' => $faxJob->id,
+                    'file_path' => $faxJob->file_path,
+                    'error' => $e->getMessage()
+                ]);
+                abort(404, 'File not accessible');
+            }
+        } else {
+            // Unknown storage location
+            Log::warning('Unknown file storage location for fax job', [
+                'fax_job_id' => $faxJob->id,
+                'file_path' => $faxJob->file_path
+            ]);
+            abort(404, 'File not accessible');
+        }
     }
 } 
