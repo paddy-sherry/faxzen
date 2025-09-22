@@ -7,12 +7,6 @@
     <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-center mb-2">Almost Ready to Send!</h1>
         <p class="text-gray-600 text-center">Just a few details and your fax will be on its way</p>
-        <div class="mt-4 inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full border border-blue-200">
-            <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm font-medium text-blue-800">Document uploaded successfully</span>
-        </div>
     </div>
 
     @if ($errors->any())
