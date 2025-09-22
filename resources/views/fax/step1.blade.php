@@ -154,11 +154,15 @@
                 <input type="email" 
                        id="sender_email" 
                        name="sender_email" 
-                       value="{{ old('sender_email') }}"
+                       value="{{ old('sender_email', auth()->user()->email ?? '') }}"
                        placeholder="your.email@example.com"
                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple"
                        required>
-                <p class="mt-1 text-sm text-gray-500">We'll send your delivery confirmation and status updates to this email</p>
+                @auth
+                    <p class="mt-1 text-sm text-green-600">✓ Using your account email address (you can change this if needed)</p>
+                @else
+                    <p class="mt-1 text-sm text-gray-500">We'll send your delivery confirmation and status updates to this email</p>
+                @endauth
             </div>
         </div>
 
