@@ -61,7 +61,7 @@
                 <nav class="hidden md:flex items-center space-x-6">
                     <a href="{{ route('fax.step1') }}#pricing" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Pricing</a>
                     <a href="{{ route('blog.index') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Blog</a>
-                    <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Contact</a>
+                    <a href="{{ route('contact') }}" class="text-gray-600 hover:text-purple-600 transition-colors duration-200 font-medium">Support</a>
                     
                     @auth
                         <div class="flex items-center space-x-4">
