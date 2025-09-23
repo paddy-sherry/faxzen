@@ -46,6 +46,25 @@
         </div>
     @endif
 
+    @if(session('discount_applied'))
+        <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-green-800">🎉 Special 50% Off Discount Applied!</h3>
+                    <p class="mt-1 text-sm text-green-700">
+                        Your discount code <strong>{{ session('discount_applied')['code'] }}</strong> has been applied. 
+                        You save <strong>${{ number_format(session('discount_applied')['amount'], 2) }}</strong>!
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <form action="{{ route('fax.step2', $faxJob->hash) }}" method="POST" class="space-y-6">
         @csrf
         
@@ -113,12 +132,21 @@
                                                 <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
                                             </div>
                                             <div class="text-right">
-                                                <div class="text-2xl font-bold text-faxzen-blue">$8.00</div>
-                                                <div class="text-sm text-gray-500">per fax</div>
+                                                @if($faxJob->hasDiscount())
+                                                    <div class="text-lg text-gray-500 line-through">${{ number_format($faxJob->original_amount ?? $faxJob->amount, 2) }}</div>
+                                                    <div class="text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
+                                                    <div class="text-sm text-green-600 font-medium">50% OFF!</div>
+                                                @else
+                                                    <div class="text-2xl font-bold text-faxzen-blue">${{ number_format($faxJob->amount, 2) }}</div>
+                                                    <div class="text-sm text-gray-500">per fax</div>
+                                                @endif
                                             </div>
                                         </div>
                                         <ul class="mt-3 text-sm text-gray-600 space-y-1">
                                             <li>• Send one fax immediately</li>
+                                            @if($faxJob->hasDiscount())
+                                                <li class="text-green-600 font-medium">• 🎉 Limited time 50% discount applied!</li>
+                                            @endif
                                             <li>• No account required</li>
                                             <li>• Email confirmation included</li>
                                         </ul>
@@ -226,12 +254,21 @@
                                             <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
                                         </div>
                                         <div class="text-right">
-                                            <div class="text-2xl font-bold text-faxzen-blue">$8.00</div>
-                                            <div class="text-sm text-gray-500">per fax</div>
+                                            @if($faxJob->hasDiscount())
+                                                <div class="text-lg text-gray-500 line-through">${{ number_format($faxJob->original_amount ?? $faxJob->amount, 2) }}</div>
+                                                <div class="text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
+                                                <div class="text-sm text-green-600 font-medium">50% OFF!</div>
+                                            @else
+                                                <div class="text-2xl font-bold text-faxzen-blue">${{ number_format($faxJob->amount, 2) }}</div>
+                                                <div class="text-sm text-gray-500">per fax</div>
+                                            @endif
                                         </div>
                                     </div>
                                     <ul class="mt-3 text-sm text-gray-600 space-y-1">
                                         <li>• Send one fax immediately</li>
+                                        @if($faxJob->hasDiscount())
+                                            <li class="text-green-600 font-medium">• 🎉 Limited time 50% discount applied!</li>
+                                        @endif
                                         <li>• No account required</li>
                                         <li>• Email confirmation included</li>
                                     </ul>
