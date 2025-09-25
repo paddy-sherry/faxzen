@@ -356,89 +356,165 @@
 
         <!-- Fax Scheduling Section -->
         <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-4">
-                When should we send your fax? <span class="text-red-500">*</span>
-            </label>
-            <div class="space-y-4">
+            <div class="text-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">⏰ When should we send your fax?</h3>
+                <p class="text-gray-600">Choose the perfect timing for your delivery</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Send Now Option -->
-                <div class="flex items-start">
+                <div class="relative">
                     <input type="radio" 
                            id="schedule_type_now" 
                            name="schedule_type" 
                            value="now"
                            checked
-                           class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
-                    <div class="ml-3 flex-1">
-                        <label for="schedule_type_now" class="cursor-pointer">
-                            <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                           class="sr-only peer">
+                    <label for="schedule_type_now" class="cursor-pointer block">
+                        <div class="relative bg-white border-2 border-gray-200 rounded-xl p-6 shadow-sm hover:border-green-400 hover:shadow-lg transition-all duration-200 peer-checked:border-green-500 peer-checked:ring-2 peer-checked:ring-green-200 peer-checked:bg-green-50 h-full">
+                            <!-- Selected Indicator -->
+                            <div class="absolute top-4 right-4 opacity-0 peer-checked:opacity-100 transition-opacity">
+                                <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">Send Immediately</h3>
-                                        <p class="text-sm text-gray-600">Your fax will be sent right after payment</p>
-                                    </div>
                                 </div>
                             </div>
-                        </label>
-                    </div>
+                            
+                            <div class="text-center">
+                                <!-- Icon with gradient background -->
+                                <div class="mx-auto w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                                
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">Send Immediately</h3>
+                                <p class="text-gray-600 mb-4">Lightning fast delivery right after payment</p>
+                                
+                                <!-- Benefits -->
+                                <div class="space-y-2 text-sm text-green-700">
+                                    <div class="flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Instant processing
+                                    </div>
+                                    <div class="flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        No waiting required
+                                    </div>
+                                </div>
+                                
+                                <!-- Recommended badge -->
+                                <div class="mt-4">
+                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
+                                        🚀 Most Popular
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
                 </div>
 
                 <!-- Schedule for Later Option -->
-                <div class="flex items-start">
+                <div class="relative">
                     <input type="radio" 
                            id="schedule_type_later" 
                            name="schedule_type" 
                            value="later"
-                           class="mt-1 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300">
-                    <div class="ml-3 flex-1">
-                        <label for="schedule_type_later" class="cursor-pointer">
-                            <div class="border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors">
-                                <div class="flex items-center mb-3">
-                                    <svg class="w-5 h-5 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           class="sr-only peer">
+                    <label for="schedule_type_later" class="cursor-pointer block">
+                        <div class="relative bg-white border-2 border-gray-200 rounded-xl p-6 shadow-sm hover:border-blue-400 hover:shadow-lg transition-all duration-200 peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-200 peer-checked:bg-blue-50 h-full">
+                            <!-- Selected Indicator -->
+                            <div class="absolute top-4 right-4 opacity-0 peer-checked:opacity-100 transition-opacity">
+                                <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center">
+                                <!-- Icon with gradient background -->
+                                <div class="mx-auto w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">Schedule for Later</h3>
-                                        <p class="text-sm text-gray-600">Choose a specific date and time</p>
+                                </div>
+                                
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">Schedule for Later</h3>
+                                <p class="text-gray-600 mb-4">Perfect timing for business hours or important meetings</p>
+                                
+                                <!-- Benefits -->
+                                <div class="space-y-2 text-sm text-blue-700">
+                                    <div class="flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Business hours delivery
+                                    </div>
+                                    <div class="flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Time zone optimization
                                     </div>
                                 </div>
                                 
-                                <!-- Scheduling Controls (hidden by default) -->
-                                <div id="schedule-controls" class="hidden mt-4 pt-4 border-t border-gray-200">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label for="schedule_date" class="block text-sm font-medium text-gray-700 mb-2">
-                                                Date
-                                            </label>
-                                            <input type="date" 
-                                                   id="schedule_date" 
-                                                   name="schedule_date" 
-                                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue">
-                                        </div>
-                                        <div>
-                                            <label for="schedule_time" class="block text-sm font-medium text-gray-700 mb-2">
-                                                Time
-                                            </label>
-                                            <select id="schedule_time" 
-                                                    name="schedule_time" 
-                                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-faxzen-blue focus:border-faxzen-blue">
-                                                <!-- Time options will be populated by JavaScript -->
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <p class="text-sm text-blue-600">
-                                            <span class="font-medium">Your timezone:</span> <span id="user-timezone">Loading...</span>
-                                        </p>
-                                        <p class="text-xs text-gray-500 mt-1">
-                                            Times are shown in your local timezone. Fax will be sent at the exact time you select.
-                                        </p>
-                                    </div>
+                                <!-- Feature badge -->
+                                <div class="mt-4">
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+                                        📅 Smart Timing
+                                    </span>
                                 </div>
                             </div>
-                        </label>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Schedule Controls for Later Option (now outside the grid) -->
+            <div id="schedule-controls" class="hidden mt-6">
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                    <div class="text-center mb-4">
+                        <h4 class="text-lg font-semibold text-blue-900 mb-2">🎯 Choose Your Perfect Timing</h4>
+                        <p class="text-blue-700 text-sm">Select when you want your fax to be delivered</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="schedule_date" class="block text-sm font-medium text-blue-900 mb-2">
+                                📅 Date
+                            </label>
+                            <input type="date" 
+                                   id="schedule_date" 
+                                   name="schedule_date" 
+                                   class="block w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white">
+                        </div>
+                        <div>
+                            <label for="schedule_time" class="block text-sm font-medium text-blue-900 mb-2">
+                                🕐 Time
+                            </label>
+                            <select id="schedule_time" 
+                                    name="schedule_time" 
+                                    class="block w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                <!-- Time options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-white rounded-lg p-4 border border-blue-200">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-sm text-blue-700">
+                                <span class="font-medium">Your timezone:</span> <span id="user-timezone" class="text-blue-900">Loading...</span>
+                            </p>
+                        </div>
+                        <p class="text-xs text-blue-600 mt-2 text-center">
+                            ✨ Times are shown in your local timezone. Fax will be sent at the exact time you select.
+                        </p>
                     </div>
                 </div>
             </div>
