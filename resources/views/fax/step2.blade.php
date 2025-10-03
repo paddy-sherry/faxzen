@@ -4,8 +4,19 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
+    <div class="relative flex items-center justify-center mb-8">
+        <a href="{{ route('fax.step1') }}" 
+           class="absolute left-0 inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back
+        </a>
+        
+        <h1 class="text-3xl font-bold">Almost Ready to Send!</h1>
+    </div>
+    
     <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-center mb-2">Almost Ready to Send!</h1>
         <p class="text-gray-600 text-center">Just a few details and your fax will be on its way</p>
         
         <!-- Urgency Banner -->
@@ -241,43 +252,6 @@
                 <!-- Pricing Options for authenticated users without credits -->
                 <div class="mb-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- One-time Payment Option -->
-                        <div class="relative">
-                            <input type="radio" 
-                                   id="payment_type_onetime" 
-                                   name="payment_type" 
-                                   value="onetime"
-                                   class="absolute top-4 right-4 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 payment-option">
-                            <label for="payment_type_onetime" class="cursor-pointer block">
-                                <div class="payment-card border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors h-full">
-                                    <div class="flex justify-between items-start mb-3">
-                                            <div>
-                                                <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
-                                                <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
-                                            </div>
-                                        <div class="text-right pr-8">
-                                                @if($faxJob->hasDiscount())
-                                                    <div class="text-lg text-gray-500 line-through">${{ number_format($faxJob->original_amount ?? $faxJob->amount, 2) }}</div>
-                                                    <div class="text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
-                                                    <div class="text-sm text-green-600 font-medium">50% OFF!</div>
-                                                @else
-                                                    <div class="text-2xl font-bold text-faxzen-blue">${{ number_format($faxJob->amount, 2) }}</div>
-                                                    <div class="text-sm text-gray-500">per fax</div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    <ul class="text-sm text-gray-600 space-y-1">
-                                            <li>• Send one fax immediately</li>
-                                            @if($faxJob->hasDiscount())
-                                                <li class="text-green-600 font-medium">• 🎉 Limited time 50% discount applied!</li>
-                                            @endif
-                                            <li>• No account required</li>
-                                            <li>• Email confirmation included</li>
-                                        </ul>
-                                    </div>
-                                </label>
-                        </div>
-
                         <!-- 10-Fax Package Option -->
                         <div class="relative">
                             <input type="radio" 
@@ -316,6 +290,43 @@
                                     </div>
                                 </label>
                         </div>
+
+                        <!-- One-time Payment Option -->
+                        <div class="relative">
+                            <input type="radio" 
+                                   id="payment_type_onetime" 
+                                   name="payment_type" 
+                                   value="onetime"
+                                   class="absolute top-4 right-4 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 payment-option">
+                            <label for="payment_type_onetime" class="cursor-pointer block">
+                                <div class="payment-card border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors h-full">
+                                    <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
+                                                <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
+                                            </div>
+                                        <div class="text-right pr-8">
+                                                @if($faxJob->hasDiscount())
+                                                    <div class="text-lg text-gray-500 line-through">${{ number_format($faxJob->original_amount ?? $faxJob->amount, 2) }}</div>
+                                                    <div class="text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
+                                                    <div class="text-sm text-green-600 font-medium">50% OFF!</div>
+                                                @else
+                                                    <div class="text-2xl font-bold text-faxzen-blue">${{ number_format($faxJob->amount, 2) }}</div>
+                                                    <div class="text-sm text-gray-500">per fax</div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                            <li>• Send one fax immediately</li>
+                                            @if($faxJob->hasDiscount())
+                                                <li class="text-green-600 font-medium">• 🎉 Limited time 50% discount applied!</li>
+                                            @endif
+                                            <li>• No account required</li>
+                                            <li>• Email confirmation included</li>
+                                        </ul>
+                                    </div>
+                                </label>
+                        </div>
                     </div>
                 </div>
             @endif
@@ -325,43 +336,6 @@
             <!-- User not logged in - show payment options -->
             <div class="mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- One-time Payment Option -->
-                    <div class="relative">
-                        <input type="radio" 
-                               id="payment_type_onetime_guest" 
-                               name="payment_type" 
-                               value="onetime"
-                               class="absolute top-4 right-4 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 payment-option">
-                        <label for="payment_type_onetime_guest" class="cursor-pointer block">
-                            <div class="payment-card border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors h-full">
-                                <div class="flex justify-between items-start mb-3">
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
-                                            <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
-                                        </div>
-                                    <div class="text-right pr-8">
-                                            @if($faxJob->hasDiscount())
-                                                <div class="text-lg text-gray-500 line-through">${{ number_format($faxJob->original_amount ?? $faxJob->amount, 2) }}</div>
-                                                <div class="text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
-                                                <div class="text-sm text-green-600 font-medium">50% OFF!</div>
-                                            @else
-                                                <div class="text-2xl font-bold text-faxzen-blue">${{ number_format($faxJob->amount, 2) }}</div>
-                                                <div class="text-sm text-gray-500">per fax</div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                <ul class="text-sm text-gray-600 space-y-1">
-                                        <li>• Send one fax immediately</li>
-                                        @if($faxJob->hasDiscount())
-                                            <li class="text-green-600 font-medium">• 🎉 Limited time 50% discount applied!</li>
-                                        @endif
-                                        <li>• No account required</li>
-                                        <li>• Email confirmation included</li>
-                                    </ul>
-                                </div>
-                            </label>
-                    </div>
-
                     <!-- 10-Fax Package Option -->
                     <div class="relative">
                         <input type="radio" 
@@ -401,12 +375,50 @@
                                 </div>
                             </label>
                         </div>
+
+                    <!-- One-time Payment Option -->
+                    <div class="relative">
+                        <input type="radio" 
+                               id="payment_type_onetime_guest" 
+                               name="payment_type" 
+                               value="onetime"
+                               class="absolute top-4 right-4 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 payment-option">
+                        <label for="payment_type_onetime_guest" class="cursor-pointer block">
+                            <div class="payment-card border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors h-full">
+                                <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
+                                            <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
+                                        </div>
+                                    <div class="text-right pr-8">
+                                            @if($faxJob->hasDiscount())
+                                                <div class="text-lg text-gray-500 line-through">${{ number_format($faxJob->original_amount ?? $faxJob->amount, 2) }}</div>
+                                                <div class="text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
+                                                <div class="text-sm text-green-600 font-medium">50% OFF!</div>
+                                            @else
+                                                <div class="text-2xl font-bold text-faxzen-blue">${{ number_format($faxJob->amount, 2) }}</div>
+                                                <div class="text-sm text-gray-500">per fax</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>• Send one fax immediately</li>
+                                        @if($faxJob->hasDiscount())
+                                            <li class="text-green-600 font-medium">• 🎉 Limited time 50% discount applied!</li>
+                                        @endif
+                                        <li>• No account required</li>
+                                        <li>• Email confirmation included</li>
+                                    </ul>
+                                </div>
+                            </label>
+                    </div>
                     </div>
                                         </div>
         @endguest
                                         </div>
 
         <!-- Simplified Fax Scheduling -->
+        <br/>
         <div class="mb-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
                 <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -425,6 +437,11 @@
                            class="absolute top-4 right-4 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300">
                     <label for="schedule_type_now" class="cursor-pointer block">
                         <div class="border-2 border-green-500 bg-green-50 rounded-lg p-4 hover:border-green-600 hover:bg-green-100 transition-colors h-full">
+                            <div class="absolute -top-2 left-4">
+                                <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                    ⚡ RECOMMENDED
+                                </span>
+                            </div>
                             <div class="flex items-start mb-3 pr-8">
                                 <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -491,13 +508,9 @@
             </div>
         </div>
 
-        <div class="flex space-x-4 pt-4">
-            <a href="{{ route('fax.step1') }}" 
-               class="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors font-semibold text-center">
-                ← Back
-            </a>
+        <div class="pt-4">
             <button type="submit" 
-                    class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 font-semibold">
+                    class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-4 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 font-bold text-lg shadow-lg">
                 @auth
                     @if(Auth::user()->hasCredits())
                         ✅ Send My Fax FREE →
@@ -505,46 +518,42 @@
                         🔒 Pay Securely & Send Fax →
                     @endif
                 @else
-                    🔒 Pay Securly & Send Fax →
+                    🔒 Pay Securely & Send Fax →
                 @endauth
             </button>
-            </div>
+        </div>
         
         <!-- Customer Testimonial -->
-        <div class="mt-4 mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-            <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+        <div class="mt-4 mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 text-center">
+            <div class="flex justify-center mb-3">
+                <img src="{{ asset('images/tp-small.png') }}" alt="Customer testimonial" >
+            </div>
+            
+            <blockquote class="text-sm text-gray-700 italic mb-3">
+                "FaxZen saved me hours of driving to find a fax machine. The interface is so simple and my important contracts were delivered instantly. Worth every penny!"
+            </blockquote>
+            
+            <div class="flex items-center justify-center">
+                <div class="flex text-yellow-400 mr-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                     </svg>
-                        </div>
-                <div class="ml-3">
-                    <blockquote class="text-sm text-gray-700 italic">
-                        "FaxZen saved me hours of driving to find a fax machine. The interface is so simple and my important contracts were delivered instantly. Worth every penny!"
-                    </blockquote>
-                    <div class="mt-2 flex items-center">
-                        <div class="flex text-yellow-400">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                        </div>
-                        <span class="ml-2 text-sm text-gray-600">— Sarah M</span>
-                        </div>
-                    </div>
-                        </div>
-                        </div>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                </div>
+                <span class="text-sm text-gray-600">— Sarah M</span>
+            </div>
+        </div>
         
         <!-- Social Proof for Conversion -->
         <div class="mt-4 text-center">
