@@ -298,13 +298,13 @@
                                             <h3 class="text-xl font-bold text-gray-900">10-Fax Package</h3>
                                                 <p class="text-sm text-gray-600">Great for small businesses</p>
                                             <span class="savings-badge inline-block mt-1 px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
-                                                SAVE 81% vs One-time
+                                                SAVE 81% 
                                                 </span>
                                             </div>
-                                        <div class="text-right pr-8">
+                                        <div class="text-right pr-4">
                                             <div class="price-amount text-2xl font-bold text-gray-900">$15.00</div>
-                                                <div class="text-sm text-gray-500">10 faxes ($1.50 each)</div>
-                                            <div class="text-xs text-gray-600 font-medium">vs $8.00 per fax</div>
+                                                <div class="text-sm text-gray-500">10 faxes</div>
+                                                <div class="text-xs text-gray-600 font-medium">($1.50 each)</div>
                                             </div>
                                         </div>
                                     <ul class="text-sm text-gray-600 space-y-1">
@@ -382,13 +382,14 @@
                                         <h3 class="text-xl font-bold text-gray-900">10-Fax Package</h3>
                                             <p class="text-sm text-gray-600">Great for small businesses</p>
                                         <span class="savings-badge inline-block mt-1 px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
-                                            SAVE 81% vs One-time
+                                            SAVE 81%
                                             </span>
                                         </div>
-                                    <div class="text-right pr-8">
+                                    <div class="text-right pr-4">
                                         <div class="price-amount text-2xl font-bold text-gray-900">$15.00</div>
-                                            <div class="text-sm text-gray-500">10 faxes ($1.50 each)</div>
-                                        <div class="text-xs text-gray-600 font-medium">vs $8.00 per fax</div>
+                                            <div class="text-sm text-gray-500">10 faxes</div>
+                                            <div class="text-xs text-gray-600 font-medium">($1.50 each)</div>
+                                      
                                         </div>
                                     </div>
                                 <ul class="text-sm text-gray-600 space-y-1">
@@ -421,7 +422,6 @@
                                     </svg>
                         <div>
                             <p class="font-semibold text-gray-900">Send Immediately</p>
-                            <p class="text-sm text-gray-600">Your fax will be delivered in under 60 seconds</p>
                                 </div>
                                     </div>
                     <div class="text-right">
