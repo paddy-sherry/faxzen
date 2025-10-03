@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto">
-    <div class="relative flex items-center justify-center mb-8">
+    <div class="relative flex items-center justify-center mb-2">
         <a href="{{ route('fax.step1') }}" 
            class="absolute left-0 inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -268,7 +268,7 @@
                                     </div>
                                     <div class="flex justify-between items-start mb-3">
                                             <div>
-                                                <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
+                                                <h3 class="text-lg font-semibold text-gray-900">Single Fax</h3>
                                                 <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
                                             </div>
                                         <div class="text-right pr-8">
@@ -357,7 +357,7 @@
                                 </div>
                                 <div class="flex justify-between items-start mb-3">
                                         <div>
-                                            <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
+                                            <h3 class="text-lg font-semibold text-gray-900">Single Fax</h3>
                                             <p class="text-sm text-gray-600">Perfect for occasional fax sending</p>
                                         </div>
                                     <div class="text-right pr-8">
@@ -459,7 +459,7 @@
                                     <h3 class="font-semibold text-gray-900">Schedule for Later</h3>
                                     <p class="text-sm text-gray-600 mt-1">Choose date and time</p>
                                 </div>
-                                    </div>
+                            </div>
                             <div id="schedule-options" class="hidden">
                                 <div class="grid grid-cols-2 gap-3 mt-3">
                                     <input type="date" id="schedule_date_alt" class="border border-gray-300 rounded px-3 py-2 text-sm" min="{{ date('Y-m-d') }}">
@@ -476,6 +476,12 @@
                                         <option value="17:00">5:00 PM</option>
                                         <option value="18:00">6:00 PM</option>
                                     </select>
+                                </div>
+                                <div class="mt-2 text-xs text-gray-500 flex items-center">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    <span id="user-timezone-display">Your timezone: Loading...</span>
                                 </div>
                             </div>
                         </div>
@@ -738,6 +744,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Initial state
         updateScheduleOptions();
+        
+        // Display user's timezone
+        const timezoneDisplay = document.getElementById('user-timezone-display');
+        if (timezoneDisplay) {
+            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const now = new Date();
+            const timezoneName = now.toLocaleString('en', {timeZoneName: 'short'}).split(' ').pop();
+            timezoneDisplay.textContent = `Your timezone: ${userTimezone} (${timezoneName})`;
+        }
     }
 
     // Cover page functionality
