@@ -414,41 +414,65 @@
                                     </svg>
                 Schedule Your Fax
             </h2>
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
-                        <div>
-                            <p class="font-semibold text-gray-900">Send Immediately</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Send Immediately Option -->
+                <div class="relative">
+                    <input type="radio" 
+                           id="schedule_type_now" 
+                           name="schedule_type" 
+                           value="now"
+                           checked
+                           class="absolute top-4 right-4 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300">
+                    <label for="schedule_type_now" class="cursor-pointer block">
+                        <div class="border-2 border-green-500 bg-green-50 rounded-lg p-4 hover:border-green-600 hover:bg-green-100 transition-colors h-full">
+                            <div class="flex items-start mb-3 pr-8">
+                                <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Send Immediately</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Fastest delivery option</p>
                                 </div>
-                                    </div>
-                    <div class="text-right">
-                        <input type="radio" name="schedule_type" value="now" checked class="h-4 w-4 text-green-600">
-                        <input type="hidden" name="schedule_date" value="">
-                        <input type="hidden" name="schedule_time" value="">
-                                    </div>
-                                </div>
-                                
-                <!-- Schedule Later Option (Collapsed) -->
-                <div class="mt-3 pt-3 border-t border-blue-200">
-                    <button type="button" id="toggle-schedule" class="text-sm text-blue-600 hover:text-blue-800 underline">
-                        📅 Need to schedule for later? Click here
-                    </button>
-                    <div id="schedule-options" class="hidden mt-3">
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="date" id="schedule_date_alt" class="border border-gray-300 rounded px-3 py-2 text-sm">
-                            <select id="schedule_time_alt" class="border border-gray-300 rounded px-3 py-2 text-sm">
-                                <option value="09:00">9:00 AM</option>
-                                <option value="10:00">10:00 AM</option>
-                                <option value="11:00">11:00 AM</option>
-                                <option value="14:00">2:00 PM</option>
-                                <option value="15:00">3:00 PM</option>
-                                <option value="16:00">4:00 PM</option>
-                            </select>
+                            </div>
                         </div>
-                    </div>
+                    </label>
+                    <input type="hidden" name="schedule_date" value="">
+                    <input type="hidden" name="schedule_time" value="">
+                </div>
+
+                <!-- Schedule Later Option -->
+                <div class="relative">
+                    <input type="radio" 
+                           id="schedule_type_later" 
+                           name="schedule_type" 
+                           value="later"
+                           class="absolute top-4 right-4 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                    <label for="schedule_type_later" class="cursor-pointer block">
+                        <div class="border border-gray-300 rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 transition-colors h-full">
+                            <div class="flex items-start mb-3 pr-8">
+                                <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">Schedule for Later</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Choose date and time</p>
+                                </div>
+                            </div>
+                            <div id="schedule-options" class="hidden">
+                                <div class="grid grid-cols-2 gap-3 mt-3">
+                                    <input type="date" id="schedule_date_alt" class="border border-gray-300 rounded px-3 py-2 text-sm">
+                                    <select id="schedule_time_alt" class="border border-gray-300 rounded px-3 py-2 text-sm">
+                                        <option value="09:00">9:00 AM</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="11:00">11:00 AM</option>
+                                        <option value="14:00">2:00 PM</option>
+                                        <option value="15:00">3:00 PM</option>
+                                        <option value="16:00">4:00 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
                 </div>
             </div>
         </div>
@@ -554,19 +578,24 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Schedule toggle functionality
-    const toggleButton = document.getElementById('toggle-schedule');
+    const scheduleNowRadio = document.getElementById('schedule_type_now');
+    const scheduleLaterRadio = document.getElementById('schedule_type_later');
     const scheduleOptions = document.getElementById('schedule-options');
     
-    if (toggleButton && scheduleOptions) {
-        toggleButton.addEventListener('click', function() {
-            if (scheduleOptions.classList.contains('hidden')) {
-                scheduleOptions.classList.remove('hidden');
-                toggleButton.textContent = '⬆️ Hide scheduling options';
-            } else {
-                scheduleOptions.classList.add('hidden');
-                toggleButton.textContent = '📅 Need to schedule for later? Click here';
-            }
-        });
+    function updateScheduleOptions() {
+        if (scheduleLaterRadio && scheduleLaterRadio.checked) {
+            scheduleOptions.classList.remove('hidden');
+        } else {
+            scheduleOptions.classList.add('hidden');
+        }
+    }
+    
+    if (scheduleNowRadio && scheduleLaterRadio && scheduleOptions) {
+        scheduleNowRadio.addEventListener('change', updateScheduleOptions);
+        scheduleLaterRadio.addEventListener('change', updateScheduleOptions);
+        
+        // Initial state
+        updateScheduleOptions();
     }
 
     // Cover page functionality
