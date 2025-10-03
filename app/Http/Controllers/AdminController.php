@@ -279,6 +279,16 @@ class AdminController extends Controller
             ->groupBy('traffic_source')
             ->orderByRaw('COUNT(*) desc')
             ->get();
+            
+        // Landing page analysis
+        $conversionsByLandingPage = (clone $baseQuery)->select('landing_page')
+            ->selectRaw('COUNT(*) as conversions')
+            ->selectRaw('ROUND(AVG(amount), 2) as avg_revenue')
+            ->whereNotNull('landing_page')
+            ->groupBy('landing_page')
+            ->orderByDesc('conversions')
+            ->limit(10)
+            ->get();
 
         // AdWords specific analytics
         $adwordsConversions = (clone $baseQuery)->where('traffic_source', 'adwords')
@@ -349,7 +359,8 @@ class AdminController extends Controller
         return view('admin.analytics', compact(
             'totalConversions',
             'totalRevenue',
-            'conversionsBySource', 
+            'conversionsBySource',
+            'conversionsByLandingPage',
             'adwordsConversions',
             'sourceComparison',
             'dailyTrends',

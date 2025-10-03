@@ -58,6 +58,7 @@ class FaxJob extends Model
         'utm_content',
         'referrer_url',
         'tracking_data',
+        'landing_page',
 
         // Cover page fields
         'include_cover_page',

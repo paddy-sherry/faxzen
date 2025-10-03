@@ -93,6 +93,7 @@ class FaxController extends Controller
                 'utm_content' => $trafficData['utm_content'] ?? null,
                 'referrer_url' => $trafficData['referrer_url'] ?? null,
                 'tracking_data' => $trafficData,
+                'landing_page' => $trafficData['landing_page'] ?? null, // This was already being captured!
             ]);
         }
 
