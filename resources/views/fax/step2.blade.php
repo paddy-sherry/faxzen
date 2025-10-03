@@ -260,7 +260,12 @@
                                    value="onetime"
                                    class="absolute top-4 right-4 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 payment-option">
                             <label for="payment_type_onetime" class="cursor-pointer block">
-                                <div class="payment-card border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors h-full">
+                                <div class="payment-card border border-gray-300 rounded-lg p-4 transition-colors h-full relative">
+                                    <div class="popular-badge absolute -top-2 left-4" style="display: none;">
+                                        <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                            💰 SELECTED
+                                        </span>
+                                    </div>
                                     <div class="flex justify-between items-start mb-3">
                                             <div>
                                                 <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
@@ -269,10 +274,10 @@
                                         <div class="text-right pr-8">
                                                 @if($faxJob->hasDiscount())
                                                     <div class="text-lg text-gray-500 line-through">${{ number_format($faxJob->original_amount ?? $faxJob->amount, 2) }}</div>
-                                                    <div class="text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
+                                                    <div class="price-amount text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
                                                     <div class="text-sm text-green-600 font-medium">50% OFF!</div>
                                                 @else
-                                                    <div class="text-2xl font-bold text-faxzen-blue">${{ number_format($faxJob->amount, 2) }}</div>
+                                                    <div class="price-amount text-2xl font-bold text-gray-900">${{ number_format($faxJob->amount, 2) }}</div>
                                                     <div class="text-sm text-gray-500">per fax</div>
                                                 @endif
                                             </div>
@@ -298,8 +303,8 @@
                                    checked
                                    class="absolute top-4 right-4 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 payment-option">
                             <label for="payment_type_credits_10" class="cursor-pointer block">
-                                <div class="payment-card border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors relative h-full" data-default-selected="true">
-                                    <div class="popular-badge absolute -top-2 left-4" style="display: none;">
+                                <div class="payment-card border-2 border-green-500 bg-green-50 rounded-lg p-4 hover:border-green-600 hover:bg-green-100 transition-colors relative h-full" data-default-selected="true">
+                                    <div class="popular-badge absolute -top-2 left-4">
                                         <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
                                             🎯 MOST POPULAR
                                             </span>
@@ -308,12 +313,12 @@
                                             <div>
                                             <h3 class="text-xl font-bold text-gray-900">10 Fax Package</h3>
                                                 <p class="text-sm text-gray-600">Great for small businesses</p>
-                                            <span class="savings-badge inline-block mt-1 px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                                            <span class="savings-badge inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
                                                 SAVE 81% 
                                                 </span>
                                             </div>
                                         <div class="text-right pr-4">
-                                            <div class="price-amount text-2xl font-bold text-gray-900">$15.00</div>
+                                            <div class="price-amount text-2xl font-bold text-green-600">$15.00</div>
                                                 <div class="text-sm text-gray-500">10 faxes</div>
                                                 <div class="text-xs text-gray-600 font-medium">($1.50 each)</div>
                                             </div>
@@ -344,7 +349,12 @@
                                value="onetime"
                                class="absolute top-4 right-4 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 payment-option">
                         <label for="payment_type_onetime_guest" class="cursor-pointer block">
-                            <div class="payment-card border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors h-full">
+                            <div class="payment-card border border-gray-300 rounded-lg p-4 transition-colors h-full relative">
+                                <div class="popular-badge absolute -top-2 left-4" style="display: none;">
+                                    <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                        💰 SELECTED
+                                    </span>
+                                </div>
                                 <div class="flex justify-between items-start mb-3">
                                         <div>
                                             <h3 class="text-lg font-semibold text-gray-900">One-time Payment</h3>
@@ -353,10 +363,10 @@
                                     <div class="text-right pr-8">
                                             @if($faxJob->hasDiscount())
                                                 <div class="text-lg text-gray-500 line-through">${{ number_format($faxJob->original_amount ?? $faxJob->amount, 2) }}</div>
-                                                <div class="text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
+                                                <div class="price-amount text-2xl font-bold text-green-600">${{ number_format($faxJob->getFinalAmount(), 2) }}</div>
                                                 <div class="text-sm text-green-600 font-medium">50% OFF!</div>
                                             @else
-                                                <div class="text-2xl font-bold text-faxzen-blue">${{ number_format($faxJob->amount, 2) }}</div>
+                                                <div class="price-amount text-2xl font-bold text-gray-900">${{ number_format($faxJob->amount, 2) }}</div>
                                                 <div class="text-sm text-gray-500">per fax</div>
                                             @endif
                                         </div>
@@ -382,8 +392,8 @@
                                checked
                                class="absolute top-4 right-4 h-4 w-4 text-faxzen-blue focus:ring-faxzen-blue border-gray-300 payment-option">
                         <label for="payment_type_credits_10_guest" class="cursor-pointer block">
-                            <div class="payment-card border border-gray-300 rounded-lg p-4 hover:border-faxzen-blue hover:bg-blue-50 transition-colors relative h-full" data-default-selected="true">
-                                <div class="popular-badge absolute -top-2 left-4" style="display: none;">
+                            <div class="payment-card border-2 border-green-500 bg-green-50 rounded-lg p-4 hover:border-green-600 hover:bg-green-100 transition-colors relative h-full" data-default-selected="true">
+                                <div class="popular-badge absolute -top-2 left-4">
                                     <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
                                         🎯 MOST POPULAR
                                         </span>
@@ -392,12 +402,12 @@
                                         <div>
                                         <h3 class="text-xl font-bold text-gray-900">10 Fax Package</h3>
                                             <p class="text-sm text-gray-600">Great for small businesses</p>
-                                        <span class="savings-badge inline-block mt-1 px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                                        <span class="savings-badge inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
                                             SAVE 81%
                                             </span>
                                         </div>
                                     <div class="text-right pr-4">
-                                        <div class="price-amount text-2xl font-bold text-gray-900">$15.00</div>
+                                        <div class="price-amount text-2xl font-bold text-green-600">$15.00</div>
                                             <div class="text-sm text-gray-500">10 faxes</div>
                                             <div class="text-xs text-gray-600 font-medium">($1.50 each)</div>
                                       
@@ -433,18 +443,23 @@
                            id="schedule_type_later" 
                            name="schedule_type" 
                            value="later"
-                           class="absolute top-4 right-4 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
+                           class="absolute top-4 right-4 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 schedule-option">
                     <label for="schedule_type_later" class="cursor-pointer block">
-                        <div class="border border-gray-300 rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 transition-colors h-full">
+                        <div class="schedule-card border border-gray-300 rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 transition-colors h-full">
+                            <div class="recommended-badge absolute -top-2 left-4" style="display: none;">
+                                <span class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+                                    🕒 SELECTED
+                                </span>
+                                </div>
                             <div class="flex items-start mb-3 pr-8">
                                 <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
+                                    </svg>
                                 <div>
                                     <h3 class="font-semibold text-gray-900">Schedule for Later</h3>
                                     <p class="text-sm text-gray-600 mt-1">Choose date and time</p>
                                 </div>
-                            </div>
+                                    </div>
                             <div id="schedule-options" class="hidden">
                                 <div class="grid grid-cols-2 gap-3 mt-3">
                                     <input type="date" id="schedule_date_alt" class="border border-gray-300 rounded px-3 py-2 text-sm">
@@ -469,18 +484,18 @@
                            name="schedule_type" 
                            value="now"
                            checked
-                           class="absolute top-4 right-4 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300">
+                           class="absolute top-4 right-4 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 schedule-option">
                     <label for="schedule_type_now" class="cursor-pointer block">
-                        <div class="border-2 border-green-500 bg-green-50 rounded-lg p-4 hover:border-green-600 hover:bg-green-100 transition-colors h-full">
-                            <div class="absolute -top-2 left-4">
+                        <div class="schedule-card border-2 border-green-500 bg-green-50 rounded-lg p-4 hover:border-green-600 hover:bg-green-100 transition-colors h-full" data-default-selected="true">
+                            <div class="recommended-badge absolute -top-2 left-4">
                                 <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
                                     ⚡ RECOMMENDED
                                 </span>
-                            </div>
+                                </div>
                             <div class="flex items-start mb-3 pr-8">
                                 <svg class="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
+                                    </svg>
                                 <div>
                                     <h3 class="font-semibold text-gray-900">Send Immediately</h3>
                                     <p class="text-sm text-gray-600 mt-1">Fastest delivery option</p>
@@ -637,40 +652,48 @@ document.addEventListener('DOMContentLoaded', function() {
             const isDefaultSelected = card.hasAttribute('data-default-selected');
             
             if (radio.checked) {
-                // Selected state
-                card.className = card.className.replace(/border-gray-300|border-\w+-\d+/g, 'border-green-500');
-                card.className = card.className.replace(/bg-\w+-\d+/g, '');
-                card.classList.add('bg-green-50', 'border-2');
+                // Selected state - always green theme
+                card.classList.remove('border-gray-300', 'border-blue-500', 'bg-blue-50', 'hover:border-faxzen-blue', 'hover:bg-blue-50');
+                card.classList.add('bg-green-50', 'border-2', 'border-green-500');
+                // Force the styling with inline styles as backup
+                card.style.backgroundColor = '#f0fdf4';
+                card.style.borderColor = '#10b981';
+                card.style.borderWidth = '2px';
                 
                 if (popularBadge) {
                     popularBadge.style.display = 'block';
                 }
                 
                 if (savingsBadge) {
-                    savingsBadge.className = savingsBadge.className.replace(/bg-gray-100|text-gray-600/g, '');
+                    savingsBadge.className = savingsBadge.className.replace(/bg-gray-100|text-gray-600|bg-green-100|text-green-800/g, '');
                     savingsBadge.classList.add('bg-green-100', 'text-green-800');
                 }
                 
                 if (priceAmount) {
-                    priceAmount.className = priceAmount.className.replace(/text-gray-900/g, 'text-green-600');
+                    priceAmount.className = priceAmount.className.replace(/text-gray-900|text-green-600/g, '');
+                    priceAmount.classList.add('text-green-600');
                 }
             } else {
-                // Unselected state
-                card.className = card.className.replace(/border-green-500|border-2/g, '');
-                card.className = card.className.replace(/bg-green-50/g, '');
+                // Unselected state - always gray theme
+                card.classList.remove('border-green-500', 'border-blue-500', 'border-2', 'bg-green-50', 'bg-blue-50');
                 card.classList.add('border', 'border-gray-300');
+                // Clear inline styles
+                card.style.backgroundColor = '';
+                card.style.borderColor = '';
+                card.style.borderWidth = '';
                 
                 if (popularBadge) {
                     popularBadge.style.display = 'none';
                 }
                 
                 if (savingsBadge) {
-                    savingsBadge.className = savingsBadge.className.replace(/bg-green-100|text-green-800/g, '');
+                    savingsBadge.className = savingsBadge.className.replace(/bg-green-100|text-green-800|bg-gray-100|text-gray-600/g, '');
                     savingsBadge.classList.add('bg-gray-100', 'text-gray-600');
                 }
                 
                 if (priceAmount) {
-                    priceAmount.className = priceAmount.className.replace(/text-green-600/g, 'text-gray-900');
+                    priceAmount.className = priceAmount.className.replace(/text-green-600|text-gray-900/g, '');
+                    priceAmount.classList.add('text-gray-900');
                 }
             }
         });
@@ -682,6 +705,57 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to all payment options
     paymentOptions.forEach(function(radio) {
         radio.addEventListener('change', updatePaymentOptionStyles);
+    });
+
+    // Schedule option styling functionality
+    const scheduleRadios = document.querySelectorAll('.schedule-option');
+    
+    function updateScheduleOptionStyles() {
+        scheduleRadios.forEach(function(radio) {
+            const card = radio.closest('.relative').querySelector('.schedule-card');
+            const recommendedBadge = card.querySelector('.recommended-badge');
+            
+            if (radio.checked) {
+                if (radio.value === 'now') {
+                    // Send Immediately selected (green theme)
+                    card.className = card.className.replace(/border-gray-300|border-blue-500|border-green-500|border-\w+-\d+/g, '');
+                    card.className = card.className.replace(/bg-\w+-\d+/g, '');
+                    card.classList.add('bg-green-50', 'border-2', 'border-green-500');
+                    
+                    if (recommendedBadge) {
+                        recommendedBadge.style.display = 'block';
+                        recommendedBadge.querySelector('span').className = 'bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm';
+                        recommendedBadge.querySelector('span').innerHTML = '⚡ RECOMMENDED';
+                    }
+                } else {
+                    // Schedule Later selected (blue theme)
+                    card.className = card.className.replace(/border-gray-300|border-blue-500|border-green-500|border-\w+-\d+/g, '');
+                    card.className = card.className.replace(/bg-\w+-\d+/g, '');
+                    card.classList.add('bg-blue-50', 'border-2', 'border-blue-500');
+                    
+                    if (recommendedBadge) {
+                        recommendedBadge.style.display = 'block';
+                        recommendedBadge.querySelector('span').className = 'bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm';
+                        recommendedBadge.querySelector('span').innerHTML = '🕒 SELECTED';
+                    }
+                }
+            } else {
+                // Unselected state (gray theme)
+                card.className = card.className.replace(/border-green-500|border-blue-500|border-2/g, '');
+                card.className = card.className.replace(/bg-green-50|bg-blue-50/g, '');
+                card.classList.add('border', 'border-gray-300');
+                
+                if (recommendedBadge) { recommendedBadge.style.display = 'none'; }
+            }
+        });
+    }
+    
+    // Initialize schedule option styles
+    updateScheduleOptionStyles();
+    
+    // Add event listeners for schedule options
+    scheduleRadios.forEach(function(radio) {
+        radio.addEventListener('change', updateScheduleOptionStyles);
     });
 });
 </script>
