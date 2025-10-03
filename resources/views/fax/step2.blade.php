@@ -786,7 +786,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </li>
                 <li class="flex items-start">
                     <span class="mr-2">•</span>
-                    <span>Your account will be created with 20 fax credits</span>
+                    <span>Your credit will be added to your account</span>
                 </li>
                 <li class="flex items-start">
                     <span class="mr-2">•</span>
