@@ -462,14 +462,19 @@
                                     </div>
                             <div id="schedule-options" class="hidden">
                                 <div class="grid grid-cols-2 gap-3 mt-3">
-                                    <input type="date" id="schedule_date_alt" class="border border-gray-300 rounded px-3 py-2 text-sm">
+                                    <input type="date" id="schedule_date_alt" class="border border-gray-300 rounded px-3 py-2 text-sm" min="{{ date('Y-m-d') }}">
                                     <select id="schedule_time_alt" class="border border-gray-300 rounded px-3 py-2 text-sm">
+                                        <option value="">Select time...</option>
                                         <option value="09:00">9:00 AM</option>
                                         <option value="10:00">10:00 AM</option>
                                         <option value="11:00">11:00 AM</option>
+                                        <option value="12:00">12:00 PM</option>
+                                        <option value="13:00">1:00 PM</option>
                                         <option value="14:00">2:00 PM</option>
                                         <option value="15:00">3:00 PM</option>
                                         <option value="16:00">4:00 PM</option>
+                                        <option value="17:00">5:00 PM</option>
+                                        <option value="18:00">6:00 PM</option>
                                     </select>
                                 </div>
                             </div>
@@ -611,12 +616,125 @@ document.addEventListener('DOMContentLoaded', function() {
             scheduleOptions.classList.remove('hidden');
         } else {
             scheduleOptions.classList.add('hidden');
+            // Clear the hidden inputs when switching back to "Send Immediately"
+            document.querySelector('input[name="schedule_date"]').value = '';
+            document.querySelector('input[name="schedule_time"]').value = '';
+        }
+    }
+    
+    // Function to sync the visible inputs with hidden inputs and create UTC timestamp
+    function syncScheduleInputs() {
+        const dateInput = document.getElementById('schedule_date_alt');
+        const timeInput = document.getElementById('schedule_time_alt');
+        const hiddenDateInput = document.querySelector('input[name="schedule_date"]');
+        const hiddenTimeInput = document.querySelector('input[name="schedule_time"]');
+        
+        if (dateInput && timeInput && hiddenDateInput && hiddenTimeInput) {
+            hiddenDateInput.value = dateInput.value;
+            hiddenTimeInput.value = timeInput.value;
+            
+            // Create the UTC timestamp that the server expects
+            if (dateInput.value && timeInput.value) {
+                // Create the local datetime string
+                const localDateTime = dateInput.value + 'T' + timeInput.value + ':00';
+                
+                // Parse as local time (not UTC)
+                const localDate = new Date(localDateTime);
+                
+                // Check if the local time is in the future
+                const now = new Date();
+                if (localDate <= now) {
+                    alert('Please select a time in the future.');
+                    return;
+                }
+                
+                // Convert to UTC timestamp
+                const utcTimestamp = localDate.toISOString();
+                const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                
+                console.log('Local datetime:', localDateTime);
+                console.log('Local date object:', localDate);
+                console.log('Current time:', now);
+                console.log('Is future?', localDate > now);
+                
+                // Set the fields the server actually expects
+                let scheduledTimeUtcInput = document.querySelector('input[name="scheduled_time_utc"]');
+                let userTimezoneInput = document.querySelector('input[name="user_timezone"]');
+                
+                if (!scheduledTimeUtcInput) {
+                    scheduledTimeUtcInput = document.createElement('input');
+                    scheduledTimeUtcInput.type = 'hidden';
+                    scheduledTimeUtcInput.name = 'scheduled_time_utc';
+                    document.querySelector('form').appendChild(scheduledTimeUtcInput);
+                }
+                
+                if (!userTimezoneInput) {
+                    userTimezoneInput = document.createElement('input');
+                    userTimezoneInput.type = 'hidden';
+                    userTimezoneInput.name = 'user_timezone';
+                    document.querySelector('form').appendChild(userTimezoneInput);
+                }
+                
+                scheduledTimeUtcInput.value = utcTimestamp;
+                userTimezoneInput.value = userTimezone;
+                
+                console.log('=== SCHEDULING DEBUG ===');
+                console.log('Created UTC timestamp:', utcTimestamp);
+                console.log('User timezone:', userTimezone);
+                console.log('Local time selected:', localDate.toString());
+                console.log('UTC time will be:', new Date(utcTimestamp).toString());
+                console.log('Time difference (minutes):', (localDate - now) / (1000 * 60));
+            }
         }
     }
     
     if (scheduleNowRadio && scheduleLaterRadio && scheduleOptions) {
         scheduleNowRadio.addEventListener('change', updateScheduleOptions);
         scheduleLaterRadio.addEventListener('change', updateScheduleOptions);
+        
+        // Add event listeners to sync the schedule inputs
+        const dateInput = document.getElementById('schedule_date_alt');
+        const timeInput = document.getElementById('schedule_time_alt');
+        
+        if (dateInput && timeInput) {
+            dateInput.addEventListener('change', syncScheduleInputs);
+            timeInput.addEventListener('change', syncScheduleInputs);
+        }
+        
+        // Sync inputs before form submission
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (scheduleLaterRadio.checked) {
+                    syncScheduleInputs();
+                    
+                    // Validate that date and time are selected
+                    const dateValue = dateInput.value;
+                    const timeValue = timeInput.value;
+                    
+                    console.log('Schedule Later selected - Date:', dateValue, 'Time:', timeValue);
+                    console.log('Hidden inputs - Date:', document.querySelector('input[name="schedule_date"]').value, 'Time:', document.querySelector('input[name="schedule_time"]').value);
+                    console.log('UTC timestamp:', document.querySelector('input[name="scheduled_time_utc"]')?.value);
+                    console.log('User timezone:', document.querySelector('input[name="user_timezone"]')?.value);
+                    
+                    if (!dateValue || !timeValue) {
+                        e.preventDefault();
+                        alert('Please select both date and time for scheduled fax.');
+                        return false;
+                    }
+                    
+                    // Ensure UTC timestamp was created
+                    const utcInput = document.querySelector('input[name="scheduled_time_utc"]');
+                    if (!utcInput || !utcInput.value) {
+                        e.preventDefault();
+                        alert('Error processing scheduled time. Please try again.');
+                        return false;
+                    }
+                } else {
+                    console.log('Send Immediately selected');
+                }
+            });
+        }
         
         // Initial state
         updateScheduleOptions();
