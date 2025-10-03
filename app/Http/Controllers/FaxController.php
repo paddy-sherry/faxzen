@@ -237,13 +237,7 @@ class FaxController extends Controller
         ], $coverPageData));
 
         // Determine pricing and product details
-        if ($paymentType === 'credits') {
-            $amount = 2000; // $20.00 in cents
-            $credits = 20;
-            $productName = 'FaxZen.com - 20 Fax Credits Package';
-            $productDescription = "20 fax credits for your account\nFirst fax: {$faxJob->file_original_name} to {$faxJob->recipient_number}";
-            $submitMessage = 'Your account will be created with 20 fax credits, and your first fax will be sent immediately.';
-        } elseif ($paymentType === 'credits_10') {
+        if ($paymentType === 'credits_10') {
             $amount = 1500; // $15.00 in cents
             $credits = 10;
             $productName = 'FaxZen.com - 10 Fax Credits Package';
