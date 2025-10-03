@@ -744,7 +744,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </li>
                     <li class="flex items-start">
                         <span class="mr-2">•</span>
-                        <span>20 more credits will be added to your account</span>
+                        <span>Your credits will be added to your account</span>
                     </li>
                     <li class="flex items-start">
                         <span class="mr-2">•</span>
