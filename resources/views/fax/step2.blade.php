@@ -3,7 +3,7 @@
 @section('title', 'Complete Your Fax Details')
 
 @section('content')
-<div class="max-w-2xl mx-auto">
+<div class="max-w-3xl mx-auto">
     <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-center mb-2">Almost Ready to Send!</h1>
         <p class="text-gray-600 text-center">Just a few details and your fax will be on its way</p>
@@ -478,7 +478,7 @@
                     @if(Auth::user()->hasCredits())
                         ✅ Send My Fax FREE →
                     @else
-                        🔒 Pay Securly & Send Fax →
+                        🔒 Pay Securely & Send Fax →
                     @endif
                 @else
                     🔒 Pay Securly & Send Fax →
@@ -645,103 +645,6 @@ document.addEventListener('DOMContentLoaded', function() {
     paymentOptions.forEach(function(radio) {
         radio.addEventListener('change', updatePaymentOptionStyles);
     });
-    
-    // Exit-intent popup functionality
-    let exitIntentShown = false;
-    
-    function showExitIntentPopup() {
-        if (exitIntentShown) return;
-        exitIntentShown = true;
-        
-        // Create modal
-        const modal = document.createElement('div');
-        modal.id = 'exit-intent-modal';
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-        modal.innerHTML = `
-            <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
-                <div class="mb-4">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Wait! Don't Miss Out!</h3>
-                    <p class="text-gray-600 mb-4">Get 25% OFF your first fax package before you leave</p>
-                </div>
-                
-                <div class="bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg p-4 mb-4">
-                    <div class="text-2xl font-bold">🎉 SPECIAL OFFER</div>
-                    <div class="text-lg">Use code: <strong>SAVE25</strong></div>
-                    <div class="text-sm opacity-90">Valid for the next 15 minutes</div>
-                </div>
-                
-                <div class="space-y-3">
-                    <button onclick="closeExitPopup(); applyDiscount();" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                        🎁 Apply Discount & Continue
-                    </button>
-                    <button onclick="closeExitPopup();" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-6 rounded-lg transition-colors text-sm">
-                        No thanks, I'll pay full price
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-    }
-    
-    window.closeExitPopup = function() {
-        const modal = document.getElementById('exit-intent-modal');
-        if (modal) {
-            modal.remove();
-        }
-    };
-    
-    window.applyDiscount = function() {
-        // Apply visual discount feedback
-        const priceElements = document.querySelectorAll('.text-3xl, .text-2xl');
-        priceElements.forEach(el => {
-            if (el.textContent.includes('$')) {
-                const originalPrice = el.textContent;
-                el.innerHTML = `
-                    <span class="line-through text-gray-500 text-lg">${originalPrice}</span><br>
-                    <span class="text-green-600">25% OFF Applied!</span>
-                `;
-            }
-        });
-        
-        // Show success message
-        const successDiv = document.createElement('div');
-        successDiv.className = 'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded z-50';
-        successDiv.innerHTML = '✅ 25% discount applied! Complete your order now.';
-        document.body.appendChild(successDiv);
-        
-        setTimeout(() => {
-            if (successDiv.parentNode) {
-                successDiv.remove();
-            }
-        }, 5000);
-    };
-    
-    // Detect exit intent
-    document.addEventListener('mouseleave', function(e) {
-        if (e.clientY <= 0) {
-            setTimeout(showExitIntentPopup, 500);
-        }
-    });
-    
-    // Show popup if user is idle for 2 minutes
-    let idleTimer;
-    function resetIdleTimer() {
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(showExitIntentPopup, 120000); // 2 minutes
-    }
-    
-    // Reset timer on user activity
-    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-        document.addEventListener(event, resetIdleTimer, true);
-    });
-    
-    resetIdleTimer(); // Start the timer
 });
 </script>
 
