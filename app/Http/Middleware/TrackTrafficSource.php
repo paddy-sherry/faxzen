@@ -31,6 +31,9 @@ class TrackTrafficSource
         $referrer = $request->headers->get('referer');
         $trafficSource = $this->determineTrafficSource($utmParams, $googleAdsParams, $referrer);
 
+        // Get the landing page URL with fallback for proxy issues
+        $landingPage = $this->getLandingPageUrl($request);
+        
         $trackingData = [
             'traffic_source' => $trafficSource,
             'utm_source' => $utmParams['utm_source'] ?? null,
@@ -43,7 +46,7 @@ class TrackTrafficSource
             'gad_source' => $googleAdsParams['gad_source'] ?? null,
             'gbraid' => $googleAdsParams['gbraid'] ?? null,
             'referrer_url' => $referrer,
-            'landing_page' => $request->fullUrl(),
+            'landing_page' => $landingPage,
             'user_agent' => $request->headers->get('user-agent'),
             'ip_address' => $request->ip(),
             'captured_at' => now()->toISOString(),
@@ -164,5 +167,37 @@ class TrackTrafficSource
 
         // No referrer or UTM parameters
         return 'direct';
+    }
+    
+    /**
+     * Get landing page URL with fallback for proxy issues
+     */
+    protected function getLandingPageUrl(Request $request): string
+    {
+        // Try Laravel's fullUrl() first
+        $fullUrl = $request->fullUrl();
+        
+        // Check if we got a proper URL with path
+        $parsedUrl = parse_url($fullUrl);
+        $hasPath = isset($parsedUrl['path']) && $parsedUrl['path'] !== '/';
+        
+        // If fullUrl() worked properly, use it
+        if ($hasPath || !empty($parsedUrl['query'])) {
+            return $fullUrl;
+        }
+        
+        // Fallback: construct URL manually from server variables and headers
+        $scheme = $request->isSecure() ? 'https' : 'http';
+        $host = $request->getHost();
+        $path = $_SERVER['REQUEST_URI'] ?? $request->getRequestUri();
+        
+        // Clean up the path
+        if (empty($path) || $path === '/') {
+            $path = '/';
+        }
+        
+        $constructedUrl = $scheme . '://' . $host . $path;
+        
+        return $constructedUrl;
     }
 }

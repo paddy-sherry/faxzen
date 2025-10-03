@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web([
             \App\Http\Middleware\TrackTrafficSource::class,
         ]);
+        
+        // Add trusted proxies middleware for production
+        $middleware->append(\Illuminate\Http\Middleware\TrustProxies::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
