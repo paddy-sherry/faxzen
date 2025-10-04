@@ -5,7 +5,17 @@
 @section('meta_description', 'Send fax online instantly for $8. Upload PDF documents, enter fax number, and send faxes online with tracked delivery. No fax machine required. Trusted worldwide')
 
 @section('content')
-<div class="bg-white rounded-lg shadow-md p-8">
+<div class="bg-white rounded-lg shadow-md p-8 relative">
+    <!-- No Account Needed Ribbon -->
+    <div class="absolute -top-2 -right-2 bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-10">
+        <div class="flex items-center">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            No Account Needed
+        </div>
+    </div>
+    
     <div class="mb-8">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Send Fax Online</h1>
         <p class="text-center text-gray-600 mb-6"><strong>Send faxes online</strong> with professional cover pages, smart scheduling and real time delivery status. Trusted by thousands of people and businesses worldwide. </p>
@@ -157,7 +167,7 @@
                     class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 font-semibold"
                     rel="nofollow noindex"
                     data-nosnippet>
-                Continue to Step 2
+                Add Details & Send Fax →
             </button>
         </div>
 
