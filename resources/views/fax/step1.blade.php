@@ -140,7 +140,7 @@
                            class="flex-1 px-3 py-2 border border-l-0 border-gray-300 rounded-r-md shadow-sm focus:outline-none focus:ring-faxzen-purple focus:border-faxzen-purple"
                            required>
                 </div>
-                <p class="mt-1 text-sm text-gray-500">Select your country and enter the fax number without the country code</p>
+                <p class="mt-1 text-sm text-gray-500">Enter fax number without country code</p>
             </div>
 
             <div>
@@ -157,7 +157,7 @@
                 @auth
                     <p class="mt-1 text-sm text-green-600">✓ Using your account email address (you can change this if needed)</p>
                 @else
-                    <p class="mt-1 text-sm text-gray-500">We'll send your delivery confirmation and status updates to this email</p>
+                    <p class="mt-1 text-sm text-gray-500">Delivery confirmation will be sent here</p>
                 @endauth
             </div>
         </div>
