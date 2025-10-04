@@ -346,7 +346,7 @@
         <p class="text-gray-600">Choose the option that works best for you</p>
     </div>
     
-    <div class="grid gap-6 lg:grid-cols-3 max-w-6xl mx-auto">
+    <div class="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
         <!-- One-time Payment -->
         <div class="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200">
             <div class="flex justify-between items-start mb-4">
@@ -426,50 +426,6 @@
             </ul>
         </div>
 
-        <!-- 20-Fax Package -->
-        <div class="border border-purple-500 rounded-lg p-6 hover:shadow-lg transition-all duration-200 relative bg-gradient-to-br from-purple-50 to-purple-100">
-            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    SAVE 87%
-                </span>
-            </div>
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <h3 class="text-xl font-semibold text-gray-800">20-Fax Package</h3>
-                    <p class="text-gray-600">Best value for regular users</p>
-                </div>
-                <div class="text-right">
-                    <div class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent">$20.00</div>
-                    <div class="text-sm text-gray-500">20 faxes ($1.00 each)</div>
-                </div>
-            </div>
-            <ul class="text-gray-600 space-y-2 mb-6">
-                <li class="flex items-center">
-                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Send 20 faxes anytime
-                </li>
-                <li class="flex items-center">
-                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Account dashboard to track usage
-                </li>
-                <li class="flex items-center">
-                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Fax history and confirmations
-                </li>
-                <li class="flex items-center">
-                    <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Credits never expire
-                </li>
-            </ul>
-        </div>
     </div>
 
     <div class="text-center mt-8">
