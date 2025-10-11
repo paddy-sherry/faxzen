@@ -35,25 +35,43 @@
         @csrf
         
         <div>
-            <label for="pdf_files" class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
                 Documents or Images <span class="text-red-500">*</span>
             </label>
+            
+            <!-- File Upload Area -->
             <div id="drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-all duration-200">
                 <div class="space-y-1 text-center">
-                    <!-- <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg> -->
                     <div class="flex flex-col items-center text-sm text-gray-600">
                         <label for="pdf_files" class="relative cursor-pointer bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-md font-medium focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-purple-500 transition-all duration-200 mb-2">
-                            <span>Upload files</span>
-                            <input id="pdf_files" name="pdf_files[]" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.svg,.webp" class="sr-only" multiple required>
+                            <span>Add Files</span>
+                            <input id="pdf_files" name="pdf_files[]" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.svg,.webp" class="sr-only" multiple>
                         </label>
-                    
                     </div>
                     <p class="text-xs text-gray-500">PDF, docs and images up to 20MB each (up to 10 files)</p>
-                    <div id="file-list" class="text-sm text-green-600 font-medium hidden"></div>
+                    <p class="text-xs text-gray-400">Drag & drop files here or click to browse</p>
                 </div>
             </div>
+            
+            <!-- File List Display -->
+            <div id="file-list-container" class="mt-4 hidden">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-medium text-gray-700">Selected Files</h3>
+                        <span id="file-count" class="text-xs text-gray-500"></span>
+                    </div>
+                    <div id="file-list" class="space-y-2"></div>
+                    <div class="mt-3 pt-3 border-t border-gray-200">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600">Total size:</span>
+                            <span id="total-size" class="font-medium text-gray-900"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hidden input for form submission -->
+            <input type="hidden" id="selected-files" name="selected_files" value="">
         </div>
 
         <!-- Responsive grid: stacked on mobile, side by side on desktop -->
@@ -799,6 +817,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('pdf_files');
     const fileList = document.getElementById('file-list');
+    const fileListContainer = document.getElementById('file-list-container');
+    const fileCount = document.getElementById('file-count');
+    const totalSize = document.getElementById('total-size');
+    const selectedFilesInput = document.getElementById('selected-files');
+    
+    // Store selected files
+    let selectedFiles = [];
+    const maxFiles = 10;
+    const maxFileSize = 20 * 1024 * 1024; // 20MB
 
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -837,56 +864,126 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleDrop(e) {
         const dt = e.dataTransfer;
         const files = dt.files;
-
         if (files.length > 0) {
-            const allowedTypes = [
-                'application/pdf',
-                'image/jpeg',
-                'image/jpg', 
-                'image/png',
-                'image/gif',
-                'image/svg+xml',
-                'image/webp'
-            ];
-            
-            const validFiles = Array.from(files).filter(file => allowedTypes.includes(file.type));
-            
-            if (validFiles.length > 0) {
-                // Create a new FileList-like object
-                const dataTransfer = new DataTransfer();
-                validFiles.forEach(file => dataTransfer.items.add(file));
-                fileInput.files = dataTransfer.files;
-                showFileList(validFiles);
-            } else {
-                alert('Please select PDF documents or image files (JPG, PNG, GIF, SVG, WebP).');
-            }
+            addFiles(Array.from(files));
         }
     }
 
     function handleFileSelect(e) {
         const files = Array.from(e.target.files);
         if (files.length > 0) {
-            showFileList(files);
+            addFiles(files);
         }
+        // Don't clear the input immediately - let it be managed by updateHiddenInput
     }
 
-    function showFileList(files) {
-        if (files.length === 0) {
-            fileList.classList.add('hidden');
+    function addFiles(newFiles) {
+        const allowedTypes = [
+            'application/pdf',
+            'image/jpeg',
+            'image/jpg', 
+            'image/png',
+            'image/gif',
+            'image/svg+xml',
+            'image/webp'
+        ];
+
+        const validFiles = newFiles.filter(file => {
+            if (!allowedTypes.includes(file.type)) {
+                alert(`File "${file.name}" is not a supported format. Please use PDF, JPG, PNG, GIF, SVG, or WebP files.`);
+                return false;
+            }
+            if (file.size > maxFileSize) {
+                alert(`File "${file.name}" is too large. Maximum size is 20MB.`);
+                return false;
+            }
+            return true;
+        });
+
+        // Check if adding these files would exceed the limit
+        if (selectedFiles.length + validFiles.length > maxFiles) {
+            alert(`You can only upload up to ${maxFiles} files. You currently have ${selectedFiles.length} files selected.`);
             return;
         }
 
-        const fileNames = files.map(file => file.name);
-        const fileCount = files.length;
-        
-        if (fileCount === 1) {
-            fileList.innerHTML = `Selected: ${fileNames[0]}`;
-        } else {
-            fileList.innerHTML = `Selected ${fileCount} files: ${fileNames.join(', ')}`;
-        }
-        
-        fileList.classList.remove('hidden');
+        // Add unique files (avoid duplicates)
+        validFiles.forEach(file => {
+            const isDuplicate = selectedFiles.some(existingFile => 
+                existingFile.name === file.name && existingFile.size === file.size
+            );
+            if (!isDuplicate) {
+                selectedFiles.push(file);
+            }
+        });
+
+        updateFileList();
+        console.log('Files added. Total selected:', selectedFiles.length);
     }
+
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        updateFileList();
+    }
+
+    function updateFileList() {
+        if (selectedFiles.length === 0) {
+            fileListContainer.classList.add('hidden');
+            selectedFilesInput.value = '';
+            return;
+        }
+
+        fileListContainer.classList.remove('hidden');
+        fileCount.textContent = `${selectedFiles.length} of ${maxFiles} files`;
+
+        // Calculate total size
+        const totalSizeBytes = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+        totalSize.textContent = formatFileSize(totalSizeBytes);
+
+        // Update file list display
+        fileList.innerHTML = selectedFiles.map((file, index) => `
+            <div class="flex items-center justify-between bg-white rounded-md p-3 border border-gray-200">
+                <div class="flex items-center flex-1 min-w-0">
+                    <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium text-gray-900 truncate" title="${file.name}">${file.name}</div>
+                        <div class="text-xs text-gray-500">${formatFileSize(file.size)}</div>
+                    </div>
+                </div>
+                <button type="button" onclick="removeFile(${index})" class="ml-3 flex-shrink-0 text-red-400 hover:text-red-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        `).join('');
+
+        // Update file input for form submission
+        updateFileInput();
+    }
+
+    function updateHiddenInput() {
+        // Update hidden input with file names for validation
+        selectedFilesInput.value = selectedFiles.map(f => f.name).join(',');
+        
+        // Debug logging
+        console.log('Selected files:', selectedFiles.length);
+        console.log('File names:', selectedFiles.map(f => f.name));
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    // Make removeFile globally accessible
+    window.removeFile = removeFile;
 
     // Fax number validation
     const countryCodeSelect = document.getElementById('country_code');
@@ -1070,11 +1167,39 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Validate on form submit
     form.addEventListener('submit', function(e) {
+        let hasErrors = false;
+        
+        // Validate files
+        if (selectedFiles.length === 0) {
+            alert('Please select at least one file to send.');
+            hasErrors = true;
+        } else {
+            // Ensure file input has the selected files before submission
+            updateFileInput();
+        }
+        
+        // Validate fax number
         if (!validateFaxNumber() && recipientNumberInput.value.replace(/[^0-9]/g, '').length >= 7) {
             e.preventDefault();
             recipientNumberInput.focus();
+            hasErrors = true;
+        }
+        
+        if (hasErrors) {
+            e.preventDefault();
         }
     });
+    
+    function updateFileInput() {
+        // Create a new DataTransfer object with all selected files
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        
+        // Update the file input
+        fileInput.files = dataTransfer.files;
+        
+        console.log('Updated file input with', fileInput.files.length, 'files');
+    }
 });
 </script>
 @endsection 

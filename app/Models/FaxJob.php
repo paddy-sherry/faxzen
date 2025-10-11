@@ -22,6 +22,7 @@ class FaxJob extends Model
         'telnyx_fax_id',
         'retry_attempts',
         'retry_stage',
+        'retry_logs',
         'last_retry_at',
         'error_message',
 
@@ -93,6 +94,7 @@ class FaxJob extends Model
         'original_file_sizes' => 'array',
         'tracking_data' => 'array',
         'delivery_details' => 'array',
+        'retry_logs' => 'array',
         'discount_amount' => 'decimal:2',
         'original_amount' => 'decimal:2',
         'is_preparing' => 'boolean',
@@ -264,6 +266,59 @@ class FaxJob extends Model
             default:
                 return null;
         }
+    }
+
+    /**
+     * Add a retry log entry
+     */
+    public function addRetryLog(string $status, string $message, array $details = [])
+    {
+        $retryLogs = $this->retry_logs ?? [];
+        $retryLogs[] = [
+            'attempt' => count($retryLogs) + 1,
+            'status' => $status, // 'attempting', 'success', 'failed', 'retrying'
+            'message' => $message,
+            'timestamp' => now()->toISOString(),
+            'details' => $details
+        ];
+        
+        $this->update(['retry_logs' => $retryLogs]);
+    }
+
+    /**
+     * Get formatted retry logs for display
+     */
+    public function getFormattedRetryLogs()
+    {
+        $logs = $this->retry_logs ?? [];
+        
+        return array_map(function ($log) {
+            return [
+                'attempt' => $log['attempt'],
+                'status' => $log['status'],
+                'message' => $log['message'],
+                'timestamp' => \Carbon\Carbon::parse($log['timestamp'])->format('M j, Y g:i A'),
+                'time_ago' => \Carbon\Carbon::parse($log['timestamp'])->diffForHumans(),
+                'details' => $log['details'] ?? []
+            ];
+        }, $logs);
+    }
+
+    /**
+     * Get the latest retry log entry
+     */
+    public function getLatestRetryLog()
+    {
+        $logs = $this->retry_logs ?? [];
+        return !empty($logs) ? end($logs) : null;
+    }
+
+    /**
+     * Clear retry logs (useful when fax is successfully sent)
+     */
+    public function clearRetryLogs()
+    {
+        $this->update(['retry_logs' => []]);
     }
 
     /**

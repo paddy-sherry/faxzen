@@ -59,12 +59,22 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    
+    .auto-refresh-indicator {
+        animation: pulse 2s infinite;
+    }
 </style>
 
 <div class="bg-white rounded-lg shadow-md p-8">
     <div class="mb-8 text-center">
         <h2 class="text-3xl font-bold text-gray-800 mb-4">Fax Status</h2>
         <p class="text-gray-600">Tracking your fax delivery in real-time</p>
+        @if($faxJob->getCurrentStep() < 4)
+            <div class="mt-2 text-sm text-gray-500 flex items-center justify-center">
+                <div class="w-2 h-2 bg-blue-500 rounded-full auto-refresh-indicator mr-2"></div>
+                Auto-refreshing every 30 seconds
+            </div>
+        @endif
     </div>
 
     <!-- Progress Bar -->
@@ -295,6 +305,56 @@
                                 @if($faxJob->retry_attempts > 0)
                                     <div class="mt-2 text-{{ $retryStageMessage['color'] }}-700 text-xs">
                                         Attempt {{ $faxJob->retry_attempts }} of {{ $faxJob->canRetry() ? '20' : $faxJob->retry_attempts }}
+                                    </div>
+                                @endif
+                                
+                                <!-- Detailed Retry Logs -->
+                                @php
+                                    $retryLogs = $faxJob->getFormattedRetryLogs();
+                                @endphp
+                                
+                                @if(!empty($retryLogs))
+                                    <div class="mt-4">
+                                        <h5 class="text-sm font-semibold text-gray-700 mb-2">📋 Attempt History</h5>
+                                        <div class="space-y-2 max-h-40 overflow-y-auto">
+                                            @foreach($retryLogs as $log)
+                                                <div class="flex items-start space-x-3 p-2 bg-white rounded border-l-2 
+                                                    @if($log['status'] === 'success') border-green-400 @elseif($log['status'] === 'failed') border-red-400 @else border-yellow-400 @endif">
+                                                    <div class="flex-shrink-0 mt-0.5">
+                                                        @if($log['status'] === 'success')
+                                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        @elseif($log['status'] === 'failed')
+                                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                            </svg>
+                                                        @else
+                                                            <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                            </svg>
+                                                        @endif
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="text-xs font-medium text-gray-900">
+                                                            Attempt #{{ $log['attempt'] }} - {{ ucfirst($log['status']) }}
+                                                        </div>
+                                                        <div class="text-xs text-gray-600 mt-0.5">{{ $log['message'] }}</div>
+                                                        <div class="text-xs text-gray-500 mt-1">{{ $log['time_ago'] }}</div>
+                                                        @if(!empty($log['details']['error']))
+                                                            <div class="text-xs text-red-600 mt-1 font-mono bg-red-50 p-1 rounded">
+                                                                Error: {{ $log['details']['error'] }}
+                                                            </div>
+                                                        @endif
+                                                        @if(!empty($log['details']['next_retry_in_minutes']))
+                                                            <div class="text-xs text-blue-600 mt-1">
+                                                                Next retry in {{ $log['details']['next_retry_in_minutes'] }} minutes
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -558,6 +618,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (countdown <= 0) {
             clearInterval(countdownInterval);
             countdownElement.innerHTML = 'Refreshing...';
+        }
+    }, 1000);
+    @endif
+
+    // Auto-refresh for active faxes
+    @if($faxJob->getCurrentStep() < 4)
+    let refreshCountdown = 30;
+    const refreshInterval = setInterval(function() {
+        refreshCountdown--;
+        
+        // Update countdown display if element exists
+        const countdownElement = document.querySelector('.auto-refresh-indicator');
+        if (countdownElement && countdownElement.nextSibling) {
+            countdownElement.nextSibling.textContent = `Auto-refreshing in ${refreshCountdown} seconds`;
+        }
+        
+        if (refreshCountdown <= 0) {
+            clearInterval(refreshInterval);
+            window.location.reload();
         }
     }, 1000);
     @endif

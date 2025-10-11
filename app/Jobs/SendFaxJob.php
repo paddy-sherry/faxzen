@@ -163,6 +163,13 @@ class SendFaxJob implements ShouldQueue
         \Telnyx\Telnyx::$apiBase = config('services.telnyx.api_base');
 
         try {
+            // Log retry attempt
+            $this->faxJob->addRetryLog('attempting', 'Attempting to send fax via Telnyx', [
+                'attempt' => $this->attempts(),
+                'max_attempts' => $this->tries,
+                'recipient' => $this->faxJob->recipient_number
+            ]);
+            
             // Clear retry stage on successful attempt
             $this->faxJob->update(['retry_stage' => null]);
             
@@ -215,6 +222,13 @@ class SendFaxJob implements ShouldQueue
                 'delivery_details' => json_encode($fax->toArray())
             ]);
 
+            // Log successful submission
+            $this->faxJob->addRetryLog('success', 'Fax successfully submitted to Telnyx', [
+                'telnyx_fax_id' => $fax->id,
+                'telnyx_status' => $fax->status ?? 'queued',
+                'attempt' => $this->attempts()
+            ]);
+
             Log::info("Fax submitted to Telnyx successfully", [
                 'fax_job_id' => $this->faxJob->id,
                 'telnyx_fax_id' => $fax->id,
@@ -242,6 +256,15 @@ class SendFaxJob implements ShouldQueue
                 'retry_attempts' => $this->attempts(),
                 'last_retry_at' => now(),
                 'error_message' => $errorMessage,
+            ]);
+
+            // Log failure
+            $this->faxJob->addRetryLog('failed', 'Fax sending failed', [
+                'error' => $errorMessage,
+                'attempt' => $this->attempts(),
+                'max_attempts' => $this->tries,
+                'will_retry' => $this->attempts() < $this->tries,
+                'next_retry_in_minutes' => $this->attempts() < $this->tries ? round($this->backoff() / 60, 1) : 0
             ]);
 
             Log::error("Failed to send fax via Telnyx", [
