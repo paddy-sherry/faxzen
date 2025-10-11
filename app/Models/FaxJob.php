@@ -13,6 +13,9 @@ class FaxJob extends Model
         'scheduled_time',
         'file_path',
         'file_original_name',
+        'file_paths',
+        'file_original_names',
+        'file_count',
         'amount',
         'payment_intent_id',
         'status',
@@ -23,6 +26,7 @@ class FaxJob extends Model
         'error_message',
 
         'original_file_size',
+        'original_file_sizes',
         'is_preparing',
         'is_sending',
         'is_delivered',
@@ -84,6 +88,11 @@ class FaxJob extends Model
         'early_reminder_clicked_at' => 'datetime',
         'reminder_clicked_at' => 'datetime',
         'email_clicks' => 'array',
+        'file_paths' => 'array',
+        'file_original_names' => 'array',
+        'original_file_sizes' => 'array',
+        'tracking_data' => 'array',
+        'delivery_details' => 'array',
         'discount_amount' => 'decimal:2',
         'original_amount' => 'decimal:2',
         'is_preparing' => 'boolean',
@@ -575,5 +584,96 @@ class FaxJob extends Model
     public function getAdWordsKeyword(): ?string
     {
         return $this->isAdWordsConversion() ? $this->utm_term : null;
+    }
+
+    /**
+     * Get all file paths (supports both single and multiple files)
+     */
+    public function getAllFilePaths(): array
+    {
+        if ($this->file_paths) {
+            if (is_array($this->file_paths)) {
+                return $this->file_paths;
+            } elseif (is_string($this->file_paths)) {
+                // Handle JSON string case
+                $decoded = json_decode($this->file_paths, true);
+                return is_array($decoded) ? $decoded : [];
+            }
+        }
+        
+        // Fallback to single file for backward compatibility
+        return $this->file_path ? [$this->file_path] : [];
+    }
+
+    /**
+     * Get all original file names (supports both single and multiple files)
+     */
+    public function getAllOriginalNames(): array
+    {
+        if ($this->file_original_names) {
+            if (is_array($this->file_original_names)) {
+                return $this->file_original_names;
+            } elseif (is_string($this->file_original_names)) {
+                // Handle JSON string case
+                $decoded = json_decode($this->file_original_names, true);
+                return is_array($decoded) ? $decoded : [];
+            }
+        }
+        
+        // Fallback to single file for backward compatibility
+        return $this->file_original_name ? [$this->file_original_name] : [];
+    }
+
+    /**
+     * Get all file sizes (supports both single and multiple files)
+     */
+    public function getAllFileSizes(): array
+    {
+        if ($this->original_file_sizes) {
+            if (is_array($this->original_file_sizes)) {
+                return $this->original_file_sizes;
+            } elseif (is_string($this->original_file_sizes)) {
+                // Handle JSON string case
+                $decoded = json_decode($this->original_file_sizes, true);
+                return is_array($decoded) ? $decoded : [];
+            }
+        }
+        
+        // Fallback to single file for backward compatibility
+        return $this->original_file_size ? [$this->original_file_size] : [];
+    }
+
+    /**
+     * Get the primary file path (first file for multiple files, or single file)
+     */
+    public function getPrimaryFilePath(): ?string
+    {
+        $paths = $this->getAllFilePaths();
+        return $paths[0] ?? null;
+    }
+
+    /**
+     * Get the primary original name (first file for multiple files, or single file)
+     */
+    public function getPrimaryOriginalName(): ?string
+    {
+        $names = $this->getAllOriginalNames();
+        return $names[0] ?? null;
+    }
+
+    /**
+     * Check if this fax job has multiple files
+     */
+    public function hasMultipleFiles(): bool
+    {
+        return $this->file_count > 1;
+    }
+
+    /**
+     * Get total file size across all files
+     */
+    public function getTotalFileSize(): int
+    {
+        return array_sum($this->getAllFileSizes());
     }
 }

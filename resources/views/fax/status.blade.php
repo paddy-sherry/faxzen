@@ -336,8 +336,14 @@
                     <span class="font-medium">{{ $faxJob->recipient_number }}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-gray-600">Document:</span>
-                    <span class="font-medium">{{ $faxJob->file_original_name }}</span>
+                    <span class="text-gray-600">{{ $faxJob->hasMultipleFiles() ? 'Documents:' : 'Document:' }}</span>
+                    <span class="font-medium">
+                        @if($faxJob->hasMultipleFiles())
+                            {{ $faxJob->file_count }} files: {{ implode(', ', $faxJob->getAllOriginalNames()) }}
+                        @else
+                            {{ $faxJob->getPrimaryOriginalName() }}
+                        @endif
+                    </span>
                 </div>
             </div>
             <div class="space-y-2">

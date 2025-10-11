@@ -223,8 +223,14 @@
             <div class="file-info">
                 <h4>📄 Your Fax Details</h4>
                 <div class="info-row">
-                    <span class="info-label">Document:</span>
-                    <span class="info-value">{{ $fileName }}</span>
+                    <span class="info-label">{{ $faxJob->hasMultipleFiles() ? 'Documents:' : 'Document:' }}</span>
+                    <span class="info-value">
+                        @if($faxJob->hasMultipleFiles())
+                            {{ $faxJob->file_count }} files: {{ implode(', ', $faxJob->getAllOriginalNames()) }}
+                        @else
+                            {{ $fileName }}
+                        @endif
+                    </span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">To:</span>

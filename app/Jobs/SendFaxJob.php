@@ -337,22 +337,30 @@ class SendFaxJob implements ShouldQueue
             }
         }
 
-        // File is local (starts with temp_fax_documents/), need to process and move to R2
-        $localPath = $this->faxJob->file_path;
+        // Handle multiple files or single file
+        $filePaths = $this->faxJob->getAllFilePaths();
         
-        if (!Storage::disk('local')->exists($localPath)) {
-            throw new \Exception("Local file not found: {$localPath}");
+        if (empty($filePaths)) {
+            throw new \Exception("No files found for fax job");
+        }
+
+        // Verify all files exist locally
+        foreach ($filePaths as $filePath) {
+            if (!Storage::disk('local')->exists($filePath)) {
+                throw new \Exception("Local file not found: {$filePath}");
+            }
         }
 
         // Process cover page if enabled
-        $finalDocumentPath = $localPath;
+        $finalDocumentPath = $filePaths[0]; // Default to first file
         $coverPagePath = null;
         $mergedPath = null;
         
         if ($this->faxJob->include_cover_page) {
             Log::info("Processing cover page for fax", [
                 'fax_job_id' => $this->faxJob->id,
-                'original_path' => $localPath
+                'file_count' => count($filePaths),
+                'file_paths' => $filePaths
             ]);
             
             $coverPageService = new CoverPageService();
@@ -363,15 +371,20 @@ class SendFaxJob implements ShouldQueue
                 $coverPagePath = $coverPageService->generateCoverPage($this->faxJob);
                 
                 if ($coverPagePath) {
-                    // Merge cover page with original document
-                    $mergedPath = $pdfMergeService->mergePdfs($coverPagePath, $localPath);
+                    // Merge cover page with all documents
+                    if ($this->faxJob->hasMultipleFiles()) {
+                        $mergedPath = $pdfMergeService->mergeMultiplePdfs($coverPagePath, $filePaths);
+                    } else {
+                        $mergedPath = $pdfMergeService->mergePdfs($coverPagePath, $filePaths[0]);
+                    }
                     
                     if ($mergedPath) {
                         $finalDocumentPath = $mergedPath;
                         Log::info('Cover page merged successfully', [
                             'fax_job_id' => $this->faxJob->id,
                             'cover_page_path' => $coverPagePath,
-                            'merged_path' => $mergedPath
+                            'merged_path' => $mergedPath,
+                            'file_count' => count($filePaths)
                         ]);
                     } else {
                         Log::warning('Cover page merge failed, using original document', [
@@ -389,17 +402,49 @@ class SendFaxJob implements ShouldQueue
                     'error' => $e->getMessage()
                 ]);
             }
+        } else if ($this->faxJob->hasMultipleFiles()) {
+            // If we have multiple files but no cover page, merge them together
+            Log::info("Processing multiple files for fax (no cover page)", [
+                'fax_job_id' => $this->faxJob->id,
+                'file_count' => count($filePaths),
+                'file_paths' => $filePaths
+            ]);
+            
+            $pdfMergeService = new PdfMergeService();
+            
+            try {
+                // Merge all documents together
+                $mergedPath = $pdfMergeService->mergeMultiplePdfs(null, $filePaths);
+                
+                if ($mergedPath) {
+                    $finalDocumentPath = $mergedPath;
+                    Log::info('Multiple files merged successfully', [
+                        'fax_job_id' => $this->faxJob->id,
+                        'merged_path' => $mergedPath,
+                        'file_count' => count($filePaths)
+                    ]);
+                } else {
+                    Log::warning('Multiple file merge failed, using first file only', [
+                        'fax_job_id' => $this->faxJob->id
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Multiple file processing failed', [
+                    'fax_job_id' => $this->faxJob->id,
+                    'error' => $e->getMessage()
+                ]);
+            }
         }
 
         Log::info("Moving final document from local to R2", [
             'fax_job_id' => $this->faxJob->id,
-            'original_path' => $localPath,
+            'original_paths' => $filePaths,
             'final_document_path' => $finalDocumentPath,
             'has_cover_page' => $this->faxJob->include_cover_page
         ]);
 
         // Create R2 path with cover page indicator in filename
-        $originalBasename = basename($localPath);
+        $originalBasename = basename($filePaths[0]);
         $r2Filename = $this->faxJob->include_cover_page 
             ? str_replace('.', '_with_cover.', $originalBasename)
             : $originalBasename;
@@ -416,10 +461,12 @@ class SendFaxJob implements ShouldQueue
             $coverPageService = new CoverPageService();
             $coverPageService->cleanupCoverPage($coverPagePath);
         }
-        if ($mergedPath && $mergedPath !== $localPath) {
-            $pdfMergeService = new PdfMergeService();
+        if ($mergedPath && $mergedPath !== $filePaths[0]) {
             $pdfMergeService->cleanupMergedFile($mergedPath);
         }
+        
+        // Clean up any converted files
+        $pdfMergeService->cleanupConvertedFiles();
         
         // Update fax job with R2 path
         $this->faxJob->update(['file_path' => $r2Path]);
@@ -433,24 +480,26 @@ class SendFaxJob implements ShouldQueue
     }
 
     /**
-     * Clean up local temporary file
+     * Clean up local temporary files
      */
     protected function cleanupLocalFile(): void
     {
-        // Use the original local path stored during construction
-        $localPath = $this->originalLocalPath;
+        // Clean up all local files
+        $filePaths = $this->faxJob->getAllFilePaths();
         
-        if (Storage::disk('local')->exists($localPath)) {
-            Storage::disk('local')->delete($localPath);
-            Log::info("Cleaned up local file", [
-                'fax_job_id' => $this->faxJob->id,
-                'local_path' => $localPath
-            ]);
-        } else {
-            Log::info("Local file already deleted or not found", [
-                'fax_job_id' => $this->faxJob->id,
-                'local_path' => $localPath
-            ]);
+        foreach ($filePaths as $filePath) {
+            if (Storage::disk('local')->exists($filePath)) {
+                Storage::disk('local')->delete($filePath);
+                Log::info("Cleaned up local file", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'local_path' => $filePath
+                ]);
+            } else {
+                Log::info("Local file already deleted or not found", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'local_path' => $filePath
+                ]);
+            }
         }
     }
 

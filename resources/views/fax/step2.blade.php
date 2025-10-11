@@ -40,6 +40,73 @@
         </div>
     </div>
 
+    <!-- File Preview Section -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <h2 class="text-lg font-semibold text-blue-900 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Documents to Send
+        </h2>
+        
+        <div class="space-y-3">
+            @if($faxJob->hasMultipleFiles())
+                <div class="text-sm text-blue-800 mb-3">
+                    <strong>{{ $faxJob->file_count }} files</strong> will be merged into a single fax:
+                </div>
+                @foreach($faxJob->getAllOriginalNames() as $index => $fileName)
+                    <div class="flex items-center justify-between bg-white rounded-md p-3 border border-blue-100">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-blue-600 font-semibold text-sm">{{ $index + 1 }}</span>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">{{ $fileName }}</div>
+                                <div class="text-sm text-gray-500">
+                                    {{ number_format($faxJob->getAllFileSizes()[$index] / 1024, 1) }} KB
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            @if($faxJob->getAllFileSizes()[$index] > 1024 * 1024)
+                                {{ number_format($faxJob->getAllFileSizes()[$index] / (1024 * 1024), 1) }} MB
+                            @else
+                                {{ number_format($faxJob->getAllFileSizes()[$index] / 1024, 1) }} KB
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+                <div class="text-sm text-blue-700 bg-blue-100 rounded-md p-3 mt-3">
+                    <strong>Total size:</strong> {{ number_format($faxJob->getTotalFileSize() / (1024 * 1024), 1) }} MB
+                </div>
+            @else
+                <div class="flex items-center justify-between bg-white rounded-md p-3 border border-blue-100">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900">{{ $faxJob->getPrimaryOriginalName() }}</div>
+                            <div class="text-sm text-gray-500">
+                                @if($faxJob->original_file_size > 1024 * 1024)
+                                    {{ number_format($faxJob->original_file_size / (1024 * 1024), 1) }} MB
+                                @else
+                                    {{ number_format($faxJob->original_file_size / 1024, 1) }} KB
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+        
+        <div class="mt-4 text-sm text-blue-700">
+            <strong>Recipient:</strong> {{ $faxJob->recipient_number }}
+        </div>
+    </div>
+
     @if ($errors->any())
         <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
             <div class="flex">

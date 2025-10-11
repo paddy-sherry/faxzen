@@ -35,8 +35,8 @@
         @csrf
         
         <div>
-            <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-2">
-                Document or Image <span class="text-red-500">*</span>
+            <label for="pdf_files" class="block text-sm font-medium text-gray-700 mb-2">
+                Documents or Images <span class="text-red-500">*</span>
             </label>
             <div id="drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-all duration-200">
                 <div class="space-y-1 text-center">
@@ -44,14 +44,14 @@
                         <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg> -->
                     <div class="flex flex-col items-center text-sm text-gray-600">
-                        <label for="pdf_file" class="relative cursor-pointer bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-md font-medium focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-purple-500 transition-all duration-200 mb-2">
-                            <span>Upload file</span>
-                            <input id="pdf_file" name="pdf_file" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.svg,.webp" class="sr-only" required>
+                        <label for="pdf_files" class="relative cursor-pointer bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-md font-medium focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-purple-500 transition-all duration-200 mb-2">
+                            <span>Upload files</span>
+                            <input id="pdf_files" name="pdf_files[]" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.svg,.webp" class="sr-only" multiple required>
                         </label>
                     
                     </div>
-                    <p class="text-xs text-gray-500">PDF, docs and images up to 20MB</p>
-                    <p id="file-name" class="text-sm text-green-600 font-medium hidden"></p>
+                    <p class="text-xs text-gray-500">PDF, docs and images up to 20MB each (up to 10 files)</p>
+                    <div id="file-list" class="text-sm text-green-600 font-medium hidden"></div>
                 </div>
             </div>
         </div>
@@ -797,8 +797,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('pdf_file');
-    const fileName = document.getElementById('file-name');
+    const fileInput = document.getElementById('pdf_files');
+    const fileList = document.getElementById('file-list');
 
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -839,7 +839,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const files = dt.files;
 
         if (files.length > 0) {
-            const file = files[0];
             const allowedTypes = [
                 'application/pdf',
                 'image/jpeg',
@@ -850,25 +849,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 'image/webp'
             ];
             
-            if (allowedTypes.includes(file.type)) {
-                fileInput.files = files;
-                showFileName(file.name);
+            const validFiles = Array.from(files).filter(file => allowedTypes.includes(file.type));
+            
+            if (validFiles.length > 0) {
+                // Create a new FileList-like object
+                const dataTransfer = new DataTransfer();
+                validFiles.forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+                showFileList(validFiles);
             } else {
-                alert('Please select a PDF document or image file (JPG, PNG, GIF, SVG, WebP).');
+                alert('Please select PDF documents or image files (JPG, PNG, GIF, SVG, WebP).');
             }
         }
     }
 
     function handleFileSelect(e) {
-        const file = e.target.files[0];
-        if (file) {
-            showFileName(file.name);
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            showFileList(files);
         }
     }
 
-    function showFileName(name) {
-        fileName.textContent = `Selected: ${name}`;
-        fileName.classList.remove('hidden');
+    function showFileList(files) {
+        if (files.length === 0) {
+            fileList.classList.add('hidden');
+            return;
+        }
+
+        const fileNames = files.map(file => file.name);
+        const fileCount = files.length;
+        
+        if (fileCount === 1) {
+            fileList.innerHTML = `Selected: ${fileNames[0]}`;
+        } else {
+            fileList.innerHTML = `Selected ${fileCount} files: ${fileNames.join(', ')}`;
+        }
+        
+        fileList.classList.remove('hidden');
     }
 
     // Fax number validation

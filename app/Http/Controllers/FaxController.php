@@ -42,7 +42,13 @@ class FaxController extends Controller
                 new ValidFaxNumber($request->country_code)
             ],
             'sender_email' => 'required|email',
-            'pdf_file' => [
+            'pdf_files' => [
+                'required',
+                'array',
+                'min:1',
+                'max:10'
+            ],
+            'pdf_files.*' => [
                 'required',
                 File::types(['pdf', 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'])
                     ->max(50 * 1024) // 50MB in KB
@@ -59,27 +65,50 @@ class FaxController extends Controller
         // Create full phone number in E164 format
         $fullPhoneNumber = $countryCode . $recipientNumber;
 
-        $file = $request->file('pdf_file');
-        $filename = time() . '_' . $file->getClientOriginalName();
+        $files = $request->file('pdf_files');
+        $fileCount = count($files);
         
-        // Store locally first for fast upload response
-        $localPath = $file->storeAs('temp_fax_documents', $filename, 'local');
+        // Process all files
+        $filePaths = [];
+        $fileOriginalNames = [];
+        $originalFileSizes = [];
+        $totalSize = 0;
         
-        // Get file size from local storage
-        $originalSize = Storage::disk('local')->size($localPath);
+        foreach ($files as $file) {
+            $filename = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+            
+            // Store locally first for fast upload response
+            $localPath = $file->storeAs('temp_fax_documents', $filename, 'local');
+            
+            // Get file size from local storage
+            $fileSize = Storage::disk('local')->size($localPath);
+            
+            $filePaths[] = $localPath;
+            $fileOriginalNames[] = $file->getClientOriginalName();
+            $originalFileSizes[] = $fileSize;
+            $totalSize += $fileSize;
+        }
+        
+        // For backward compatibility, set the first file as the primary file
+        $primaryFilePath = $filePaths[0];
+        $primaryOriginalName = $fileOriginalNames[0];
 
         // Get traffic source data from session (captured by middleware)
         $trafficData = session('traffic_source_data', []);
         
-        // Create fax job record - file will be moved to R2 in SendFaxJob
+        // Create fax job record - files will be moved to R2 in SendFaxJob
         $faxJobData = [
             'recipient_number' => $fullPhoneNumber,
-            'file_path' => $localPath, // Initially stored locally
-            'file_original_name' => $file->getClientOriginalName(),
+            'file_path' => $primaryFilePath, // Primary file for backward compatibility
+            'file_original_name' => $primaryOriginalName, // Primary file name for backward compatibility
+            'file_paths' => json_encode($filePaths), // All file paths as JSON
+            'file_original_names' => json_encode($fileOriginalNames), // All original names as JSON
+            'file_count' => $fileCount, // Number of files
             'amount' => config('services.faxzen.price'),
             'status' => FaxJob::STATUS_PENDING,
             'sender_email' => $request->sender_email,
-            'original_file_size' => $originalSize,
+            'original_file_size' => $totalSize, // Total size of all files
+            'original_file_sizes' => json_encode($originalFileSizes), // Individual file sizes as JSON
         ];
 
         // Add traffic source tracking data if available
