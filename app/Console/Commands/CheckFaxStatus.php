@@ -91,13 +91,17 @@ class CheckFaxStatus extends Command
     {
         try {
             Log::debug('checking fax jobs 8');
-            $this->line("Checking fax job {$faxJob->id} (Telnyx ID: {$faxJob->telnyx_fax_id})...");
+            $message = "Checking fax job {$faxJob->id} (Telnyx ID: {$faxJob->telnyx_fax_id})...";
+            $this->line($message);
+            // Don't log technical details to command output for end users
 
             // Retrieve fax status from Telnyx
             $fax = Fax::retrieve($faxJob->telnyx_fax_id);
             Log::debug('checking fax jobs 9');
             
-            $this->info("  Current status: {$fax->status}");
+            $statusMessage = "Current status: {$fax->status}";
+            $this->info("  {$statusMessage}");
+            // Don't log redundant status messages to command output
 
             // Update our database with the latest status
             $faxJob->update([
@@ -111,7 +115,9 @@ class CheckFaxStatus extends Command
                     Log::debug('checking fax jobs 11');
                     if (!$faxJob->is_delivered) {
                         $faxJob->markDelivered($fax->status, json_encode($fax->toArray()));
-                        $this->info("  ✅ Marked as delivered");
+                        $deliveredMessage = "✅ Marked as delivered";
+                        $this->info("  {$deliveredMessage}");
+                        $faxJob->addCommandOutput($deliveredMessage, 'success');
                     }
                     
                     // Send confirmation email if not already sent (regardless of when it was marked delivered)
@@ -122,16 +128,22 @@ class CheckFaxStatus extends Command
                             \Mail::to($faxJob->sender_email)->bcc('faxzen.com+656498d49b@invite.trustpilot.com')->send(new \App\Mail\FaxDeliveryConfirmation($faxJob));
                             $faxJob->markEmailSent();
                             Log::debug('checking fax jobs 13');
-                            $this->info("  📧 Confirmation email sent successfully");
+                            $emailMessage = "📧 Confirmation email sent successfully";
+                            $this->info("  {$emailMessage}");
+                            $faxJob->addCommandOutput($emailMessage, 'success');
                         } catch (\Exception $e) {
-                            $this->error("  ❌ Failed to send confirmation email: " . $e->getMessage());
+                            $errorMessage = "❌ Failed to send confirmation email: " . $e->getMessage();
+                            $this->error("  {$errorMessage}");
+                            $faxJob->addCommandOutput($errorMessage, 'error');
                             Log::error("Failed to send fax confirmation email", [
                                 'fax_job_id' => $faxJob->id,
                                 'error' => $e->getMessage()
                             ]);
                         }
                     } else {
-                        $this->line("  📧 Email already sent");
+                        $emailMessage = "📧 Email already sent";
+                        $this->line("  {$emailMessage}");
+                        $faxJob->addCommandOutput($emailMessage, 'info');
                     }
                     break;
 
@@ -157,14 +169,29 @@ class CheckFaxStatus extends Command
                     ]);
                     
                     if ($isEcmError) {
-                        $this->error("  ❌ Marked as failed (ECM compatibility): " . $failureReason);
-                        $this->line("  🔧 ECM error: Receiving fax machine has ECM compatibility issues");
-                        $this->line("  💡 Suggestion: Contact recipient to disable ECM on their fax machine");
+                        $errorMessage = "❌ Marked as failed (ECM compatibility): " . $failureReason;
+                        $this->error("  {$errorMessage}");
+                        $faxJob->addCommandOutput($errorMessage, 'error');
+                        
+                        $ecmMessage = "🔧 ECM error: Receiving fax machine has ECM compatibility issues";
+                        $this->line("  {$ecmMessage}");
+                        $faxJob->addCommandOutput($ecmMessage, 'warning');
+                        
+                        $suggestionMessage = "💡 Suggestion: Contact recipient to disable ECM on their fax machine";
+                        $this->line("  {$suggestionMessage}");
+                        $faxJob->addCommandOutput($suggestionMessage, 'info');
                     } elseif ($isRetryableFailure && $faxJob->canRetry()) {
-                        $this->error("  ❌ Marked as failed (retryable): " . $failureReason);
-                        $this->line("  🔄 This error type can often be resolved by retrying");
+                        $errorMessage = "❌ Marked as failed (retryable): " . $failureReason;
+                        $this->error("  {$errorMessage}");
+                        $faxJob->addCommandOutput($errorMessage, 'error');
+                        
+                        $retryMessage = "🔄 This error type can often be resolved by retrying";
+                        $this->line("  {$retryMessage}");
+                        $faxJob->addCommandOutput($retryMessage, 'info');
                     } else {
-                        $this->error("  ❌ Marked as failed: " . $failureReason);
+                        $errorMessage = "❌ Marked as failed: " . $failureReason;
+                        $this->error("  {$errorMessage}");
+                        $faxJob->addCommandOutput($errorMessage, 'error');
                     }
                     break;
 
@@ -172,12 +199,20 @@ class CheckFaxStatus extends Command
                     Log::debug('checking fax jobs 15');
                     if (!$faxJob->is_sending) {
                         $faxJob->markSendingStarted();
-                        $this->info("  📤 Marked as sending");
+                        $sendingMessage = "📤 Marked as sending";
+                        $this->info("  {$sendingMessage}");
+                        $faxJob->addCommandOutput($sendingMessage, 'info');
+                    } else {
+                        $sendingMessage = "📤 Still sending...";
+                        $this->line("  {$sendingMessage}");
+                        $faxJob->addCommandOutput($sendingMessage, 'info');
                     }
                     break;
 
                 default:
-                    $this->line("  ⏳ Status: {$fax->status}");
+                    $statusMessage = "⏳ Status: {$fax->status}";
+                    $this->line("  {$statusMessage}");
+                    $faxJob->addCommandOutput($statusMessage, 'info');
             }
 
             Log::info("Fax status checked via command", [
@@ -188,7 +223,9 @@ class CheckFaxStatus extends Command
             ]);
 
         } catch (\Exception $e) {
-            $this->error("  ❌ Error checking fax {$faxJob->id}: " . $e->getMessage());
+            $errorMessage = "❌ Error checking fax {$faxJob->id}: " . $e->getMessage();
+            $this->error("  {$errorMessage}");
+            $faxJob->addCommandOutput($errorMessage, 'error');
             
             Log::error("Failed to check fax status via command", [
                 'fax_job_id' => $faxJob->id,

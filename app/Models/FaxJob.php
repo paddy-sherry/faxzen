@@ -23,6 +23,7 @@ class FaxJob extends Model
         'retry_attempts',
         'retry_stage',
         'retry_logs',
+        'command_output',
         'last_retry_at',
         'error_message',
 
@@ -95,6 +96,7 @@ class FaxJob extends Model
         'tracking_data' => 'array',
         'delivery_details' => 'array',
         'retry_logs' => 'array',
+        'command_output' => 'array',
         'discount_amount' => 'decimal:2',
         'original_amount' => 'decimal:2',
         'is_preparing' => 'boolean',
@@ -319,6 +321,53 @@ class FaxJob extends Model
     public function clearRetryLogs()
     {
         $this->update(['retry_logs' => []]);
+    }
+
+    /**
+     * Add command output entry
+     */
+    public function addCommandOutput(string $message, string $type = 'info', array $details = [])
+    {
+        $commandOutput = $this->command_output ?? [];
+        $commandOutput[] = [
+            'message' => $message,
+            'type' => $type, // 'info', 'success', 'error', 'warning'
+            'timestamp' => now()->toISOString(),
+            'details' => $details
+        ];
+        
+        // Keep only last 50 entries to prevent database bloat
+        if (count($commandOutput) > 50) {
+            $commandOutput = array_slice($commandOutput, -50);
+        }
+        
+        $this->update(['command_output' => $commandOutput]);
+    }
+
+    /**
+     * Get formatted command output for display
+     */
+    public function getFormattedCommandOutput()
+    {
+        $output = $this->command_output ?? [];
+        
+        return array_map(function ($entry) {
+            return [
+                'message' => $entry['message'],
+                'type' => $entry['type'],
+                'timestamp' => \Carbon\Carbon::parse($entry['timestamp'])->format('M j, Y g:i A'),
+                'time_ago' => \Carbon\Carbon::parse($entry['timestamp'])->diffForHumans(),
+                'details' => $entry['details'] ?? []
+            ];
+        }, $output);
+    }
+
+    /**
+     * Clear command output
+     */
+    public function clearCommandOutput()
+    {
+        $this->update(['command_output' => []]);
     }
 
     /**

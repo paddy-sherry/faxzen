@@ -307,57 +307,33 @@
                                         Attempt {{ $faxJob->retry_attempts }} of {{ $faxJob->canRetry() ? '20' : $faxJob->retry_attempts }}
                                     </div>
                                 @endif
-                                
-                                <!-- Detailed Retry Logs -->
-                                @php
-                                    $retryLogs = $faxJob->getFormattedRetryLogs();
-                                @endphp
-                                
-                                @if(!empty($retryLogs))
-                                    <div class="mt-4">
-                                        <h5 class="text-sm font-semibold text-gray-700 mb-2">📋 Attempt History</h5>
-                                        <div class="space-y-2 max-h-40 overflow-y-auto">
-                                            @foreach($retryLogs as $log)
-                                                <div class="flex items-start space-x-3 p-2 bg-white rounded border-l-2 
-                                                    @if($log['status'] === 'success') border-green-400 @elseif($log['status'] === 'failed') border-red-400 @else border-yellow-400 @endif">
-                                                    <div class="flex-shrink-0 mt-0.5">
-                                                        @if($log['status'] === 'success')
-                                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                            </svg>
-                                                        @elseif($log['status'] === 'failed')
-                                                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                            </svg>
-                                                        @else
-                                                            <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                            </svg>
-                                                        @endif
-                                                    </div>
-                                                    <div class="flex-1 min-w-0">
-                                                        <div class="text-xs font-medium text-gray-900">
-                                                            Attempt #{{ $log['attempt'] }} - {{ ucfirst($log['status']) }}
-                                                        </div>
-                                                        <div class="text-xs text-gray-600 mt-0.5">{{ $log['message'] }}</div>
-                                                        <div class="text-xs text-gray-500 mt-1">{{ $log['time_ago'] }}</div>
-                                                        @if(!empty($log['details']['error']))
-                                                            <div class="text-xs text-red-600 mt-1 font-mono bg-red-50 p-1 rounded">
-                                                                Error: {{ $log['details']['error'] }}
-                                                            </div>
-                                                        @endif
-                                                        @if(!empty($log['details']['next_retry_in_minutes']))
-                                                            <div class="text-xs text-blue-600 mt-1">
-                                                                Next retry in {{ $log['details']['next_retry_in_minutes'] }} minutes
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endif
                             </div>
+                        </div>
+                    </div>
+                @endif
+                
+                
+                <!-- Background Process Activity -->
+                @php
+                    $commandOutput = $faxJob->getFormattedCommandOutput();
+                @endphp
+                
+                @if(!empty($commandOutput))
+                    <div class="mt-4">
+                        <div class="space-y-2 max-h-32 overflow-y-auto bg-gray-900 rounded-md p-3 font-mono text-xs">
+                            @foreach($commandOutput as $entry)
+                                <div class="flex items-start space-x-2 
+                                    @if($entry['type'] === 'success') text-green-400 @elseif($entry['type'] === 'error') text-red-400 @elseif($entry['type'] === 'warning') text-yellow-400 @else text-gray-300 @endif">
+                                    <span class="text-gray-500 text-xs flex-shrink-0">{{ $entry['time_ago'] }}</span>
+                                    <span class="flex-1">{{ $entry['message'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="mt-2 text-xs text-gray-500">
+                            <span class="inline-flex items-center">
+                                <div class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                                Live Updates
+                            </span>
                         </div>
                     </div>
                 @endif

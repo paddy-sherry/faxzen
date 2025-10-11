@@ -18,7 +18,7 @@ Route::prefix('fax')->name('fax.')->group(function () {
     Route::get('/payment/success/{faxJob:hash}', [FaxController::class, 'paymentSuccess'])->name('payment.success');
     
     // Status tracking page
-    Route::get('/status/{faxJob:hash}', [FaxController::class, 'status'])->name('status');
+    Route::get('/status/{hash}', [FaxController::class, 'status'])->name('status');
     
     // Document serving route (for Telnyx to access PDFs via temporary signed URLs)
     Route::get('/document/{filename}', function ($filename) {

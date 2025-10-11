@@ -452,8 +452,15 @@ class FaxController extends Controller
         return redirect()->route('fax.step1')->with('error', 'Payment not completed or invalid.');
     }
 
-    public function status(FaxJob $faxJob)
+    public function status($hash)
     {
+        // Find fax job by hash (case-insensitive)
+        $faxJob = FaxJob::whereRaw('LOWER(hash) = LOWER(?)', [$hash])->first();
+        
+        if (!$faxJob) {
+            return redirect()->route('fax.step1')->with('error', 'Fax job not found.');
+        }
+        
         // Only allow access to paid fax jobs
         if ($faxJob->status !== FaxJob::STATUS_PAID && $faxJob->status !== FaxJob::STATUS_SENT) {
             return redirect()->route('fax.step1')->with('error', 'Fax job not found or not paid.');
