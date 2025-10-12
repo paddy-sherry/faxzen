@@ -229,7 +229,7 @@
         <div class="text-center">
             <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">2</div>
             <h4 class="font-semibold text-gray-800">Enter Details</h4>
-            <p class="text-sm text-gray-600">Provide your name and email address</p>
+            <p class="text-sm text-gray-600">Provide your name, email and cover letter details</p>
         </div>
         <div class="text-center">
             <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">3</div>
