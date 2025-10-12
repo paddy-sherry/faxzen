@@ -61,12 +61,6 @@
                         <span id="file-count" class="text-xs text-gray-500"></span>
                     </div>
                     <div id="file-list" class="space-y-2"></div>
-                    <div class="mt-3 pt-3 border-t border-gray-200">
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-600">Total size:</span>
-                            <span id="total-size" class="font-medium text-gray-900"></span>
-                        </div>
-                    </div>
                     
                     <!-- Add More Files Button -->
                     <div class="mt-4 flex justify-center">
@@ -827,7 +821,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileList = document.getElementById('file-list');
     const fileListContainer = document.getElementById('file-list-container');
     const fileCount = document.getElementById('file-count');
-    const totalSize = document.getElementById('total-size');
     const selectedFilesInput = document.getElementById('selected-files');
     
     // Store selected files
@@ -951,9 +944,6 @@ document.addEventListener('DOMContentLoaded', function() {
         dropZone.classList.add('hidden'); // Hide drop zone when files are selected
         fileCount.textContent = `${selectedFiles.length} of ${maxFiles} files`;
 
-        // Calculate total size
-        const totalSizeBytes = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-        totalSize.textContent = formatFileSize(totalSizeBytes);
 
         // Update file list display
         fileList.innerHTML = selectedFiles.map((file, index) => `
@@ -966,7 +956,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="text-sm font-medium text-gray-900 truncate" title="${file.name}">${file.name}</div>
-                        <div class="text-xs text-gray-500">${formatFileSize(file.size)}</div>
                     </div>
                 </div>
                 <button type="button" onclick="removeFile(${index})" class="ml-3 flex-shrink-0 text-red-400 hover:text-red-600 transition-colors">
