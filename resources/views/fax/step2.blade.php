@@ -55,30 +55,17 @@
                     <strong>{{ $faxJob->file_count }} files</strong> will be merged into a single fax:
                 </div>
                 @foreach($faxJob->getAllOriginalNames() as $index => $fileName)
-                    <div class="flex items-center justify-between bg-white rounded-md p-3 border border-blue-100">
+                    <div class="flex items-center bg-white rounded-md p-3 border border-blue-100">
                         <div class="flex items-center">
                             <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
                                 <span class="text-blue-600 font-semibold text-sm">{{ $index + 1 }}</span>
                             </div>
                             <div>
                                 <div class="font-medium text-gray-900">{{ $fileName }}</div>
-                                <div class="text-sm text-gray-500">
-                                    {{ number_format($faxJob->getAllFileSizes()[$index] / 1024, 1) }} KB
-                                </div>
                             </div>
-                        </div>
-                        <div class="text-sm text-gray-500">
-                            @if($faxJob->getAllFileSizes()[$index] > 1024 * 1024)
-                                {{ number_format($faxJob->getAllFileSizes()[$index] / (1024 * 1024), 1) }} MB
-                            @else
-                                {{ number_format($faxJob->getAllFileSizes()[$index] / 1024, 1) }} KB
-                            @endif
                         </div>
                     </div>
                 @endforeach
-                <div class="text-sm text-blue-700 bg-blue-100 rounded-md p-3 mt-3">
-                    <strong>Total size:</strong> {{ number_format($faxJob->getTotalFileSize() / (1024 * 1024), 1) }} MB
-                </div>
             @else
                 <div class="flex items-center justify-between bg-white rounded-md p-3 border border-blue-100">
                     <div class="flex items-center">
