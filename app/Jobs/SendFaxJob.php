@@ -367,15 +367,29 @@ class SendFaxJob implements ShouldQueue
             throw new \Exception("No files found for fax job");
         }
 
-        // Verify all files exist locally
+        // Verify all files exist (check both local and R2 storage)
         foreach ($filePaths as $filePath) {
-            if (!Storage::disk('local')->exists($filePath)) {
-                throw new \Exception("Local file not found: {$filePath}");
+            $fileExistsLocally = Storage::disk('local')->exists($filePath);
+            $fileExistsOnR2 = Storage::disk('r2')->exists($filePath);
+            
+            if (!$fileExistsLocally && !$fileExistsOnR2) {
+                throw new \Exception("File not found in local or R2 storage: {$filePath}");
+            }
+            
+            // If file exists on R2 but not locally, we can still proceed
+            if ($fileExistsOnR2 && !$fileExistsLocally) {
+                Log::info("File found on R2 but not locally, will use R2 file", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'file_path' => $filePath
+                ]);
             }
         }
 
+        // Ensure all files are available locally for processing
+        $localFilePaths = $this->ensureFilesAreLocal($filePaths);
+        
         // Process cover page if enabled
-        $finalDocumentPath = $filePaths[0]; // Default to first file
+        $finalDocumentPath = $localFilePaths[0]; // Default to first file
         $coverPagePath = null;
         $mergedPath = null;
         $pdfMergeService = new PdfMergeService(); // Initialize for cleanup
@@ -396,9 +410,9 @@ class SendFaxJob implements ShouldQueue
                 if ($coverPagePath) {
                     // Merge cover page with all documents
                     if ($this->faxJob->hasMultipleFiles()) {
-                        $mergedPath = $pdfMergeService->mergeMultiplePdfs($coverPagePath, $filePaths);
+                        $mergedPath = $pdfMergeService->mergeMultiplePdfs($coverPagePath, $localFilePaths);
                     } else {
-                        $mergedPath = $pdfMergeService->mergePdfs($coverPagePath, $filePaths[0]);
+                        $mergedPath = $pdfMergeService->mergePdfs($coverPagePath, $localFilePaths[0]);
                     }
                     
                     if ($mergedPath) {
@@ -433,9 +447,9 @@ class SendFaxJob implements ShouldQueue
                 'file_paths' => $filePaths
             ]);
             
-            try {
-                // Merge all documents together
-                $mergedPath = $pdfMergeService->mergeMultiplePdfs(null, $filePaths);
+                try {
+                    // Merge all documents together
+                    $mergedPath = $pdfMergeService->mergeMultiplePdfs(null, $localFilePaths);
                 
                 if ($mergedPath) {
                     $finalDocumentPath = $mergedPath;
@@ -472,7 +486,22 @@ class SendFaxJob implements ShouldQueue
         $r2Path = 'fax_documents/' . $r2Filename;
         
         // Get file content from final document (could be merged with cover page)
-        $fileContent = Storage::disk('local')->get($finalDocumentPath);
+        // Check if file exists on local or R2 storage
+        if (Storage::disk('local')->exists($finalDocumentPath)) {
+            $fileContent = Storage::disk('local')->get($finalDocumentPath);
+            Log::info("Using file from local storage", [
+                'fax_job_id' => $this->faxJob->id,
+                'file_path' => $finalDocumentPath
+            ]);
+        } elseif (Storage::disk('r2')->exists($finalDocumentPath)) {
+            $fileContent = Storage::disk('r2')->get($finalDocumentPath);
+            Log::info("Using file from R2 storage", [
+                'fax_job_id' => $this->faxJob->id,
+                'file_path' => $finalDocumentPath
+            ]);
+        } else {
+            throw new \Exception("Final document not found in local or R2 storage: {$finalDocumentPath}");
+        }
         
         // Upload to R2
         Storage::disk('r2')->put($r2Path, $fileContent);
@@ -572,6 +601,52 @@ class SendFaxJob implements ShouldQueue
         }
     }
 
+    /**
+     * Ensure all files are available locally for processing
+     * Downloads files from R2 to local storage if needed
+     */
+    protected function ensureFilesAreLocal(array $filePaths): array
+    {
+        $localFilePaths = [];
+        
+        foreach ($filePaths as $filePath) {
+            if (Storage::disk('local')->exists($filePath)) {
+                // File already exists locally
+                $localFilePaths[] = $filePath;
+                Log::debug("File already exists locally", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'file_path' => $filePath
+                ]);
+            } elseif (Storage::disk('r2')->exists($filePath)) {
+                // File exists on R2, download to local storage
+                $localPath = $filePath; // Use the same path structure
+                
+                try {
+                    $fileContent = Storage::disk('r2')->get($filePath);
+                    Storage::disk('local')->put($localPath, $fileContent);
+                    
+                    $localFilePaths[] = $localPath;
+                    
+                    Log::info("Downloaded file from R2 to local storage", [
+                        'fax_job_id' => $this->faxJob->id,
+                        'original_path' => $filePath,
+                        'local_path' => $localPath
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error("Failed to download file from R2 to local storage", [
+                        'fax_job_id' => $this->faxJob->id,
+                        'file_path' => $filePath,
+                        'error' => $e->getMessage()
+                    ]);
+                    throw new \Exception("Failed to download file from R2: {$filePath}");
+                }
+            } else {
+                throw new \Exception("File not found in local or R2 storage: {$filePath}");
+            }
+        }
+        
+        return $localFilePaths;
+    }
 
     public function failed(\Throwable $exception): void
     {
