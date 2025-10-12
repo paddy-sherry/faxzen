@@ -1172,45 +1172,67 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Validate on form submit
     form.addEventListener('submit', function(e) {
-        let hasErrors = false;
+        console.log('Form submission started');
         
-        // Validate files
-        if (selectedFiles.length === 0) {
+        // Check CSRF token
+        const csrfToken = document.querySelector('input[name="_token"]');
+        console.log('CSRF token check:', {
+            tokenExists: !!csrfToken,
+            tokenValue: csrfToken?.value,
+            tokenLength: csrfToken?.value?.length
+        });
+        
+        // Check files
+        const actualFileCount = fileInput.files.length;
+        const selectedFileCount = selectedFiles.length;
+        
+        console.log('File check:', {
+            selectedFileCount: selectedFileCount,
+            actualFileCount: actualFileCount
+        });
+        
+        // Basic validation
+        if (selectedFileCount === 0 && actualFileCount === 0) {
             alert('Please select at least one file to send.');
             e.preventDefault();
             return;
         }
         
-        // Ensure file input has the selected files before submission
-        updateFileInput();
+        // Update file input if needed
+        if (selectedFileCount > 0) {
+            updateFileInput();
+        }
         
         // Validate fax number
         if (!validateFaxNumber() && recipientNumberInput.value.replace(/[^0-9]/g, '').length >= 7) {
             e.preventDefault();
             recipientNumberInput.focus();
-            hasErrors = true;
+            return;
         }
         
-        if (hasErrors) {
-            e.preventDefault();
-        }
+        console.log('Form submission proceeding...');
     });
     
     function updateFileInput() {
-        // Create a new DataTransfer object with all selected files
-        const dataTransfer = new DataTransfer();
-        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        console.log('Updating file input...', {
+            selectedFilesCount: selectedFiles.length,
+            fileInputFilesCount: fileInput.files.length
+        });
         
-        // Update the file input
-        fileInput.files = dataTransfer.files;
-        
-        console.log('Updated file input with', fileInput.files.length, 'files');
-        console.log('Selected files count:', selectedFiles.length);
-        console.log('File input files count:', fileInput.files.length);
-        
-        // Verify the files are actually set
-        if (fileInput.files.length === 0 && selectedFiles.length > 0) {
-            console.error('Failed to set files in input!');
+        // Simple DataTransfer approach without complex DOM manipulation
+        try {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            fileInput.files = dataTransfer.files;
+            
+            console.log('File input updated:', {
+                selectedFilesCount: selectedFiles.length,
+                fileInputFilesCount: fileInput.files.length
+            });
+        } catch (error) {
+            console.error('Error updating file input:', error);
         }
     }
 });

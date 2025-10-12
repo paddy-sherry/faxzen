@@ -34,6 +34,25 @@ class FaxController extends Controller
         }
 
         // Handle POST request - process the form
+        // Debug: Log request details
+        \Log::info('Step1 POST request received', [
+            'has_csrf_token' => $request->has('_token'),
+            'csrf_token' => $request->input('_token'),
+            'session_token' => session()->token(),
+            'request_method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'user_agent' => $request->header('User-Agent')
+        ]);
+        
+        // Check if any files are present before validation
+        $hasFiles = $request->hasFile('pdf_files') && count($request->file('pdf_files', [])) > 0;
+        
+        if (!$hasFiles) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['pdf_files' => 'Please select at least one file to send.']);
+        }
+        
         $request->validate([
             'country_code' => 'required|string',
             'recipient_number' => [
