@@ -213,7 +213,9 @@
                                                         🔄 Retry
                                                     </button>
                                                 </form>
-                                            @elseif(!$job->telnyx_fax_id)
+                                            @endif
+                                            
+                                            @if(!$job->telnyx_fax_id && $job->status !== 'failed')
                                                 <span class="text-gray-400 text-xs">-</span>
                                             @endif
                                         </div>
