@@ -1191,15 +1191,26 @@ document.addEventListener('DOMContentLoaded', function() {
             actualFileCount: actualFileCount
         });
         
-        // Basic validation - only check actual file input
-        if (actualFileCount === 0) {
+        // Check if we have files in either the selectedFiles array or the actual input
+        if (selectedFileCount === 0 && actualFileCount === 0) {
             alert('Please select at least one file to send.');
             e.preventDefault();
             return;
         }
         
-        // Don't manipulate file input - let the original input handle files
-        console.log('Using original file input without manipulation');
+        // If we have selected files but no actual files in input, try to sync them
+        if (selectedFileCount > 0 && actualFileCount === 0) {
+            console.log('Syncing selected files to input...');
+            updateFileInput();
+            
+            // Check again after sync
+            if (fileInput.files.length === 0) {
+                console.error('Failed to sync files to input');
+                alert('There was an issue with file selection. Please try selecting your files again.');
+                e.preventDefault();
+                return;
+            }
+        }
         
         // Validate fax number
         if (!validateFaxNumber() && recipientNumberInput.value.replace(/[^0-9]/g, '').length >= 7) {
@@ -1217,7 +1228,12 @@ document.addEventListener('DOMContentLoaded', function() {
             fileInputFilesCount: fileInput.files.length
         });
         
-        // Try DataTransfer first
+        if (selectedFiles.length === 0) {
+            console.log('No files to sync');
+            return;
+        }
+        
+        // Try DataTransfer approach
         try {
             const dataTransfer = new DataTransfer();
             selectedFiles.forEach(file => {
@@ -1225,52 +1241,25 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             fileInput.files = dataTransfer.files;
             
-            console.log('DataTransfer result:', {
+            console.log('DataTransfer sync result:', {
                 selectedFilesCount: selectedFiles.length,
                 fileInputFilesCount: fileInput.files.length,
-                success: fileInput.files.length > 0
+                success: fileInput.files.length === selectedFiles.length
             });
             
-            // If DataTransfer failed, try alternative approach
-            if (fileInput.files.length === 0 && selectedFiles.length > 0) {
-                console.log('DataTransfer failed, trying alternative approach...');
-                
-                // Create a new file input with the same name and attributes
-                const newFileInput = document.createElement('input');
-                newFileInput.type = 'file';
-                newFileInput.name = 'pdf_files[]';
-                newFileInput.multiple = true;
-                newFileInput.accept = '.pdf,.jpg,.jpeg,.png,.gif,.svg,.webp';
-                newFileInput.style.display = 'none';
-                
-                // Try to set files using DataTransfer on the new input
-                const newDataTransfer = new DataTransfer();
-                selectedFiles.forEach(file => {
-                    newDataTransfer.items.add(file);
-                });
-                newFileInput.files = newDataTransfer.files;
-                
-                // Replace the old input with the new one
-                fileInput.parentNode.replaceChild(newFileInput, fileInput);
-                fileInput = newFileInput;
-                
-                console.log('Alternative approach result:', {
-                    newFileInputFilesCount: newFileInput.files.length,
-                    success: newFileInput.files.length > 0
-                });
+            // If DataTransfer worked, we're done
+            if (fileInput.files.length === selectedFiles.length) {
+                console.log('Files successfully synced to input');
+                return;
             }
             
         } catch (error) {
-            console.error('Error updating file input:', error);
-            
-            // Fallback: Create a new input and let the user re-select files
-            if (selectedFiles.length > 0) {
-                console.log('All methods failed, user will need to re-select files');
-                alert('There was an issue with file selection. Please select your files again.');
-                selectedFiles = [];
-                updateFileList();
-            }
+            console.error('DataTransfer failed:', error);
         }
+        
+        // If we get here, DataTransfer failed
+        console.warn('DataTransfer failed, files may not be properly synced');
+        console.log('This might cause validation issues, but the form will still submit');
     }
 });
 </script>
