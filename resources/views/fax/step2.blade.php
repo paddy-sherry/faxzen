@@ -19,25 +19,6 @@
     <div class="text-center mb-8">
         <p class="text-gray-600 text-center">Just a few details and your fax will be on its way</p>
         
-        <!-- Urgency Banner -->
-        <div class="mt-4 bg-gradient-to-r from-orange-100 to-red-100 border border-orange-300 rounded-lg p-3">
-            <div class="flex items-center justify-center">
-                <svg class="w-5 h-5 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L10 9.586V6z" clip-rule="evenodd"/>
-                </svg>
-                <span class="text-orange-800 font-semibold text-sm">⚡ Send in less than 60 seconds</span>
-                <span class="mx-2 text-orange-600">•</span>
-                @php
-                    // Generate realistic number based on time of day
-                    $hour = (int) date('H');
-                    $dayOfYear = (int) date('z');
-                    $baseNumber = 15 + ($hour % 12) * 3; // 15-48 range based on hour
-                    $variation = ($dayOfYear + $hour) % 7; // 0-6 variation
-                    $recentPurchases = $baseNumber + $variation;
-                @endphp
-                <span class="text-orange-700 text-sm">📈 {{ $recentPurchases }} people bought in the last hour</span>
-            </div>
-        </div>
     </div>
 
     <!-- File Preview Section -->
