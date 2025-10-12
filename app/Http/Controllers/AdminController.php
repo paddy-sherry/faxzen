@@ -76,11 +76,27 @@ class AdminController extends Controller
                 'error_message' => null,
                 'is_sending' => false,
                 'is_delivered' => false,
-                'retry_attempts' => $faxJob->retry_attempts // Keep current retry count
+                'retry_attempts' => 0, // Reset retry count for admin retry
+                'retry_stage' => null, // Clear retry stage
+                'last_retry_at' => null, // Clear last retry timestamp
+                'prepared_at' => null, // Clear prepared timestamp
+                'sending_started_at' => null, // Clear sending started timestamp
+                'delivered_at' => null, // Clear delivered timestamp
+                'email_sent_at' => null, // Clear email sent timestamp
+                'failure_email_sent' => false, // Reset failure email flag
+                'email_sent' => false // Reset email sent flag
             ]);
 
             // Dispatch the SendFaxJob
             SendFaxJob::dispatch($faxJob);
+
+            // Log the admin retry
+            Log::info("Fax job manually retried by admin", [
+                'fax_job_id' => $faxJob->id,
+                'old_retry_attempts' => $faxJob->retry_attempts,
+                'new_status' => $faxJob->status,
+                'admin_action' => 'manual_retry'
+            ]);
 
             $successMsg = "Fax job #{$faxJob->id} has been queued for retry. It will be processed shortly.";
             
