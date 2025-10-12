@@ -378,6 +378,7 @@ class SendFaxJob implements ShouldQueue
         $finalDocumentPath = $filePaths[0]; // Default to first file
         $coverPagePath = null;
         $mergedPath = null;
+        $pdfMergeService = new PdfMergeService(); // Initialize for cleanup
         
         if ($this->faxJob->include_cover_page) {
             Log::info("Processing cover page for fax", [
@@ -387,7 +388,6 @@ class SendFaxJob implements ShouldQueue
             ]);
             
             $coverPageService = new CoverPageService();
-            $pdfMergeService = new PdfMergeService();
             
             try {
                 // Generate cover page
@@ -432,8 +432,6 @@ class SendFaxJob implements ShouldQueue
                 'file_count' => count($filePaths),
                 'file_paths' => $filePaths
             ]);
-            
-            $pdfMergeService = new PdfMergeService();
             
             try {
                 // Merge all documents together
