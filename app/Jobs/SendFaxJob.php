@@ -372,6 +372,20 @@ class SendFaxJob implements ShouldQueue
             $fileExistsLocally = Storage::disk('local')->exists($filePath);
             $fileExistsOnR2 = Storage::disk('r2')->exists($filePath);
             
+            // If file doesn't exist on R2 with original path, try fax_documents/ path
+            if (!$fileExistsOnR2 && str_starts_with($filePath, 'temp_fax_documents/')) {
+                $r2Path = str_replace('temp_fax_documents/', 'fax_documents/', $filePath);
+                $fileExistsOnR2 = Storage::disk('r2')->exists($r2Path);
+                
+                if ($fileExistsOnR2) {
+                    Log::info("File found on R2 with fax_documents/ path", [
+                        'fax_job_id' => $this->faxJob->id,
+                        'original_path' => $filePath,
+                        'r2_path' => $r2Path
+                    ]);
+                }
+            }
+            
             if (!$fileExistsLocally && !$fileExistsOnR2) {
                 throw new \Exception("File not found in local or R2 storage: {$filePath}");
             }
@@ -493,14 +507,27 @@ class SendFaxJob implements ShouldQueue
                 'fax_job_id' => $this->faxJob->id,
                 'file_path' => $finalDocumentPath
             ]);
-        } elseif (Storage::disk('r2')->exists($finalDocumentPath)) {
-            $fileContent = Storage::disk('r2')->get($finalDocumentPath);
-            Log::info("Using file from R2 storage", [
-                'fax_job_id' => $this->faxJob->id,
-                'file_path' => $finalDocumentPath
-            ]);
         } else {
-            throw new \Exception("Final document not found in local or R2 storage: {$finalDocumentPath}");
+            // Check R2 storage - try original path first, then fax_documents/ path
+            $r2Path = $finalDocumentPath;
+            $fileExistsOnR2 = Storage::disk('r2')->exists($r2Path);
+            
+            // If file doesn't exist on R2 with original path, try fax_documents/ path
+            if (!$fileExistsOnR2 && str_starts_with($finalDocumentPath, 'temp_fax_documents/')) {
+                $r2Path = str_replace('temp_fax_documents/', 'fax_documents/', $finalDocumentPath);
+                $fileExistsOnR2 = Storage::disk('r2')->exists($r2Path);
+            }
+            
+            if ($fileExistsOnR2) {
+                $fileContent = Storage::disk('r2')->get($r2Path);
+                Log::info("Using file from R2 storage", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'original_path' => $finalDocumentPath,
+                    'r2_path' => $r2Path
+                ]);
+            } else {
+                throw new \Exception("Final document not found in local or R2 storage: {$finalDocumentPath}");
+            }
         }
         
         // Upload to R2
@@ -617,31 +644,45 @@ class SendFaxJob implements ShouldQueue
                     'fax_job_id' => $this->faxJob->id,
                     'file_path' => $filePath
                 ]);
-            } elseif (Storage::disk('r2')->exists($filePath)) {
-                // File exists on R2, download to local storage
-                $localPath = $filePath; // Use the same path structure
-                
-                try {
-                    $fileContent = Storage::disk('r2')->get($filePath);
-                    Storage::disk('local')->put($localPath, $fileContent);
-                    
-                    $localFilePaths[] = $localPath;
-                    
-                    Log::info("Downloaded file from R2 to local storage", [
-                        'fax_job_id' => $this->faxJob->id,
-                        'original_path' => $filePath,
-                        'local_path' => $localPath
-                    ]);
-                } catch (\Exception $e) {
-                    Log::error("Failed to download file from R2 to local storage", [
-                        'fax_job_id' => $this->faxJob->id,
-                        'file_path' => $filePath,
-                        'error' => $e->getMessage()
-                    ]);
-                    throw new \Exception("Failed to download file from R2: {$filePath}");
-                }
             } else {
-                throw new \Exception("File not found in local or R2 storage: {$filePath}");
+                // Check R2 storage - try original path first, then fax_documents/ path
+                $r2Path = $filePath;
+                $fileExistsOnR2 = Storage::disk('r2')->exists($r2Path);
+                
+                // If file doesn't exist on R2 with original path, try fax_documents/ path
+                if (!$fileExistsOnR2 && str_starts_with($filePath, 'temp_fax_documents/')) {
+                    $r2Path = str_replace('temp_fax_documents/', 'fax_documents/', $filePath);
+                    $fileExistsOnR2 = Storage::disk('r2')->exists($r2Path);
+                }
+                
+                if ($fileExistsOnR2) {
+                    // File exists on R2, download to local storage
+                    $localPath = $filePath; // Use the original path structure for local storage
+                    
+                    try {
+                        $fileContent = Storage::disk('r2')->get($r2Path);
+                        Storage::disk('local')->put($localPath, $fileContent);
+                        
+                        $localFilePaths[] = $localPath;
+                        
+                        Log::info("Downloaded file from R2 to local storage", [
+                            'fax_job_id' => $this->faxJob->id,
+                            'original_path' => $filePath,
+                            'r2_path' => $r2Path,
+                            'local_path' => $localPath
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error("Failed to download file from R2 to local storage", [
+                            'fax_job_id' => $this->faxJob->id,
+                            'file_path' => $filePath,
+                            'r2_path' => $r2Path,
+                            'error' => $e->getMessage()
+                        ]);
+                        throw new \Exception("Failed to download file from R2: {$filePath}");
+                    }
+                } else {
+                    throw new \Exception("File not found in local or R2 storage: {$filePath}");
+                }
             }
         }
         
