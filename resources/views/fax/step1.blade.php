@@ -1177,11 +1177,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Validate files
         if (selectedFiles.length === 0) {
             alert('Please select at least one file to send.');
-            hasErrors = true;
-        } else {
-            // Ensure file input has the selected files before submission
-            updateFileInput();
+            e.preventDefault();
+            return;
         }
+        
+        // Ensure file input has the selected files before submission
+        updateFileInput();
         
         // Validate fax number
         if (!validateFaxNumber() && recipientNumberInput.value.replace(/[^0-9]/g, '').length >= 7) {
@@ -1204,6 +1205,13 @@ document.addEventListener('DOMContentLoaded', function() {
         fileInput.files = dataTransfer.files;
         
         console.log('Updated file input with', fileInput.files.length, 'files');
+        console.log('Selected files count:', selectedFiles.length);
+        console.log('File input files count:', fileInput.files.length);
+        
+        // Verify the files are actually set
+        if (fileInput.files.length === 0 && selectedFiles.length > 0) {
+            console.error('Failed to set files in input!');
+        }
     }
 });
 </script>
