@@ -67,6 +67,13 @@
                             <span id="total-size" class="font-medium text-gray-900"></span>
                         </div>
                     </div>
+                    
+                    <!-- Add More Files Button -->
+                    <div class="mt-4 flex justify-center">
+                        <button type="button" id="add-more-files-btn" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 text-sm">
+                            + Add More Files
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -816,6 +823,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('pdf_files');
+    const addMoreBtn = document.getElementById('add-more-files-btn');
     const fileList = document.getElementById('file-list');
     const fileListContainer = document.getElementById('file-list-container');
     const fileCount = document.getElementById('file-count');
@@ -845,8 +853,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle dropped files
     dropZone.addEventListener('drop', handleDrop, false);
 
-    // Handle file selection via button
+    // Handle file selection via file input
     fileInput.addEventListener('change', handleFileSelect, false);
+    
+    // Handle "Add More Files" button click
+    addMoreBtn.addEventListener('click', function() {
+        fileInput.click();
+    });
 
     function preventDefaults(e) {
         e.preventDefault();
@@ -874,7 +887,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (files.length > 0) {
             addFiles(files);
         }
-        // Don't clear the input immediately - let it be managed by updateHiddenInput
+        // Clear the input to prevent re-processing the same files
+        e.target.value = '';
     }
 
     function addFiles(newFiles) {
@@ -928,11 +942,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateFileList() {
         if (selectedFiles.length === 0) {
             fileListContainer.classList.add('hidden');
+            dropZone.classList.remove('hidden'); // Show drop zone when no files
             selectedFilesInput.value = '';
             return;
         }
 
         fileListContainer.classList.remove('hidden');
+        dropZone.classList.add('hidden'); // Hide drop zone when files are selected
         fileCount.textContent = `${selectedFiles.length} of ${maxFiles} files`;
 
         // Calculate total size
