@@ -880,8 +880,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (files.length > 0) {
             addFiles(files);
         }
-        // Clear the input to prevent re-processing the same files
-        e.target.value = '';
+        // Don't clear the input - we need it for form submission
     }
 
     function addFiles(newFiles) {
@@ -1191,25 +1190,11 @@ document.addEventListener('DOMContentLoaded', function() {
             actualFileCount: actualFileCount
         });
         
-        // Check if we have files in either the selectedFiles array or the actual input
-        if (selectedFileCount === 0 && actualFileCount === 0) {
+        // Check if we have files in the actual input (which should now be populated)
+        if (actualFileCount === 0) {
             alert('Please select at least one file to send.');
             e.preventDefault();
             return;
-        }
-        
-        // If we have selected files but no actual files in input, try to sync them
-        if (selectedFileCount > 0 && actualFileCount === 0) {
-            console.log('Syncing selected files to input...');
-            updateFileInput();
-            
-            // Check again after sync
-            if (fileInput.files.length === 0) {
-                console.error('Failed to sync files to input');
-                alert('There was an issue with file selection. Please try selecting your files again.');
-                e.preventDefault();
-                return;
-            }
         }
         
         // Validate fax number
