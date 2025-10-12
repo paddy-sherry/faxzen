@@ -204,7 +204,7 @@
                                                 </button>
                                             @endif
                                             
-                                            @if($job->status === 'failed' && $job->canRetry())
+                                            @if($job->status === 'failed')
                                                 <form method="POST" action="{{ route('admin.fax-jobs.retry', $job->id) }}" class="inline">
                                                     @csrf
                                                     <button type="submit" 
@@ -213,8 +213,6 @@
                                                         🔄 Retry
                                                     </button>
                                                 </form>
-                                            @elseif($job->status === 'failed')
-                                                <span class="text-gray-400 text-xs">No retries left</span>
                                             @elseif(!$job->telnyx_fax_id)
                                                 <span class="text-gray-400 text-xs">-</span>
                                             @endif

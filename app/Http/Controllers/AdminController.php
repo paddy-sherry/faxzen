@@ -52,17 +52,8 @@ class AdminController extends Controller
             return redirect()->route('admin.fax-jobs')->with('error', $errorMsg);
         }
         
-        // Check if the job can be retried
-        if (!$faxJob->canRetry()) {
-            $errorMsg = "Fax job #{$faxJob->id} has already used all retry attempts.";
-            
-            // For GET requests, return JSON or simple response
-            if ($request->isMethod('GET')) {
-                return response()->json(['error' => $errorMsg], 400);
-            }
-            
-            return redirect()->route('admin.fax-jobs')->with('error', $errorMsg);
-        }
+        // Allow manual retry even if normal retry limit is exceeded
+        // (canRetry() check removed to allow admin override)
 
         // Check if job is in a retryable state
         if ($faxJob->status !== FaxJob::STATUS_FAILED) {
