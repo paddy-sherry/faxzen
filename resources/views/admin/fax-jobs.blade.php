@@ -197,8 +197,7 @@
                                                 <form method="POST" action="{{ route('admin.fax-jobs.retry', $job->id) }}" class="inline">
                                                     @csrf
                                                     <button type="submit" 
-                                                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200"
-                                                            onclick="return confirm('Are you sure you want to retry fax job #{{ $job->id }}? This will attempt to send the fax again.')">
+                                                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200">
                                                         🔄 Retry
                                                     </button>
                                                 </form>
