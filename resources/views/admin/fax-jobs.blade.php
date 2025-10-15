@@ -334,15 +334,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     showNotification('success', data.success);
                     
-                    // Update the row with new data if provided
+                    // Update the UI with new data instead of refreshing
                     if (data.updated_data) {
                         updateJobRow(jobId, data.updated_data);
                     }
-                    
-                    // Refresh the page after a short delay to show updated status
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
                 } else {
                     showNotification('error', data.error || 'Failed to retry fax job');
                 }
@@ -368,20 +363,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const statusCell = row.querySelector('td:nth-child(6)'); // Status column
         if (statusCell) {
             const statusBadge = statusCell.querySelector('.px-2');
-            if (statusBadge && updatedData.telnyx_status) {
-                // Update status text
-                statusBadge.textContent = updatedData.telnyx_status.charAt(0).toUpperCase() + updatedData.telnyx_status.slice(1);
-                
-                // Update status color based on new status
-                statusBadge.className = statusBadge.className.replace(/bg-\w+-\d+\s+text-\w+-\d+/, '');
-                if (updatedData.telnyx_status === 'delivered') {
-                    statusBadge.className += ' bg-green-100 text-green-800';
-                } else if (updatedData.telnyx_status === 'failed') {
-                    statusBadge.className += ' bg-red-100 text-red-800';
-                } else if (updatedData.telnyx_status === 'sending') {
-                    statusBadge.className += ' bg-orange-100 text-orange-800';
-                } else {
-                    statusBadge.className += ' bg-gray-100 text-gray-800';
+            if (statusBadge) {
+                // Update status text - use telnyx_status if available, otherwise use status
+                const displayStatus = updatedData.telnyx_status || updatedData.status;
+                if (displayStatus) {
+                    statusBadge.textContent = displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1);
+                    
+                    // Update status color based on new status
+                    statusBadge.className = statusBadge.className.replace(/bg-\w+-\d+\s+text-\w+-\d+/, '');
+                    if (displayStatus === 'delivered') {
+                        statusBadge.className += ' bg-green-100 text-green-800';
+                    } else if (displayStatus === 'failed') {
+                        statusBadge.className += ' bg-red-100 text-red-800';
+                    } else if (displayStatus === 'sending') {
+                        statusBadge.className += ' bg-orange-100 text-orange-800';
+                    } else if (displayStatus === 'paid') {
+                        statusBadge.className += ' bg-blue-100 text-blue-800';
+                    } else {
+                        statusBadge.className += ' bg-gray-100 text-gray-800';
+                    }
                 }
             }
             
@@ -395,6 +395,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 errorDiv.textContent = updatedData.error_message.substring(0, 30) + (updatedData.error_message.length > 30 ? '...' : '');
                 errorDiv.title = updatedData.error_message;
+            } else {
+                // Remove error message if status is no longer failed
+                const errorDiv = statusCell.querySelector('.text-red-600');
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+            }
+        }
+        
+        // Update retry button visibility based on status
+        const actionsCell = row.querySelector('td:nth-child(7)'); // Actions column
+        if (actionsCell) {
+            const retryForm = actionsCell.querySelector('form[action*="retry"]');
+            if (retryForm) {
+                if (updatedData.status === 'paid' || updatedData.status === 'sending') {
+                    // Hide retry button for non-failed statuses
+                    retryForm.style.display = 'none';
+                } else if (updatedData.status === 'failed') {
+                    // Show retry button for failed status
+                    retryForm.style.display = 'inline';
+                }
             }
         }
     }
