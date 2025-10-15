@@ -102,9 +102,9 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sender</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telnyx ID</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -113,8 +113,10 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {{ $job->id }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
-                                        {{ config('services.telnyx.from_number', '+1800FAXZEN') }}
+                                    <td class="px-6 py-4 text-sm text-gray-900 font-mono" style="max-width: 100px;">
+                                        <div class="truncate" title="{{ config('services.telnyx.from_number', '+1800FAXZEN') }}">
+                                            {{ config('services.telnyx.from_number', '+1800FAXZEN') }}
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
                                         {{ $job->recipient_number }}
@@ -122,15 +124,15 @@
                                     <td class="px-6 py-4 text-sm text-gray-900">
                                         <div class="text-gray-500 text-xs">{{ $job->sender_email }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <td class="px-6 py-4 text-sm text-gray-900" style="max-width: 300px;">
                                         @if($job->file_path)
                                             @php
                                                 $filename = basename($job->file_path);
                                             @endphp
                                             <a href="{{ route('admin.fax-jobs.file', $job->id) }}" 
                                                target="_blank" 
-                                               class="text-blue-600 hover:text-blue-800 underline"
-                                               title="Preview file">
+                                               class="text-blue-600 hover:text-blue-800 underline block truncate"
+                                               title="{{ $filename }}">
                                                 {{ $filename }}
                                             </a>
                                         @else
@@ -180,19 +182,6 @@
                                             </div>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
-                                        @if($job->telnyx_fax_id)
-                                            <span title="{{ $job->telnyx_fax_id }}">
-                                                {{ Str::limit($job->telnyx_fax_id, 20, '...') }}
-                                            </span>
-                                        @else
-                                            <span class="text-gray-400">Not assigned</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <div>{{ $job->created_at->format('M j, Y') }}</div>
-                                        <div class="text-gray-500 text-xs">{{ $job->created_at->format('g:i A') }}</div>
-                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         <div class="flex gap-2">
                                             @if($job->telnyx_fax_id)
@@ -219,6 +208,19 @@
                                                 <span class="text-gray-400 text-xs">-</span>
                                             @endif
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
+                                        @if($job->telnyx_fax_id)
+                                            <span title="{{ $job->telnyx_fax_id }}">
+                                                {{ Str::limit($job->telnyx_fax_id, 20, '...') }}
+                                            </span>
+                                        @else
+                                            <span class="text-gray-400">Not assigned</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <div>{{ $job->created_at->format('M j, Y') }}</div>
+                                        <div class="text-gray-500 text-xs">{{ $job->created_at->format('g:i A') }}</div>
                                     </td>
                                 </tr>
                             @endforeach
