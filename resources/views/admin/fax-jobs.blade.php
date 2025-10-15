@@ -303,6 +303,63 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Handle retry form submissions to prevent page scroll to top
+    document.querySelectorAll('form[action*="retry"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const jobId = this.action.split('/').pop();
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            const originalClass = submitButton.className;
+            
+            // Disable button and show loading state
+            submitButton.disabled = true;
+            submitButton.innerHTML = '⏳ Retrying...';
+            submitButton.className = submitButton.className.replace('bg-blue-600 hover:bg-blue-700', 'bg-gray-400');
+            
+            // Make AJAX request to retry
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': formData.get('_token')
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', data.success);
+                    
+                    // Update the row with new data if provided
+                    if (data.updated_data) {
+                        updateJobRow(jobId, data.updated_data);
+                    }
+                    
+                    // Refresh the page after a short delay to show updated status
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showNotification('error', data.error || 'Failed to retry fax job');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Network error while retrying fax job');
+            })
+            .finally(() => {
+                // Re-enable button
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+                submitButton.className = originalClass;
+            });
+        });
+    });
+    
     function updateJobRow(jobId, updatedData) {
         const row = document.querySelector(`[data-job-id="${jobId}"]`).closest('tr');
         if (!row) return;

@@ -45,7 +45,7 @@ class AdminController extends Controller
         if (!$faxJob) {
             $errorMsg = "Fax job #{$id} not found.";
             
-            if ($request->isMethod('GET')) {
+            if ($request->isMethod('GET') || $request->ajax()) {
                 return response()->json(['error' => $errorMsg], 404);
             }
             
@@ -59,8 +59,8 @@ class AdminController extends Controller
         if ($faxJob->status !== FaxJob::STATUS_FAILED) {
             $errorMsg = "Fax job #{$faxJob->id} is not in a failed state and cannot be retried.";
             
-            // For GET requests, return JSON or simple response
-            if ($request->isMethod('GET')) {
+            // For GET requests or AJAX requests, return JSON response
+            if ($request->isMethod('GET') || $request->ajax()) {
                 return response()->json(['error' => $errorMsg], 400);
             }
             
@@ -100,12 +100,20 @@ class AdminController extends Controller
 
             $successMsg = "Fax job #{$faxJob->id} has been queued for retry. It will be processed shortly.";
             
-            // For GET requests, return JSON response
-            if ($request->isMethod('GET')) {
+            // For GET requests or AJAX requests, return JSON response
+            if ($request->isMethod('GET') || $request->ajax()) {
                 return response()->json([
                     'success' => $successMsg,
                     'job_id' => $faxJob->id,
-                    'new_status' => $faxJob->status
+                    'new_status' => $faxJob->status,
+                    'updated_data' => [
+                        'status' => $faxJob->status,
+                        'telnyx_status' => $faxJob->telnyx_status,
+                        'is_delivered' => $faxJob->is_delivered,
+                        'is_sending' => $faxJob->is_sending,
+                        'email_sent' => $faxJob->email_sent,
+                        'error_message' => $faxJob->error_message,
+                    ]
                 ]);
             }
 
@@ -114,8 +122,8 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             $errorMsg = "Failed to retry fax job #{$faxJob->id}: " . $e->getMessage();
             
-            // For GET requests, return JSON error
-            if ($request->isMethod('GET')) {
+            // For GET requests or AJAX requests, return JSON error
+            if ($request->isMethod('GET') || $request->ajax()) {
                 return response()->json(['error' => $errorMsg], 500);
             }
             
