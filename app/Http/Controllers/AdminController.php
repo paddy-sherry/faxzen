@@ -79,6 +79,8 @@ class AdminController extends Controller
                 'retry_attempts' => 0, // Reset retry count for admin retry
                 'retry_stage' => null, // Clear retry stage
                 'last_retry_at' => null, // Clear last retry timestamp
+                'delivery_retry_attempts' => 0, // Reset delivery retry count for admin retry
+                'last_delivery_retry_at' => null, // Clear last delivery retry timestamp
                 'prepared_at' => null, // Clear prepared timestamp
                 'sending_started_at' => null, // Clear sending started timestamp
                 'delivered_at' => null, // Clear delivered timestamp
@@ -88,15 +90,26 @@ class AdminController extends Controller
             ]);
 
             // Dispatch the SendFaxJob
-            SendFaxJob::dispatch($faxJob);
-
-            // Log the admin retry
-            Log::info("Fax job manually retried by admin", [
-                'fax_job_id' => $faxJob->id,
-                'old_retry_attempts' => $faxJob->retry_attempts,
-                'new_status' => $faxJob->status,
-                'admin_action' => 'manual_retry'
-            ]);
+            try {
+                SendFaxJob::dispatch($faxJob);
+                
+                // Log the admin retry
+                Log::info("Fax job manually retried by admin", [
+                    'fax_job_id' => $faxJob->id,
+                    'old_retry_attempts' => $faxJob->retry_attempts,
+                    'new_status' => $faxJob->status,
+                    'admin_action' => 'manual_retry',
+                    'queue_dispatched' => true
+                ]);
+            } catch (\Exception $dispatchError) {
+                Log::error("Failed to dispatch SendFaxJob for admin retry", [
+                    'fax_job_id' => $faxJob->id,
+                    'error' => $dispatchError->getMessage(),
+                    'trace' => $dispatchError->getTraceAsString()
+                ]);
+                
+                throw new \Exception("Failed to queue fax job for retry: " . $dispatchError->getMessage());
+            }
 
             $successMsg = "Fax job #{$faxJob->id} has been queued for retry. It will be processed shortly.";
             

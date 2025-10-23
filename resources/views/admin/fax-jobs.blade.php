@@ -320,6 +320,9 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.className = submitButton.className.replace('bg-blue-600 hover:bg-blue-700', 'bg-gray-400');
             
             // Make AJAX request to retry
+            console.log('Making retry request to:', this.action);
+            console.log('Form data:', Object.fromEntries(formData));
+            
             fetch(this.action, {
                 method: 'POST',
                 headers: {
@@ -329,8 +332,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return response.json();
+            })
             .then(data => {
+                console.log('Response data:', data);
+                
                 if (data.success) {
                     showNotification('success', data.success);
                     
@@ -343,8 +357,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showNotification('error', 'Network error while retrying fax job');
+                console.error('Retry request failed:', error);
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name
+                });
+                showNotification('error', 'Network error while retrying fax job: ' + error.message);
             })
             .finally(() => {
                 // Re-enable button
