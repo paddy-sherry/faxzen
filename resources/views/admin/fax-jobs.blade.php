@@ -197,7 +197,8 @@
                                                 <form method="POST" action="{{ route('admin.fax-jobs.retry', $job->id) }}" class="inline">
                                                     @csrf
                                                     <button type="submit" 
-                                                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200">
+                                                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors duration-200"
+                                                            data-job-id="{{ $job->id }}">
                                                         🔄 Retry
                                                     </button>
                                                 </form>
@@ -340,20 +341,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
-                return response.json();
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                console.log('Content-Type:', contentType);
+                
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    // If not JSON, it might be a redirect or HTML response
+                    console.warn('Response is not JSON, might be a redirect');
+                    return response.text().then(text => {
+                        console.log('Response text:', text);
+                        throw new Error('Server returned non-JSON response (likely a redirect)');
+                    });
+                }
             })
             .then(data => {
                 console.log('Response data:', data);
+                console.log('Response data type:', typeof data);
+                console.log('Response data keys:', data ? Object.keys(data) : 'null/undefined');
                 
-                if (data.success) {
+                if (data && data.success) {
                     showNotification('success', data.success);
                     
                     // Update the UI with new data instead of refreshing
                     if (data.updated_data) {
+                        console.log('Updating job row with data:', data.updated_data);
                         updateJobRow(jobId, data.updated_data);
                     }
+                } else if (data && data.error) {
+                    showNotification('error', data.error);
                 } else {
-                    showNotification('error', data.error || 'Failed to retry fax job');
+                    console.error('Unexpected response format:', data);
+                    showNotification('error', 'Unexpected response format from server');
                 }
             })
             .catch(error => {
@@ -375,8 +395,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function updateJobRow(jobId, updatedData) {
-        const row = document.querySelector(`[data-job-id="${jobId}"]`).closest('tr');
-        if (!row) return;
+        // Try multiple ways to find the row
+        let row = document.querySelector(`[data-job-id="${jobId}"]`)?.closest('tr');
+        
+        // If not found, try to find by the retry form action URL
+        if (!row) {
+            const retryForm = document.querySelector(`form[action*="/retry/${jobId}"]`);
+            row = retryForm?.closest('tr');
+        }
+        
+        // If still not found, try to find by any element containing the job ID
+        if (!row) {
+            const elements = document.querySelectorAll(`*[data-job-id="${jobId}"]`);
+            if (elements.length > 0) {
+                row = elements[0].closest('tr');
+            }
+        }
+        
+        if (!row) {
+            console.warn(`Could not find row for job ID: ${jobId}`);
+            return;
+        }
         
         // Update status badge
         const statusCell = row.querySelector('td:nth-child(6)'); // Status column

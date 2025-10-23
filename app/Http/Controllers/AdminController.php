@@ -113,9 +113,19 @@ class AdminController extends Controller
 
             $successMsg = "Fax job #{$faxJob->id} has been queued for retry. It will be processed shortly.";
             
+            // Debug request type
+            Log::info("Admin retry request details", [
+                'fax_job_id' => $faxJob->id,
+                'method' => $request->method(),
+                'ajax' => $request->ajax(),
+                'wants_json' => $request->wantsJson(),
+                'accepts_json' => $request->acceptsJson(),
+                'headers' => $request->headers->all()
+            ]);
+            
             // For GET requests or AJAX requests, return JSON response
-            if ($request->isMethod('GET') || $request->ajax()) {
-                return response()->json([
+            if ($request->isMethod('GET') || $request->ajax() || $request->wantsJson()) {
+                $responseData = [
                     'success' => $successMsg,
                     'job_id' => $faxJob->id,
                     'new_status' => $faxJob->status,
@@ -127,7 +137,14 @@ class AdminController extends Controller
                         'email_sent' => $faxJob->email_sent,
                         'error_message' => $faxJob->error_message,
                     ]
+                ];
+                
+                Log::info("Returning JSON response for admin retry", [
+                    'fax_job_id' => $faxJob->id,
+                    'response_data' => $responseData
                 ]);
+                
+                return response()->json($responseData);
             }
 
             return redirect()->route('admin.fax-jobs')->with('success', $successMsg);
