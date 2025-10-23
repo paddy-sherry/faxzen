@@ -370,24 +370,95 @@ class SendFaxJob implements ShouldQueue
         // Verify all files exist (check both local and R2 storage)
         foreach ($filePaths as $filePath) {
             $fileExistsLocally = Storage::disk('local')->exists($filePath);
-            $fileExistsOnR2 = Storage::disk('r2')->exists($filePath);
+            $fileExistsOnR2 = false;
+            $r2CheckSkipped = false;
+            
+            // Check R2 storage with error handling
+            try {
+                // Log the file path being checked
+                Log::debug("Checking file existence on R2", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'file_path' => $filePath,
+                    'encoded_path' => urlencode($filePath)
+                ]);
+                
+                $fileExistsOnR2 = Storage::disk('r2')->exists($filePath);
+            } catch (\Exception $e) {
+                Log::warning("Failed to check file existence on R2", [
+                    'fax_job_id' => $this->faxJob->id,
+                    'file_path' => $filePath,
+                    'error' => $e->getMessage()
+                ]);
+                
+                // If R2 check fails, try alternative path
+                if (str_starts_with($filePath, 'temp_fax_documents/')) {
+                    $r2Path = str_replace('temp_fax_documents/', 'fax_documents/', $filePath);
+                    try {
+                        $fileExistsOnR2 = Storage::disk('r2')->exists($r2Path);
+                        if ($fileExistsOnR2) {
+                            Log::info("File found on R2 with fax_documents/ path", [
+                                'fax_job_id' => $this->faxJob->id,
+                                'original_path' => $filePath,
+                                'r2_path' => $r2Path
+                            ]);
+                        }
+                    } catch (\Exception $e2) {
+                        Log::warning("Failed to check alternative R2 path", [
+                            'fax_job_id' => $this->faxJob->id,
+                            'r2_path' => $r2Path,
+                            'error' => $e2->getMessage()
+                        ]);
+                    }
+                }
+                
+                // If R2 checks are consistently failing, skip them for this job
+                if (!$fileExistsOnR2) {
+                    $r2CheckSkipped = true;
+                    Log::warning("Skipping R2 existence check due to API issues", [
+                        'fax_job_id' => $this->faxJob->id,
+                        'file_path' => $filePath
+                    ]);
+                }
+            }
             
             // If file doesn't exist on R2 with original path, try fax_documents/ path
             if (!$fileExistsOnR2 && str_starts_with($filePath, 'temp_fax_documents/')) {
                 $r2Path = str_replace('temp_fax_documents/', 'fax_documents/', $filePath);
-                $fileExistsOnR2 = Storage::disk('r2')->exists($r2Path);
-                
-                if ($fileExistsOnR2) {
-                    Log::info("File found on R2 with fax_documents/ path", [
+                try {
+                    $fileExistsOnR2 = Storage::disk('r2')->exists($r2Path);
+                    
+                    if ($fileExistsOnR2) {
+                        Log::info("File found on R2 with fax_documents/ path", [
+                            'fax_job_id' => $this->faxJob->id,
+                            'original_path' => $filePath,
+                            'r2_path' => $r2Path
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    Log::warning("Failed to check fax_documents/ path on R2", [
                         'fax_job_id' => $this->faxJob->id,
-                        'original_path' => $filePath,
-                        'r2_path' => $r2Path
+                        'r2_path' => $r2Path,
+                        'error' => $e->getMessage()
                     ]);
                 }
             }
             
             if (!$fileExistsLocally && !$fileExistsOnR2) {
-                throw new \Exception("File not found in local or R2 storage: {$filePath}");
+                // If we can't verify R2 existence due to API issues, but file exists locally, proceed
+                if ($fileExistsLocally) {
+                    Log::warning("R2 existence check failed, but file exists locally - proceeding", [
+                        'fax_job_id' => $this->faxJob->id,
+                        'file_path' => $filePath
+                    ]);
+                } elseif ($r2CheckSkipped) {
+                    // If R2 checks are skipped due to API issues, assume file exists on R2 and proceed
+                    Log::warning("R2 existence check skipped due to API issues - assuming file exists on R2", [
+                        'fax_job_id' => $this->faxJob->id,
+                        'file_path' => $filePath
+                    ]);
+                } else {
+                    throw new \Exception("File not found in local or R2 storage: {$filePath}");
+                }
             }
             
             // If file exists on R2 but not locally, we can still proceed
