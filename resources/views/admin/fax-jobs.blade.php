@@ -310,8 +310,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             const formData = new FormData(this);
-            const jobId = this.action.split('/').pop();
+            const jobId = this.action.split('/').slice(-2, -1)[0]; // Get the job ID (second-to-last part)
             const submitButton = this.querySelector('button[type="submit"]');
+            
+            console.log('Extracted job ID:', jobId);
+            console.log('Form action URL:', this.action);
             const originalText = submitButton.innerHTML;
             const originalClass = submitButton.className;
             
